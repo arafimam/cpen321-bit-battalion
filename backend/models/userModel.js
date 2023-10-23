@@ -12,12 +12,11 @@ const userSchema = new mongoose.Schema({
   },
   userLocation: {
     location: {
-      latitude: Number,
-      longitude: Number,
+      latitude: { type: Number, required: true },
+      longitude: { type: Number, required: true },
     },
-    locationName: String,
+    locationName: { type: String, required: true },
   },
-  // Add other user attributes here
 });
 
 const User = mongoose.model("User", userSchema);
