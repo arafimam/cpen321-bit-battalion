@@ -2,6 +2,7 @@ package com.example.triptrooperapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -22,8 +23,14 @@ public class MainActivity extends AppCompatActivity {
 
         signInButton = findViewById(R.id.sign_in_google);
         signInButton.setButtonText("Sign In With Google");
-        signInButton.setButtonActionOnClick(view ->
-                // TODO: Replace this google sign in auth.
-                Toast.makeText(MainActivity.this, "Sign In Button Clicked", Toast.LENGTH_LONG).show());
+        signInButton.setButtonActionOnClick(view -> {
+                    // TODO: Replace this google sign in auth.
+                    Toast.makeText(MainActivity.this, "Sign In Button Clicked", Toast.LENGTH_LONG).show();
+
+                    // TODO: Should launch this activity once user authenticated.
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                }
+        );
     }
 }

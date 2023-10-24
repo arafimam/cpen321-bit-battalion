@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/home"
+        tools:ignore="MenuTitle" />
+    <item
+        android:id="@+id/nav_list"
+        android:icon="@drawable/list"
+        tools:ignore="MenuTitle" />
+    <item
+        android:id="@+id/nav_activity"
+        android:icon="@drawable/activity"
+        tools:ignore="MenuTitle" />
+
+    <item
+        android:id="@+id/nav_group"
+        android:icon="@drawable/groups"
+        tools:ignore="MenuTitle"/>
+
+</menu>
