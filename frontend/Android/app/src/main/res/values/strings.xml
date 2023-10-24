@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">TripTrooperApp</string>
+
+    <!--For Default texts-->
+    <string name="default_btn">Default Button</string>
+
+    <!-- Content-->
+    <string name="TripTrooperHeader">Trip Trooper</string>
+
 </resources>

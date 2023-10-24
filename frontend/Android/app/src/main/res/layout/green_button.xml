@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/green_button"
+        android:layout_width="0dp"
+        android:layout_height="81dp"
+        android:layout_weight="1"
+        android:backgroundTint="#15E979"
+        android:elevation="1dp"
+        android:padding="12dp"
+        android:text="@string/default_btn"
+        android:textColor="#000000" />
+</LinearLayout>
