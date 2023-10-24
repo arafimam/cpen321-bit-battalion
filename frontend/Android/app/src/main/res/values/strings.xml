@@ -3,6 +3,9 @@
 
     <!--For Default texts-->
     <string name="default_btn">Default Button</string>
+    <string name="main_title">Main Title</string>
+    <string name="side_title">Side Title</string>
+    <string name="sub_title">Sub Title</string>
 
     <!-- Content-->
     <string name="TripTrooperHeader">Trip Trooper</string>
