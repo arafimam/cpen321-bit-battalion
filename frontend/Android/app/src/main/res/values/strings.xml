@@ -9,5 +9,8 @@
 
     <!-- Content-->
     <string name="TripTrooperHeader">Trip Trooper</string>
+    <string name="list_header">Your Lists</string>
+    <string name="group_list_header">Your Groups</string>
+    <string name="new_group_header">New Group</string>
 
 </resources>

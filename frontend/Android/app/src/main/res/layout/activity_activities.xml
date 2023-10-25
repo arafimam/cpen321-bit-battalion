@@ -6,10 +6,33 @@
     android:layout_height="match_parent"
     tools:context=".ActivitiesActivity">
 
+
     <com.example.triptrooperapp.BottomNavBarView
         android:id="@+id/bottomNavBarView"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <com.example.triptrooperapp.GreenButtonView
+        android:id="@+id/activity_destination"
+        android:layout_width="300dp"
+        android:layout_height="86dp"
+        android:layout_marginTop="172dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.triptrooperapp.GreenButtonView
+        android:id="@+id/activity_location"
+        android:layout_width="300dp"
+        android:layout_height="86dp"
+        android:layout_marginTop="88dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavBarView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_destination"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
