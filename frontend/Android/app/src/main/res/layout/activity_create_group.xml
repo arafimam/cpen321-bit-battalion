@@ -70,20 +70,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/join_group_header" />
 
-    <EditText
-        android:id="@+id/group_destination_text_field"
-        android:layout_width="340dp"
-        android:layout_height="51dp"
-        android:layout_marginTop="16dp"
-        android:background="#C8C8C8"
-        android:hint="@string/group_destination_place_holder"
-        android:inputType="text"
-        android:padding="10dp"
-        android:textColorHint="#575757"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.563"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/group_name_text_field" />
 
     <com.example.triptrooperapp.GreenButtonView
         android:id="@+id/create_group"
@@ -93,8 +79,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/group_destination_text_field"/>
-
+        app:layout_constraintTop_toBottomOf="@+id/group_name_text_field" />
 
     <View
         android:id="@+id/view"

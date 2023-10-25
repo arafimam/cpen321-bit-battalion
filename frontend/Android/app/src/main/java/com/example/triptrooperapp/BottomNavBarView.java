@@ -1,12 +1,14 @@
 package com.example.triptrooperapp;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
@@ -54,25 +56,39 @@ public class BottomNavBarView extends RelativeLayout {
                     /* Navigate to Home page*/
                     Intent intent = new Intent(BottomNavBarView.this.getContext(), HomeActivity.class);
                     BottomNavBarView.this.getContext().startActivity(intent);
+
+                    if (BottomNavBarView.this.getContext() instanceof Activity) {
+                        ((Activity) BottomNavBarView.this.getContext()).overridePendingTransition(0, 0);
+                    }
+
                 }
 
                 else if (item.getItemId() == R.id.nav_list){
                     /* navigate to list page*/
                     Intent intent = new Intent(BottomNavBarView.this.getContext(), ListActivity.class);
                     BottomNavBarView.this.getContext().startActivity(intent);
+                    if (BottomNavBarView.this.getContext() instanceof Activity) {
+                        ((Activity) BottomNavBarView.this.getContext()).overridePendingTransition(0, 0);
+                    }
 
                 }
 
-                else if (item.getItemId() == R.id.nav_group){
+                else if (item.getItemId() == R.id.nav_group) {
                     /* navigate to group page*/
                     Intent intent = new Intent(BottomNavBarView.this.getContext(), GroupsActivity.class);
                     BottomNavBarView.this.getContext().startActivity(intent);
+                    if (BottomNavBarView.this.getContext() instanceof Activity) {
+                        ((Activity) BottomNavBarView.this.getContext()).overridePendingTransition(0, 0);
+                    }
                 }
 
-                else if (item.getItemId() == R.id.nav_activity){
+                else if (item.getItemId() == R.id.nav_activity) {
                     /* navigate to activity page*/
                     Intent intent = new Intent(BottomNavBarView.this.getContext(), ActivitiesActivity.class);
                     BottomNavBarView.this.getContext().startActivity(intent);
+                    if (BottomNavBarView.this.getContext() instanceof Activity) {
+                        ((Activity) BottomNavBarView.this.getContext()).overridePendingTransition(0, 0);
+                    }
                 }
 
                 else {

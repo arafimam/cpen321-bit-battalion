@@ -14,8 +14,8 @@
 
     <com.example.triptrooperapp.GreenButtonView
         android:id="@+id/create_list_button"
-        android:layout_width="wrap_content"
+        android:layout_width="207dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

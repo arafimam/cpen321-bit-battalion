@@ -6,6 +6,7 @@
     <string name="main_title">Main Title</string>
     <string name="side_title">Side Title</string>
     <string name="sub_title">Sub Title</string>
+    <string name="default_list_name">Default List Name</string>
 
     <!-- Content-->
     <string name="TripTrooperHeader">Trip Trooper</string>
@@ -18,5 +19,7 @@
     <string name="join_group_header">Join Group</string>
     <string name="group_code_place_holder">Group Code</string>
     <string name="list_name_place_holder">List Name</string>
+    <string name="delete_btn">Delete</string>
+
 
 </resources>
