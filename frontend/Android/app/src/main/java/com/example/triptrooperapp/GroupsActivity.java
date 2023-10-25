@@ -2,6 +2,7 @@ package com.example.triptrooperapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -42,12 +43,12 @@ public class GroupsActivity extends AppCompatActivity {
 
         }
 
-        // TODO: Change this to open create list dialog.
         createGroupButton = findViewById(R.id.create_group);
         createGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(GroupsActivity.this, "Clicked Create Group", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(GroupsActivity.this, CreateGroupActivity.class);
+                startActivity(intent);
             }
         });
     }

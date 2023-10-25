@@ -12,5 +12,11 @@
     <string name="list_header">Your Lists</string>
     <string name="group_list_header">Your Groups</string>
     <string name="new_group_header">New Group</string>
+    <string name="new_group_sub_header">Please enter your group details</string>
+    <string name="group_name_place_holder">Group Name</string>
+    <string name="group_destination_place_holder">Group Destination</string>
+    <string name="join_group_header">Join Group</string>
+    <string name="group_code_place_holder">Group Code</string>
+    <string name="list_name_place_holder">List Name</string>
 
 </resources>

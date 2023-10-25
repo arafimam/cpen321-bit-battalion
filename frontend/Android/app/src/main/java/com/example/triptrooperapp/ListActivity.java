@@ -1,9 +1,13 @@
 package com.example.triptrooperapp;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -39,15 +43,39 @@ public class ListActivity extends AppCompatActivity {
                 }
             });
             listBoxContainer.addView(listBoxComponentView);
-
         }
 
-        // TODO: Navigate to Create Group page here.
+        /**
+         * Create List, Floating action Button.
+         */
         createListButton = findViewById(R.id.create_list);
         createListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(ListActivity.this, "Clicked Create List", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListActivity.this);
+                View dialogView = LayoutInflater.from(ListActivity.this).inflate(R.layout.create_list_dialog_view,null);
+                final EditText listNameText = dialogView.findViewById(R.id.list_name_textField);
+                GreenButtonView createListButton = dialogView.findViewById(R.id.create_list_button);
+                createListButton.setButtonText("Create List");
+                builder.setView(dialogView);
+
+                final AlertDialog dialog = builder.create();
+                createListButton.setButtonActionOnClick(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (listNameText.getText().toString().equals("")){
+                            Toast.makeText(ListActivity.this, "List Name Empty", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                        else {
+                            // TODO: send back end api call to make list with name and also update the lists.
+                            Toast.makeText(ListActivity.this, "Created List", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                dialog.show();
+
             }
         });
     }

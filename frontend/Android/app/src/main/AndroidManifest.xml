@@ -13,6 +13,9 @@
         android:theme="@style/Theme.TripTrooperApp"
         tools:targetApi="31">
         <activity
+            android:name=".CreateGroupActivity"
+            android:exported="false" />
+        <activity
             android:name=".ActivitiesActivity"
             android:exported="false" />
         <activity
