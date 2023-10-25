@@ -1,4 +1,5 @@
 const PORT = 8081;
-const MONGO_CONNECTION_STRING = "mongodb://0.0.0.0:27017/mydatabase";
+const MONGO_CONNECTION_STRING = 'mongodb://0.0.0.0:27017/mydatabase';
+const AVIATION_STACK_API_KEY = '2b4d1d9f68842706cef9396e927a2f15';
 
-module.exports = { MONGO_CONNECTION_STRING, PORT };
+module.exports = { MONGO_CONNECTION_STRING, PORT, AVIATION_STACK_API_KEY };
