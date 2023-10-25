@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +40,12 @@ public class ListActivity extends AppCompatActivity {
             listBoxComponentView.setActionOnCardClick(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(ListActivity.this, String.format("Selected List %d", finalI+1), Toast.LENGTH_SHORT).show();
+                    // TODO: pass the list id to the list activity page instead of the list name.
+                    Intent intent = new Intent(ListActivity.this, ListDetailsActivity.class);
+                    intent.putExtra("listName", "List- " + (finalI + 1));
+                    startActivity(intent);
+                    overridePendingTransition(0,0);
+
                 }
             });
             listBoxContainer.addView(listBoxComponentView);

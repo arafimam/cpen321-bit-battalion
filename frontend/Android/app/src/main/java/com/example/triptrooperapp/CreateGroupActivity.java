@@ -16,7 +16,6 @@ public class CreateGroupActivity extends AppCompatActivity {
     private GreenButtonView joinGroupButton;
 
     private EditText groupNameField;
-    private EditText groupDestinationField;
     private EditText groupCodeField;
     private Toolbar toolbar;
 
@@ -31,20 +30,19 @@ public class CreateGroupActivity extends AppCompatActivity {
         joinGroupButton = findViewById(R.id.join_group_btn);
         joinGroupButton.setButtonText("Join Group");
         groupNameField = findViewById(R.id.group_name_text_field);
-        groupDestinationField = findViewById(R.id.group_destination_text_field);
         groupCodeField = findViewById(R.id.join_group_text_field);
         toolbar = findViewById(R.id.toolbar);
 
         createGroupButton.setButtonActionOnClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (groupNameField.getText().toString().equals("") || groupDestinationField.getText().toString().equals("")){
+                if (groupNameField.getText().toString().equals("") ){
                     Toast.makeText(CreateGroupActivity.this, "Group name or destination not entered",
                             Toast.LENGTH_SHORT).show();
                 }
                 else {
                     // TODO: Make backend call to add a new group.
-                    Toast.makeText(CreateGroupActivity.this, groupNameField.getText().toString()+" "+groupDestinationField.getText().toString(),
+                    Toast.makeText(CreateGroupActivity.this, groupNameField.getText().toString(),
                             Toast.LENGTH_SHORT).show();
                 }
             }
