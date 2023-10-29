@@ -21,5 +21,8 @@
     <string name="list_name_place_holder">List Name</string>
     <string name="delete_btn">Delete</string>
 
+    <!-- User Auth -->
+    <string name="web_client_id">asdasd</string>
+
 
 </resources>
