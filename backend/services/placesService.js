@@ -33,7 +33,19 @@ async function getPlacesNearby(latitude, longitude, category) {
     body: JSON.stringify(reqBody)
   };
 
-  return await fetch('https://places.googleapis.com/v1/places:searchNearby', requestOptions);
+  try {
+    googleResponse = await fetch('https://places.googleapis.com/v1/places:searchNearby', requestOptions);
+
+    if (googleResponse.ok) {
+      jsonResp = await googleResponse.json();
+      jsonResp = processPlacesResponse(jsonResp);
+      return { status: 200, response: jsonResp };
+    } else {
+      return { status: 400, errorMessage: `Failed to find places for the given search text.` };
+    }
+  } catch (error) {
+    return { status: 500, errorMessage: `Something went wrong while finding places by destination.` };
+  }
 }
 
 async function getPlacesByText(textQuery, category) {
@@ -50,17 +62,29 @@ async function getPlacesByText(textQuery, category) {
     body: JSON.stringify(reqBody)
   };
 
-  return await fetch('https://places.googleapis.com/v1/places:searchText', requestOptions);
-}
+  try {
+    googleResponse = await fetch('https://places.googleapis.com/v1/places:searchText', requestOptions);
 
-function processPhotos(googleResponse) {
-  for (place of googleResponse.places) {
-    if (place.photos) {
-      for (photo of place.photos) {
-        delete photo.authorAttributions;
-      }
+    if (googleResponse.ok) {
+      jsonResp = await googleResponse.json();
+      jsonResp = processPlacesResponse(jsonResp);
+      return { status: 200, response: jsonResp };
+    } else {
+      return { status: 400, errorMessage: `Failed to find places for the given search text.` };
     }
+  } catch (error) {
+    return { status: 500, errorMessage: `Something went wrong while finding places by destination.` };
   }
 }
 
-module.exports = { getPlacesNearby, getPlacesByText, processPhotos };
+function processPlacesResponse(googleResponse) {
+  for (place of googleResponse.places) {
+    place['placeId'] = place.name;
+    delete place.name;
+    place['displayName'] = place.displayName?.text;
+  }
+
+  return googleResponse;
+}
+
+module.exports = { getPlacesNearby, getPlacesByText };
