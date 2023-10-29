@@ -1,10 +1,4 @@
-const {
-  List,
-  getAll,
-  getById,
-  addPlace,
-  deleteList,
-} = require("../models/listModel");
+const { List, getAll, getById, addPlace, deleteList } = require('../models/listModel');
 
 async function getAllLists() {
   try {
@@ -12,7 +6,7 @@ async function getAllLists() {
     console.log(lists);
     return lists;
   } catch (error) {
-    throw new Error("Error in service while getting lists", error.message);
+    throw new Error('Error in service while getting lists', error.message);
   }
 }
 
@@ -21,20 +15,23 @@ async function getListById(listId) {
     const list = await getById(listId);
     return list;
   } catch (error) {
-    throw new Error("Error in service while getting list by id", error.message);
+    throw new Error('Error in service while getting list by id', error.message);
   }
 }
 
 async function createList(listName) {
   try {
     listschemaInput = {
-      listName: listName,
+      listName
     };
 
+    console.log(listschemaInput);
+
     const list = await List.create(listschemaInput);
-    return list._id;
+    console.log(list);
+    return list;
   } catch (error) {
-    throw new Error("Error in service while creating list: " + error.message);
+    throw new Error('Error in service while creating list: ' + error.message);
   }
 }
 
@@ -47,7 +44,7 @@ async function addPlaceToList(placeData, listId) {
     // websiteUri: placeData.websiteUri,
     // phoneNumber: placeData.phoneNumber,
     // regularOpeningHours: placeData.regularOpeningHours,
-    ...placeData,
+    ...placeData
   };
 
   try {
@@ -70,6 +67,5 @@ module.exports = {
   getAllLists,
   getListById,
   createList,
-  addPlaceToList,
-  addListToGroup,
+  addPlaceToList
 };

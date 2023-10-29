@@ -8,6 +8,7 @@ const flightRouter = require('./controllers/flightController.js');
 const groupRouter = require('./controllers/groupController.js');
 const placesRouter = require('./controllers/placesController.js');
 const userRouter = require('./controllers/userController.js');
+const listRouter = require('./controllers/listController.js');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/flights', flightRouter);
 app.use('/groups', groupRouter);
 app.use('/places', placesRouter);
 app.use('/users', userRouter);
+app.use('/lists', listRouter);
 
 // Simple GET endpoint
 app.get('/', (req, res) => {
