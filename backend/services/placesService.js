@@ -34,22 +34,33 @@ async function getPlacesNearby(latitude, longitude, category) {
   };
 
   try {
-    googleResponse = await fetch('https://places.googleapis.com/v1/places:searchNearby', requestOptions);
+    googleResponse = await fetch(
+      'https://places.googleapis.com/v1/places:searchNearby',
+      requestOptions
+    );
 
     if (googleResponse.ok) {
       jsonResp = await googleResponse.json();
       jsonResp = processPlacesResponse(jsonResp);
       return { status: 200, response: jsonResp };
     } else {
-      return { status: 400, errorMessage: `Failed to find places for the given search text.` };
+      return {
+        status: 400,
+        errorMessage: `Failed to find places for the given search text.`
+      };
     }
   } catch (error) {
-    return { status: 500, errorMessage: `Something went wrong while finding places by destination.` };
+    return {
+      status: 500,
+      errorMessage: `Something went wrong while finding places by destination.`
+    };
   }
 }
 
 async function getPlacesByText(textQuery, category) {
-  improvedQuery = category ? `${category} near ${textQuery}` : `places near ${textQuery}`;
+  improvedQuery = category
+    ? `${category} near ${textQuery}`
+    : `places near ${textQuery}`;
 
   const reqBody = {
     textQuery: `${improvedQuery}`,
@@ -63,17 +74,26 @@ async function getPlacesByText(textQuery, category) {
   };
 
   try {
-    googleResponse = await fetch('https://places.googleapis.com/v1/places:searchText', requestOptions);
+    googleResponse = await fetch(
+      'https://places.googleapis.com/v1/places:searchText',
+      requestOptions
+    );
 
     if (googleResponse.ok) {
       jsonResp = await googleResponse.json();
       jsonResp = processPlacesResponse(jsonResp);
       return { status: 200, response: jsonResp };
     } else {
-      return { status: 400, errorMessage: `Failed to find places for the given search text.` };
+      return {
+        status: 400,
+        errorMessage: `Failed to find places for the given search text.`
+      };
     }
   } catch (error) {
-    return { status: 500, errorMessage: `Something went wrong while finding places by destination.` };
+    return {
+      status: 500,
+      errorMessage: `Something went wrong while finding places by destination.`
+    };
   }
 }
 
