@@ -1,12 +1,12 @@
 // User:
 // 1. GET /api/users/username
-const express = require("express")
+const express = require('express');
 
-const router = express.Router()
+const router = express.Router();
 
-router.get("/username", (req, res) => {
+router.get('/username', (req, res) => {
   // get username from database or Google Auth
-  res.send("Username")
-})
+  res.send('Username');
+});
 
-export default router
+module.exports = router;

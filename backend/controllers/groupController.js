@@ -8,9 +8,9 @@
 
 const express = require('express');
 
-const router = express.Router();
-
 const groupService = require('../services/groupService.js');
+
+const router = express.Router();
 
 // Get all groups
 // router.get('/', async (req, res) => {

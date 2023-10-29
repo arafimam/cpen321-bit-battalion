@@ -11,25 +11,25 @@ const { AVIATION_STACK_API_KEY } = require('../constants');
 
 // Get all the flights that the user has (your trips page)
 router.get('/', (req, res) => {
-    console.log('hello');
-    res.send('hello');
+  console.log('hello');
+  res.send('hello');
 });
 
 // Get a specific flight that the user has
 router.get('/:flightId', (req, res) => {});
 
 router.post('/create', async (req, res) => {
-    let flight_iata = req.body.flight_iata;
-    let flight_departure_date = req.body.flight_departure_date;
+  let flight_iata = req.body.flight_iata;
+  let flight_departure_date = req.body.flight_departure_date;
 
-    // let endpoint = `http://api.aviationstack.com/v1/flights?access_key=${AVIATION_STACK_API_KEY}&flight_iata=${flight_iata}&flight_date=${flight_departure_date}`;
-    let endpoint = `http://api.aviationstack.com/v1/flights?access_key=${AVIATION_STACK_API_KEY}&arr_scheduled_time_dep=${flight_departure_date}`;
+  // let endpoint = `http://api.aviationstack.com/v1/flights?access_key=${AVIATION_STACK_API_KEY}&flight_iata=${flight_iata}&flight_date=${flight_departure_date}`;
+  let endpoint = `http://api.aviationstack.com/v1/flights?access_key=${AVIATION_STACK_API_KEY}&arr_scheduled_time_dep=${flight_departure_date}`;
 
-    let flightResp = await fetch(endpoint);
-    // console.log(endpoint);
-    console.log(flightResp);
-    res.send(flightResp);
-    // res.send('hello');
+  let flightResp = await fetch(endpoint);
+  // console.log(endpoint);
+  console.log(flightResp);
+  res.send(flightResp);
+  // res.send('hello');
 });
 
 router.delete('/:flightId/delete', (req, res) => {});
