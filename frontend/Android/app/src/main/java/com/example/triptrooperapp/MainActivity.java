@@ -25,6 +25,21 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /**
  * We can use the Main Activity as the Initial Login Page.
  * If the user is logged in directly go to another activity from the
@@ -68,14 +83,40 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
                         String idToken = credential.getGoogleIdToken();
-
+                        Log.d(TAG, idToken);
                         if(idToken!=null){
+                            // Construct the JSON payload
+                            JSONObject json = new JSONObject();
+                            try {
+                                json.put("idToken", idToken);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                return; // If there's an error creating the JSON, don't proceed with the request.
+                            }
+                            Log.d(TAG, json.toString());
+
+                            // Creating a RequestBody with the JSON
+                            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+                            RequestBody body = RequestBody.create(json.toString(), JSON);
+                            OkHttpClient client = new OkHttpClient();
+
+                            Request request = new Request.Builder()
+                                    .url("https://localhost:8081/users/login")
+                                    .post(body)
+                                    .build();
+                            Log.d(TAG, body.toString());
+                            client.newCall(request).execute();
+
+
                             Log.d(TAG,idToken);
                             Toast.makeText(getApplicationContext(),"ID token: "+idToken,Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                             startActivity(intent);
                         }
                     } catch (ApiException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
