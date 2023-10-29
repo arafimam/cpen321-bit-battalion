@@ -5,8 +5,8 @@ const {
   generateUniqueGroupCode,
   addUser,
   addList,
-  deleteList
-} = require('../models/groupModel');
+  deleteList,
+} = require("../models/groupModel");
 
 async function getAllGroups() {
   try {
@@ -14,7 +14,10 @@ async function getAllGroups() {
     console.log(groups);
     return groups;
   } catch (error) {
-    throw new Error('Error in service while getting group by id', error.message);
+    throw new Error(
+      "Error in service while getting group by id",
+      error.message
+    );
   }
 }
 
@@ -23,7 +26,7 @@ async function getGroupById(groupId) {
     const group = await getById(groupId);
     return group;
   } catch (error) {
-    throw new Error('Error while getting group by id', error.message);
+    throw new Error("Error while getting group by id", error.message);
   }
 }
 
@@ -31,29 +34,29 @@ async function createGroup(groupData) {
   try {
     const groupCode = await generateUniqueGroupCode();
     groupSchemaInput = {
-      groupCode,
+      groupCode: groupCode,
       ownerId: groupData.ownerId,
       ownerName: groupData.ownerName,
       groupName: groupData.groupName,
       members: [
         {
           user_id: groupData.ownerId,
-          username: groupData.ownerName
-        }
-      ]
+          username: groupData.ownerName,
+        },
+      ],
     };
 
     await Group.create(groupSchemaInput);
     return groupCode;
   } catch (error) {
-    throw new Error('Error creating group: ' + error.message);
+    throw new Error("Error creating group: " + error.message);
   }
 }
 
 async function addUserToGroup(userData, groupCode) {
   const member = {
     user_id: userData.user_id,
-    username: userData.username
+    username: userData.username,
   };
 
   try {
@@ -86,5 +89,5 @@ module.exports = {
   createGroup,
   addUserToGroup,
   addListToGroup,
-  deleteListFromGroup
+  deleteListFromGroup,
 };

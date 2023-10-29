@@ -2,7 +2,7 @@ const {
   List,
   getAll,
   getById,
-  addList,
+  addPlace,
   deleteList,
 } = require("../models/listModel");
 
@@ -21,7 +21,7 @@ async function getListById(listId) {
     const list = await getById(listId);
     return list;
   } catch (error) {
-    throw new Error("Error while getting list by id", error.message);
+    throw new Error("Error in service while getting list by id", error.message);
   }
 }
 
@@ -31,28 +31,27 @@ async function createList(listName) {
       listName: listName,
     };
 
-    return await List.create(listschemaInput);
+    const list = await List.create(listschemaInput);
+    return list._id;
   } catch (error) {
-    throw new Error("Error while creating list: " + error.message);
+    throw new Error("Error in service while creating list: " + error.message);
   }
 }
 
-async function addPlaceToList(userData, groupCode) {
-  const member = {
-    user_id: userData.user_id,
-    username: userData.username,
+async function addPlaceToList(placeData, listId) {
+  const place = {
+    // placeId: placeData.placeId,
+    // displayName: placeData.displayName,
+    // location: placeData.location,
+    // rating: placeData.rating,
+    // websiteUri: placeData.websiteUri,
+    // phoneNumber: placeData.phoneNumber,
+    // regularOpeningHours: placeData.regularOpeningHours,
+    ...placeData,
   };
 
   try {
-    return await addUser(member, groupCode);
-  } catch (error) {
-    throw error;
-  }
-}
-
-async function addListToGroup(listId) {
-  try {
-    return await addList(listId);
+    return await addPlace(place, listId);
   } catch (error) {
     throw error;
   }
@@ -60,7 +59,7 @@ async function addListToGroup(listId) {
 
 async function deleteListById(listId) {
   try {
-    return await deleteList(listId, listId);
+    return await deleteList(listId);
     //call list service to delete list
   } catch (error) {
     throw error;

@@ -60,6 +60,19 @@ async function addPlace(place, listId) {
   }
 }
 
+async function deletePlace(listId, placeId) {
+  const filter = { _id: listId };
+  const update = { $pull: { places: placeId } };
+
+  try {
+    return await List.updateOne(filter, update, { new: true });
+  } catch (error) {
+    throw new Error(
+      "Error in DB while deleting place from the list: " + error.message
+    );
+  }
+}
+
 async function deleteList(listId) {
   try {
     return await List.findByIdAndDelete(listId);
