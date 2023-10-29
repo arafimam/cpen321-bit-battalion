@@ -1,10 +1,10 @@
-const { PLACES_API_KEY } = require('../constants.js');
+require('dotenv').config();
 
 const MAX_RESULTS = 20;
 
 const REQ_HEADERS = {
   'Content-Type': 'application/json',
-  'X-Goog-Api-Key': PLACES_API_KEY,
+  'X-Goog-Api-Key': process.env.PLACES_API_KEY,
   'X-Goog-FieldMask':
     'places.regularOpeningHours,places.displayName,places.name,places.location,places.shortFormattedAddress,places.rating,places.nationalPhoneNumber,places.websiteUri',
   'Accept-Language': 'en'
@@ -34,10 +34,7 @@ async function getPlacesNearby(latitude, longitude, category) {
   };
 
   try {
-    googleResponse = await fetch(
-      'https://places.googleapis.com/v1/places:searchNearby',
-      requestOptions
-    );
+    googleResponse = await fetch('https://places.googleapis.com/v1/places:searchNearby', requestOptions);
 
     if (googleResponse.ok) {
       jsonResp = await googleResponse.json();
@@ -58,9 +55,7 @@ async function getPlacesNearby(latitude, longitude, category) {
 }
 
 async function getPlacesByText(textQuery, category) {
-  improvedQuery = category
-    ? `${category} near ${textQuery}`
-    : `places near ${textQuery}`;
+  improvedQuery = category ? `${category} near ${textQuery}` : `places near ${textQuery}`;
 
   const reqBody = {
     textQuery: `${improvedQuery}`,
@@ -74,10 +69,7 @@ async function getPlacesByText(textQuery, category) {
   };
 
   try {
-    googleResponse = await fetch(
-      'https://places.googleapis.com/v1/places:searchText',
-      requestOptions
-    );
+    googleResponse = await fetch('https://places.googleapis.com/v1/places:searchText', requestOptions);
 
     if (googleResponse.ok) {
       jsonResp = await googleResponse.json();
