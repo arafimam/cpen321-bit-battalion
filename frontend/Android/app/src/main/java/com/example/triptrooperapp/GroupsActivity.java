@@ -36,7 +36,8 @@ public class GroupsActivity extends AppCompatActivity {
             listBoxComponentView.setActionOnCardClick(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(GroupsActivity.this, String.format("Selected group %d", finalI+1), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(GroupsActivity.this, GroupDetailsActivity.class);
+                    startActivity(intent);
                 }
             });
             listBoxContainer.addView(listBoxComponentView);
