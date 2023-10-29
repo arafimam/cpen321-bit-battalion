@@ -4,7 +4,7 @@ const fs = require('fs');
 
 const connectDB = require('./db.js');
 const { PORT } = require('./constants.js');
-const flightRouter = require('./controllers/flightController.js');
+const userRouter = require('./controllers/userController.js');
 const groupRouter = require('./controllers/groupController.js');
 const placesRouter = require('./controllers/placesController.js');
 const userRouter = require('./controllers/userController.js');
@@ -19,7 +19,7 @@ const httpsOptions = {
 
 // Middleware
 app.use(express.json());
-app.use('/flights', flightRouter);
+app.use('/user', userRouter);
 app.use('/groups', groupRouter);
 app.use('/places', placesRouter);
 app.use('/users', userRouter);
