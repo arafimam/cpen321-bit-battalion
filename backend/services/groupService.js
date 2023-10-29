@@ -31,7 +31,7 @@ async function createGroup(groupData) {
   try {
     const groupCode = await generateUniqueGroupCode();
     groupSchemaInput = {
-      groupCode,
+      groupCode: groupCode,
       ownerId: groupData.ownerId,
       ownerName: groupData.ownerName,
       groupName: groupData.groupName,

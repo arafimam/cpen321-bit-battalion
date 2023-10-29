@@ -13,7 +13,7 @@ const groupService = require('../services/groupService.js');
 const router = express.Router();
 
 // Get all groups
-// router.get('/', async (req, res) => {
+// router.get('/all', async (req, res) => {
 //   try {
 //     const groups = await groupService.getAllGroups();
 //     res.send({ groups: groups });
@@ -33,7 +33,9 @@ router.get('/:groupId', async (req, res) => {
       res.send({ group: group });
     }
   } catch (error) {
-    res.status(500).send({ errorMessage: `Something went wrong while finding group with ID.` });
+    res.status(500).send({
+      errorMessage: `Something went wrong while finding group with ID.`
+    });
   }
 });
 
