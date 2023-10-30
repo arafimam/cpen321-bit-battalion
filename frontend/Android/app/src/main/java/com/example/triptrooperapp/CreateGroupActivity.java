@@ -3,14 +3,23 @@ package com.example.triptrooperapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class CreateGroupActivity extends AppCompatActivity {
 
@@ -89,7 +98,34 @@ public class CreateGroupActivity extends AppCompatActivity {
         }
         else {
             if (isCreatingNewGroup){
-                BackendServiceClass backendServiceClass = new BackendServiceClass("groups/create",)
+                JSONObject json = new JSONObject();
+                try{
+                    json.put("groupName",textToValidate);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(CreateGroupActivity.this);
+                BackendServiceClass backendServiceClass = new BackendServiceClass("groups/create",json,
+                        "authorization",account.getIdToken());
+                Request request = backendServiceClass.getPostRequestWithHeaderAndJsonParameter();
+                new Thread(() -> {
+                    Response response = backendServiceClass.getResponseFromRequest(request);
+                    if (response.isSuccessful()){
+                        try {
+                            JSONObject jsonResponse = new JSONObject(backendServiceClass.getResponseBody(response));
+                            String groupCode = jsonResponse.getString("groupCode");
+                            runOnUiThread(()->{
+                                Toast.makeText(CreateGroupActivity.this, "Created group with code: "+ groupCode, Toast.LENGTH_SHORT).show();
+                            });
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else {
+                        // TODO: add some error handling path.
+                        Toast.makeText(CreateGroupActivity.this, "Cannot create group", Toast.LENGTH_SHORT).show();
+                    }
+                }).start();
             }
         }
 
