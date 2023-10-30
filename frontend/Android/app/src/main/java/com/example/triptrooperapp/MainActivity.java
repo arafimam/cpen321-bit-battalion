@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private GreenButtonView signInButton; /* Sign in Button component.*/
     private SignInClient oneTapClient;
     private BeginSignInRequest signUpRequest;
+    private BeginSignInRequest signInRequest;
+
     private String TAG = "MAIN_ACTIVITY";
 
     private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
@@ -49,6 +51,22 @@ public class MainActivity extends AppCompatActivity {
 
         /* Code for configuring one tap client */
         oneTapClient = Identity.getSignInClient(this);
+
+        signInRequest = BeginSignInRequest.builder()
+                .setPasswordRequestOptions(BeginSignInRequest.PasswordRequestOptions.builder()
+                        .setSupported(true)
+                        .build())
+                .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                        .setSupported(true)
+                        // Your server's client ID, not your Android client ID.
+                        .setServerClientId(getString(R.string.web_client_id))
+                        // Only show accounts previously used to sign in.
+                        .setFilterByAuthorizedAccounts(true)
+                        .build())
+                // Automatically sign in when exactly one credential is retrieved.
+                .setAutoSelectEnabled(true)
+                .build();
+
         signUpRequest = BeginSignInRequest.builder()
                 .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                         .setSupported(true)
@@ -70,10 +88,13 @@ public class MainActivity extends AppCompatActivity {
                         String idToken = credential.getGoogleIdToken();
 
                         if(idToken!=null){
-                            Log.d(TAG,idToken);
+
+                           // Log.d(TAG,idToken);
                             Toast.makeText(getApplicationContext(),"ID token: "+idToken,Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+
                             startActivity(intent);
+                            Log.d(TAG,idToken);
                         }
                     } catch (ApiException e) {
                         throw new RuntimeException(e);
@@ -86,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         signInButton.setButtonActionOnClick(view -> {
             // TODO: Replace this google sign in auth.
             // Toast.makeText(MainActivity.this, "Sign In Button Clicked", Toast.LENGTH_LONG).show();
-            oneTapClient.beginSignIn(signUpRequest)
+            oneTapClient.beginSignIn(signInRequest)
                     .addOnSuccessListener(this, new OnSuccessListener<BeginSignInResult>() {
                         @Override
                         public void onSuccess(BeginSignInResult result) {
@@ -95,18 +116,25 @@ public class MainActivity extends AppCompatActivity {
                         }
                     })
                     .addOnFailureListener(this, new OnFailureListener() {
+
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            // No Google Accounts found. Just continue presenting the signed-out UI.
-                            Log.d(TAG, e.getLocalizedMessage());
+                            // No saved credentials found. Launch the One Tap sign-up flow
+
+                            oneTapClient.beginSignIn(signUpRequest).addOnSuccessListener(MainActivity.this, new OnSuccessListener<BeginSignInResult>() {
+                                @Override
+                                public void onSuccess(BeginSignInResult beginSignInResult) {
+                                    IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(beginSignInResult.getPendingIntent().getIntentSender()).build();
+                                    activityResultLauncher.launch(intentSenderRequest);
+                                }
+                            }).addOnFailureListener(MainActivity.this, new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, e.getLocalizedMessage());
+                                }
+                            });
                         }
                     });
-
-                    /**
-                    // TODO: Should launch this activity once user authenticated.
-                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                     **/
                 }
         );
     }
