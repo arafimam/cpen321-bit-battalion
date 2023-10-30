@@ -48,14 +48,13 @@ async function deleteGroup(groupId) {
   }
 }
 
-async function getAll() {
-  // try {
-  //   const groups = await Group.find({});
-  //   return groups;
-  // } catch (error) {
-  //   throw new Error('Error in DB while getting all groups ' + error.message);
-  // }
-  return await Group.find({});
+async function getAllGroups(userId) {
+  try {
+    const groups = await Group.find({ 'members.userId': userId });
+    return groups;
+  } catch (error) {
+    throw new Error('Error in DB while getting all groups for a user' + error.message);
+  }
 }
 
 async function getGroupById(groupId) {
@@ -88,6 +87,7 @@ async function addUserToGroup(groupCode, member) {
 
 async function removeUserFromGroup(groupId, userId) {
   //TODO: check if user already in group
+  //TODO: if group members becomes empty after removing user, then delete group
   const filter = { _id: groupId };
   const update = { $pull: { members: { userId: userId } } };
 
@@ -125,7 +125,7 @@ module.exports = {
   Group,
   createGroup,
   generateUniqueGroupCode,
-  getAll,
+  getAllGroups,
   getGroupById,
   addUserToGroup,
   removeUserFromGroup,

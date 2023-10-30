@@ -45,7 +45,6 @@ public class BackendServiceClass {
         this.json = json;
         this.headerKey = headerKey;
         this.headerValue = headerValue;
-        this.client = getOkHttpClient();
     }
 
     public Request getPostRequestWithHeaderAndJsonParameter(){

@@ -7,44 +7,27 @@
 // 6. DELETE /api/groups/leave_group items: {group_id, userId}
 
 const express = require('express');
-const { OAuth2Client } = require('google-auth-library');
 
 const groupService = require('../services/groupService.js');
-const userService = require('../services/userService.js');
+const middleware = require('../middleware/middleware.js');
 
-const client = new OAuth2Client();
 const router = express.Router();
 
-async function verifyToken(req, res, next) {
-  const idToken = req.headers.authorization;
+// Get all groups for a user
+router.get('/all', middleware.verifyToken, middleware.getUser, async (req, res) => {
+  const user = res.locals.user;
 
   try {
-    const ticket = await client.verifyIdToken({
-      idToken,
-      audience: process.env.WEB_CLIENT_ID_RITAM
-    });
-    const payload = ticket.getPayload();
-    req.googleId = payload['sub'];
-    console.log(req.googleId);
-    next();
+    const groups = await groupService.getAllGroups(user.userId);
+    res.send({ groups: groups });
   } catch (error) {
     console.log(error.message);
     return res.status(401).json({ message: 'Invalid Google ID token.' });
   }
-}
-
-// Get all groups
-// router.get('/all', async (req, res) => {
-//   try {
-//     const groups = await groupService.getAllGroups();
-//     res.send({ groups: groups });
-//   } catch (error) {
-//     res.status(500).send({ errorMessage: 'Something went wrong while getting all groups' });
-//   }
-// });
+});
 
 // Get a group by Id
-router.get('/:id', async (req, res) => {
+router.get('/:id', middleware.verifyToken, async (req, res) => {
   try {
     const groupId = req.params.id;
     const group = await groupService.getGroupById(groupId);
@@ -61,7 +44,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create a group
-router.post('/create', verifyToken, async (req, res) => {
+router.post('/create', middleware.verifyToken, middleware.getUser, async (req, res) => {
   let groupName = req.body.groupName;
 
   const googleId = req.googleId;
@@ -75,8 +58,8 @@ router.post('/create', verifyToken, async (req, res) => {
 
   let groupData = {
     groupName,
-    ownerId: user[0]._id,
-    ownerName: user[0].username
+    ownerId: res.locals.user.userId,
+    ownerName: res.locals.user.username
   };
 
   console.log(groupData);
@@ -90,35 +73,28 @@ router.post('/create', verifyToken, async (req, res) => {
 });
 
 // Delete group
-router.delete('/:id/delete', async (req, res) => {
+router.delete('/:id/delete', middleware.verifyToken, async (req, res) => {
   const groupId = req.params.id;
 
   try {
+    // TODO: check if user is owner of group
     await groupService.deleteGroup(groupId);
-    res.send('group successfully deleted');
+    res.send({ message: 'group successfully deleted' });
   } catch (error) {
     res.status(500).send({ errorMessage: 'Failed to delete the group.' });
   }
 });
 
 // Add user to group
-router.put('/join', verifyToken, async (req, res) => {
+router.put('/join', middleware.verifyToken, middleware.getUser, async (req, res) => {
   // Group code as part of request body
   const groupCode = req.body.groupCode;
-
-  // actual user data will come from Google Auth that frontend
-  // TODO: change to use middleware to convert token to uid
-  // const userData = {
-  //   userId: req.headers.userid,
-  //   username: req.headers.username
-  // };
-  const userId = req.userId;
-  // const
-
+  const user = res.locals.user;
+  console.log(user);
   try {
-    const groupCreated = await groupService.addUserToGroup(groupCode, userData);
+    const group = await groupService.addUserToGroup(groupCode, user);
 
-    if (!groupCreated) {
+    if (!group) {
       res.status(400).send({ errorMessage: 'Incorrect group code' });
     } else {
       res.send({ message: 'User successfully added to group' });
@@ -129,17 +105,12 @@ router.put('/join', verifyToken, async (req, res) => {
 });
 
 // Remove user from group
-router.put('/:id/leave', async (req, res) => {
+router.put('/:id/leave', middleware.verifyToken, middleware.getUser, async (req, res) => {
   const groupId = req.params.id;
-
-  // GET USER ID FROM TOKEN
-  const userData = {
-    userId: req.headers.userid,
-    username: req.headers.username
-  };
+  const user = res.locals.user;
 
   try {
-    let resp = await groupService.removeUserFromGroup(groupId, userData.userId);
+    let resp = await groupService.removeUserFromGroup(groupId, user.userId);
     console.log(resp);
     res.send({ message: 'User successfully removed from group' });
   } catch (error) {
@@ -147,7 +118,8 @@ router.put('/:id/leave', async (req, res) => {
   }
 });
 
-router.put('/:id/add/list', async (req, res) => {
+// Adding a list to the group
+router.put('/:id/add/list', middleware.verifyToken, async (req, res) => {
   const groupId = req.params.id;
   const listName = req.body.listName;
 
@@ -164,7 +136,8 @@ router.put('/:id/add/list', async (req, res) => {
   }
 });
 
-router.put('/:id/remove/list', async (req, res) => {
+// Removing a list from the group
+router.put('/:id/remove/list', middleware.verifyToken, async (req, res) => {
   const groupId = req.params.id;
   const listId = req.body.listId;
 
