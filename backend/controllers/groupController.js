@@ -28,6 +28,7 @@ async function verifyToken(req, res, next) {
     console.log(req.googleId);
     next();
   } catch (error) {
+    console.log(error.message);
     return res.status(401).json({ message: 'Invalid Google ID token.' });
   }
 }
@@ -64,6 +65,7 @@ router.post('/create', verifyToken, async (req, res) => {
   let groupName = req.body.groupName;
 
   const googleId = req.googleId;
+  console.log(googleId);
   try {
     var user = await userService.getUserByGoogleId(googleId);
   } catch (error) {
