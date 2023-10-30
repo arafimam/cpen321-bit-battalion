@@ -13,12 +13,11 @@ router.get('/username', (req, res) => {
 
 router.post('/login', async (req, res) => {
   const idToken = req.body.idToken;
-  console.log(idToken);
 
   async function verify() {
     const ticket = await client.verifyIdToken({
       idToken: idToken,
-      audience: "341689223031-547ca9idtu3985lrl0uduo6ifpatgd7f.apps.googleusercontent.com" // Specify the CLIENT_ID of the app that accesses the backend
+      audience: CLIENT_ID // Specify the CLIENT_ID of the app that accesses the backend
       // Or, if multiple clients access the backend:
       //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
     });
@@ -27,10 +26,7 @@ router.post('/login', async (req, res) => {
     // If request specified a G Suite domain:
     // const domain = payload['hd'];
   }
-  verify().then(()=> {
-    console.log("Sucess");
-    res.status(200).send("success");
-  }).catch(console.error);
+  verify().catch(console.error);
 });
 
 module.exports = router;
