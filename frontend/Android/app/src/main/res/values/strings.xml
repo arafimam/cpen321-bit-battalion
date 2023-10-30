@@ -22,7 +22,9 @@
     <string name="delete_btn">Delete</string>
 
     <!-- User Auth -->
-    <string name="web_client_id">assds</string>
+
+    <string name="web_client_id">asdasd</string>
+
 
 
 </resources>
