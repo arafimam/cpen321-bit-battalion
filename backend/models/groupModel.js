@@ -19,7 +19,7 @@ const groupSchema = new mongoose.Schema({
   members: {
     type: [
       {
-        user_id: { type: String, required: true },
+        userId: { type: String, required: true },
         username: { type: String, required: true }
       }
     ]
@@ -28,17 +28,25 @@ const groupSchema = new mongoose.Schema({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'List' }],
     default: []
   }
-
-  // groupDestination: {
-  //   location: {
-  //     latitude: { type: Number, required: true },
-  //     longitude: { type: Number, required: true }
-  //   },
-  //   locationName: { type: String, required: true }
-  // }
 });
 
 const Group = mongoose.model('Group', groupSchema);
+
+async function createGroup(group) {
+  try {
+    return await Group.create(group);
+  } catch (error) {
+    throw new Error('Error while creating group: ' + error.message);
+  }
+}
+
+async function deleteGroup(groupId) {
+  try {
+    return await Group.findByIdAndDelete(groupId);
+  } catch (error) {
+    throw new Error('Error in DB while deleting groups: ' + error.message);
+  }
+}
 
 async function getAll() {
   // try {
@@ -50,7 +58,7 @@ async function getAll() {
   return await Group.find({});
 }
 
-async function getById(groupId) {
+async function getGroupById(groupId) {
   return await Group.findById(groupId);
 }
 
@@ -66,7 +74,8 @@ async function generateUniqueGroupCode() {
   }
 }
 
-async function addUser(member, groupCode) {
+async function addUserToGroup(groupCode, member) {
+  //TODO: check if user already in group
   const filter = { groupCode: groupCode };
   const update = { $push: { members: member } };
 
@@ -77,7 +86,19 @@ async function addUser(member, groupCode) {
   }
 }
 
-async function addList(groupId) {
+async function removeUserFromGroup(groupId, userId) {
+  //TODO: check if user already in group
+  const filter = { _id: groupId };
+  const update = { $pull: { members: { userId: userId } } };
+
+  try {
+    return await Group.findOneAndUpdate(filter, update, { new: true });
+  } catch (error) {
+    throw new Error('Error in DB while removing user from the group: ' + error.message);
+  }
+}
+
+async function addListToGroup(groupId, listId) {
   const filter = { _id: groupId };
 
   try {
@@ -85,20 +106,30 @@ async function addList(groupId) {
     const update = { $push: { lists: listId } };
     return await Group.findOneAndUpdate(filter, update, { new: true });
   } catch (error) {
-    throw new Error('Error in DB while adding list to the group: ' + error.message);
+    throw new Error('Error occured while adding list to the group: ' + error.message);
   }
 }
 
-async function deleteList(listId, groupId) {
+async function removeListFromGroup(groupId, listId) {
   const filter = { _id: groupId };
   const update = { $pull: { lists: listId } };
 
   try {
-    // delete list first
     return await Group.updateOne(filter, update, { new: true });
   } catch (error) {
     throw new Error('Error in DB while deleting list from the group: ' + error.message);
   }
 }
 
-module.exports = { Group, getAll, getById, generateUniqueGroupCode, addUser, addList, deleteList };
+module.exports = {
+  Group,
+  createGroup,
+  generateUniqueGroupCode,
+  getAll,
+  getGroupById,
+  addUserToGroup,
+  removeUserFromGroup,
+  addListToGroup,
+  removeListFromGroup,
+  deleteGroup
+};

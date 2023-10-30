@@ -1,16 +1,9 @@
-const {
-  Group,
-  getAll,
-  getById,
-  generateUniqueGroupCode,
-  addUser,
-  addList,
-  deleteList
-} = require('../models/groupModel');
+const groupModel = require('../models/groupModel');
+const listService = require('./listService');
 
 async function getAllGroups() {
   try {
-    const groups = await getAll();
+    const groups = await getAllGroups();
     console.log(groups);
     return groups;
   } catch (error) {
@@ -20,7 +13,7 @@ async function getAllGroups() {
 
 async function getGroupById(groupId) {
   try {
-    const group = await getById(groupId);
+    const group = await groupModel.getGroupById(groupId);
     return group;
   } catch (error) {
     throw new Error('Error while getting group by id', error.message);
@@ -28,63 +21,64 @@ async function getGroupById(groupId) {
 }
 
 async function createGroup(groupData) {
-  try {
-    const groupCode = await generateUniqueGroupCode();
-    groupSchemaInput = {
-      groupCode: groupCode,
-      ownerId: groupData.ownerId,
-      ownerName: groupData.ownerName,
-      groupName: groupData.groupName,
-      members: [
-        {
-          user_id: groupData.ownerId,
-          username: groupData.ownerName
-        }
-      ]
-    };
+  const groupCode = await groupModel.generateUniqueGroupCode();
+  const group = {
+    groupCode: groupCode,
+    ownerId: groupData.ownerId,
+    ownerName: groupData.ownerName,
+    groupName: groupData.groupName,
+    members: [
+      {
+        userId: groupData.ownerId,
+        username: groupData.ownerName
+      }
+    ]
+  };
 
-    await Group.create(groupSchemaInput);
-    return groupCode;
-  } catch (error) {
-    throw new Error('Error while creating group: ' + error.message);
-  }
+  await groupModel.createGroup(group);
+  return groupCode;
 }
 
-async function addUserToGroup(userData, groupCode) {
+async function deleteGroup(groupId) {
+  return await groupModel.deleteGroup(groupId);
+}
+
+async function addUserToGroup(groupCode, userData) {
   const member = {
-    user_id: userData.user_id,
+    userId: userData.userId,
     username: userData.username
   };
 
+  return await groupModel.addUserToGroup(groupCode, member);
+}
+
+async function removeUserFromGroup(userId, groupCode) {
+  return await groupModel.removeUserFromGroup(userId, groupCode);
+}
+
+async function addListToGroup(groupId, listName) {
+  const list = await listService.createList(listName);
+
   try {
-    return await addUser(member, groupCode);
+    return await groupModel.addListToGroup(groupId, list._id);
   } catch (error) {
-    throw error;
+    await listService.deleteListById(list._id);
+    throw new Error('Error in service while adding list to group: ' + error.message);
   }
 }
 
-async function addListToGroup(groupId) {
-  try {
-    return await addList(groupId);
-  } catch (error) {
-    throw error;
-  }
-}
-
-async function deleteListFromGroup(listId, groupId) {
-  try {
-    return await deleteList(listId, groupId);
-    //call list service to delete list
-  } catch (error) {
-    throw error;
-  }
+async function removeListFromGroup(groupId, listId) {
+  await listService.deleteListById(listId);
+  return await groupModel.removeListFromGroup(groupId, listId);
 }
 
 module.exports = {
   getAllGroups,
   getGroupById,
   createGroup,
+  deleteGroup,
   addUserToGroup,
+  removeUserFromGroup,
   addListToGroup,
-  deleteListFromGroup
+  removeListFromGroup
 };
