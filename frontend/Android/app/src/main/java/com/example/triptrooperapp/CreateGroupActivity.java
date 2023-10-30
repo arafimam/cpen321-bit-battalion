@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 public class CreateGroupActivity extends AppCompatActivity {
 
     private GreenButtonView createGroupButton;
@@ -86,8 +88,9 @@ public class CreateGroupActivity extends AppCompatActivity {
             Toast.makeText(CreateGroupActivity.this, failureMessage, Toast.LENGTH_SHORT).show();
         }
         else {
-            // TODO: if isCreateNewGroup true make backend call to create group else make backend call to join group.
-            Toast.makeText(CreateGroupActivity.this, successMessage, Toast.LENGTH_SHORT).show();
+            if (isCreatingNewGroup){
+                BackendServiceClass backendServiceClass = new BackendServiceClass("groups/create",)
+            }
         }
 
     }

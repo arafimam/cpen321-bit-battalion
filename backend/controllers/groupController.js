@@ -21,7 +21,8 @@ router.get('/all', middleware.verifyToken, middleware.getUser, async (req, res) 
     const groups = await groupService.getAllGroups(user.userId);
     res.send({ groups: groups });
   } catch (error) {
-    res.status(500).send({ errorMessage: 'Something went wrong while getting all groups' });
+    console.log(error.message);
+    return res.status(401).json({ message: 'Invalid Google ID token.' });
   }
 });
 
@@ -45,6 +46,15 @@ router.get('/:id', middleware.verifyToken, async (req, res) => {
 // Create a group
 router.post('/create', middleware.verifyToken, middleware.getUser, async (req, res) => {
   let groupName = req.body.groupName;
+
+  const googleId = req.googleId;
+  console.log(googleId);
+  try {
+    var user = await userService.getUserByGoogleId(googleId);
+  } catch (error) {
+    res.status(400).send({ errorMessage: 'Failed to get user by google id' });
+    return;
+  }
 
   let groupData = {
     groupName,
