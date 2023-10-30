@@ -7,7 +7,6 @@ const { PORT } = require('./constants.js');
 const userRouter = require('./controllers/userController.js');
 const groupRouter = require('./controllers/groupController.js');
 const placesRouter = require('./controllers/placesController.js');
-const userRouter = require('./controllers/userController.js');
 const listRouter = require('./controllers/listController.js');
 
 const app = express();
@@ -19,10 +18,9 @@ const httpsOptions = {
 
 // Middleware
 app.use(express.json());
-app.use('/user', userRouter);
+app.use('/users', userRouter);
 app.use('/groups', groupRouter);
 app.use('/places', placesRouter);
-app.use('/users', userRouter);
 app.use('/lists', listRouter);
 
 // Simple GET endpoint

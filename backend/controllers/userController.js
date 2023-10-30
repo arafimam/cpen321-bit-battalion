@@ -1,10 +1,11 @@
 // User:
 // 1. GET /api/users/username
+require('dotenv').config();
 const express = require('express');
-const { OAuth2Client } = require('google-auth-library');
+
+const userService = require('../services/userService.js');
 
 const router = express.Router();
-const client = new OAuth2Client();
 
 router.get('/username', (req, res) => {
   // get username from database or Google Auth
@@ -13,27 +14,28 @@ router.get('/username', (req, res) => {
 
 router.post('/login', async (req, res) => {
   const idToken = req.body.idToken;
+  const username = req.body.username;
+  console.log(idToken);
 
-  async function verify() {
-    const ticket = await client.verifyIdToken({
-      idToken: idToken,
-      audience: CLIENT_ID // Specify the CLIENT_ID of the app that accesses the backend
-      // Or, if multiple clients access the backend:
-      //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
-    });
-    const payload = ticket.getPayload();
-    const userid = payload['sub'];
-    // If request specified a G Suite domain:
-    // const domain = payload['hd'];
+  try {
+    var userId = await userService.verify(idToken);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Error while verifying user');
+    return;
   }
 
-  verify()
-    .then(() => {
-      console.log('Sucess');
-      res.status(200).send('success');
-    })
-    .catch(console.error);
-
+  try {
+    let userData = {
+      userId,
+      username
+    };
+    response = await userService.createUser(userData);
+    res.send({ response: response });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Error while creating user');
+  }
 });
 
 module.exports = router;

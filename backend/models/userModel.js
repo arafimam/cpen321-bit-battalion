@@ -1,24 +1,25 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
+    required: true
   },
   googleId: {
     type: String,
     required: true,
-    unique: true,
-  },
-  userLocation: {
-    location: {
-      latitude: { type: Number, required: true },
-      longitude: { type: Number, required: true },
-    },
-    locationName: { type: String, required: true },
-  },
+    unique: true
+  }
 });
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+async function checkUserExists(googleId) {
+  try {
+    return await User.exists({ googleId: googleId });
+  } catch (error) {
+    throw new Error('Error while checking if user exists: ' + error.message);
+  }
+}
+
+module.exports = { User, checkUserExists };
