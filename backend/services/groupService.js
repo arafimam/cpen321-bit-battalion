@@ -1,9 +1,9 @@
 const groupModel = require('../models/groupModel');
 const listService = require('./listService');
 
-async function getAllGroups() {
+async function getAllGroups(userId) {
   try {
-    const groups = await getAllGroups();
+    const groups = await groupModel.getAllGroups(userId);
     console.log(groups);
     return groups;
   } catch (error) {
