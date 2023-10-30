@@ -46,7 +46,7 @@ async function createGroup(groupData) {
     await Group.create(groupSchemaInput);
     return groupCode;
   } catch (error) {
-    throw new Error('Error creating group: ' + error.message);
+    throw new Error('Error while creating group: ' + error.message);
   }
 }
 
