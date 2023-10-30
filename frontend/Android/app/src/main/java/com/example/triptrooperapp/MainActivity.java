@@ -1,41 +1,44 @@
 package com.example.triptrooperapp;
 
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
+
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.BeginSignInResult;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
-import org.json.JSONException;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
-import okhttp3.Call;
-import okhttp3.Callback;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -55,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private BeginSignInRequest signInRequest;
 
     private String TAG = "MAIN_ACTIVITY";
-
+    private GoogleSignInClient mGoogleSignInClient;
+    private ActivityResultLauncher<Intent> signInActivityIntent;
     private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
     private boolean showOneTapUI = true;
 
@@ -69,135 +73,157 @@ public class MainActivity extends AppCompatActivity {
         /* Code for configuring one tap client */
         oneTapClient = Identity.getSignInClient(this);
 
-        signInRequest = BeginSignInRequest.builder()
-                .setPasswordRequestOptions(BeginSignInRequest.PasswordRequestOptions.builder()
-                        .setSupported(true)
-                        .build())
-                .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                        .setSupported(true)
-                        // Your server's client ID, not your Android client ID.
-                        .setServerClientId(getString(R.string.web_client_id))
-                        // Only show accounts previously used to sign in.
-                        .setFilterByAuthorizedAccounts(true)
-                        .build())
-                // Automatically sign in when exactly one credential is retrieved.
-                .setAutoSelectEnabled(true)
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.web_client_id))
+                .requestProfile()
+                .requestEmail()
                 .build();
-
-        signUpRequest = BeginSignInRequest.builder()
-                .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                        .setSupported(true)
-                        // Your server's client ID, not your Android client ID.
-                        .setServerClientId(getString(R.string.web_client_id))
-                        // Show all accounts on the device.
-                        .setFilterByAuthorizedAccounts(false)
-                        .build())
-                .build();
-
-        /* Activity result launcher for one tap ui */
-
-        ActivityResultLauncher<IntentSenderRequest> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-                ExecutorService service = Executors.newFixedThreadPool(1);
-                if(result.getResultCode() == Activity.RESULT_OK){
-                    try {
-                        SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
-                        String idToken = credential.getGoogleIdToken();
-                        Log.d(TAG, idToken);
-                        if(idToken!=null){
-
-
-                            service.execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    JSONObject json = new JSONObject();
-                                    try {
-                                        json.put("idToken", idToken);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                        return;
-                                    }
-                                    Log.d(TAG, json.toString());
-
-                                    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-                                    RequestBody body = RequestBody.create(json.toString(), JSON);
-                                    OkHttpClient client = new OkHttpClient();
-
-                                    Request request = new Request.Builder()
-                                            .url("https://10.0.2.2:8081/users/login")
-                                            .post(body)
-                                            .build();
-                                    Log.d(TAG, body.toString());
-                                    client.newCall(request).enqueue(new Callback() {
-                                        @Override
-                                        public void onFailure(Call call, IOException e) {
-                                            e.printStackTrace();
-                                            Log.d(TAG, call.toString());
-                                        }
-
-                                        @Override
-                                        public void onResponse(Call call, Response response) throws IOException {
-                                            if (response.isSuccessful()){
-                                                Log.d(TAG, "hello");
-                                                String responseBody = response.body().string();
-                                                Log.d(TAG, responseBody);
-                                                Intent intent = new Intent(MainActivity.this,HomeActivity.class);
-                                                startActivity(intent);
-                                            } else {
-                                                Log.d(TAG, "handleError");
-                                            }
-                                        }
-                                    });
-
-                                }
-                            });
-                            Intent intent = new Intent(MainActivity.this,HomeActivity.class);
-                            startActivity(intent);
-
-                        }
-
-                    } catch (ApiException e) {
-                        throw new RuntimeException(e);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        signInActivityIntent = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        Intent data = result.getData();
+                        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                        handleSignInResult(task);
                     }
-                }
+                });
+
+
+        signInButton.setButtonText("Sign In With Google");
+        signInButton.setButtonActionOnClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
             }
         });
 
-        signInButton.setButtonText("Sign In With Google");
-        signInButton.setButtonActionOnClick(view -> {
-            // TODO: Replace this google sign in auth.
-            // Toast.makeText(MainActivity.this, "Sign In Button Clicked", Toast.LENGTH_LONG).show();
-            oneTapClient.beginSignIn(signInRequest)
-                    .addOnSuccessListener(this, new OnSuccessListener<BeginSignInResult>() {
-                        @Override
-                        public void onSuccess(BeginSignInResult result) {
-                            IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(result.getPendingIntent().getIntentSender()).build();
-                            activityResultLauncher.launch(intentSenderRequest);
-                        }
-                    })
-                    .addOnFailureListener(this, new OnFailureListener() {
 
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // No saved credentials found. Launch the One Tap sign-up flow
+    }
 
-                            oneTapClient.beginSignIn(signUpRequest).addOnSuccessListener(MainActivity.this, new OnSuccessListener<BeginSignInResult>() {
-                                @Override
-                                public void onSuccess(BeginSignInResult beginSignInResult) {
-                                    IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(beginSignInResult.getPendingIntent().getIntentSender()).build();
-                                    activityResultLauncher.launch(intentSenderRequest);
-                                }
-                            }).addOnFailureListener(MainActivity.this, new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, e.getLocalizedMessage());
-                                }
-                            });
-                        }
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            setLoggedInUser(account);
+        } catch (ApiException e) {
+            setLoggedInUser(null);
+        }
+    }
+
+    private void signIn() {
+        // get last signed in.
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        // user is not already signed in.
+        if (account == null){
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            signInActivityIntent.launch(signInIntent);
+        }
+        // user is logged in. So launch loginServerInfo activity.
+        else{
+            setLoggedInUser(account);
+        }
+    }
+
+    private void setLoggedInUser(GoogleSignInAccount account){
+        if (account == null){
+            Toast.makeText(MainActivity.this, "You need to log in to open this page", Toast.LENGTH_LONG).show();
+        }
+        else{
+            if (account.getIdToken() == null){
+                Log.d("Tag", "No Token");
+            }
+            else {
+                Log.d("Tag","YEYYE");
+            }
+            Log.d("Tag", account.getIdToken());
+            sendIdTokenToBackend(account.getIdToken(), account.getId());
+        }
+    }
+
+
+    private void sendIdTokenToBackend(String idToken, String username){
+        OkHttpClient client = getOkHttpClient();
+        String url = "https://34.220.237.44:8081/users/login";
+        JSONObject json = new JSONObject();
+        try{
+            json.put("idToken", idToken);
+            json.put("username",username);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+        RequestBody body = RequestBody.create(json.toString(), JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        new Thread(() -> {
+            try {
+                Response loginResponse = client.newCall(request).execute();
+                if (loginResponse.isSuccessful()){
+                    runOnUiThread(()->{
+                        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                        startActivity(intent);
                     });
                 }
-        );
+                else {
+                    runOnUiThread(() -> {
+                        Toast.makeText(MainActivity.this, "HELLo", Toast.LENGTH_SHORT).show();
+                    });
+
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+
+
     }
+
+    public static OkHttpClient getOkHttpClient() {
+        try {
+            // Create a trust manager that does not validate certificate chains
+            final TrustManager[] trustAllCerts = new TrustManager[] {
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[]{};
+                        }
+                    }
+            };
+
+            // Install the all-trusting trust manager
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            // Create an ssl socket factory with our all-trusting manager
+            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager)trustAllCerts[0]);
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+
+            return builder.build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
