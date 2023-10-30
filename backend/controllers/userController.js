@@ -26,7 +26,14 @@ router.post('/login', async (req, res) => {
     // If request specified a G Suite domain:
     // const domain = payload['hd'];
   }
-  verify().catch(console.error);
+
+  verify()
+    .then(() => {
+      console.log('Sucess');
+      res.status(200).send('success');
+    })
+    .catch(console.error);
+
 });
 
 module.exports = router;
