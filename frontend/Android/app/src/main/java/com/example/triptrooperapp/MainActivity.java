@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -79,44 +81,59 @@ public class MainActivity extends AppCompatActivity {
         ActivityResultLauncher<IntentSenderRequest> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
+                ExecutorService service = Executors.newFixedThreadPool(1);
                 if(result.getResultCode() == Activity.RESULT_OK){
                     try {
                         SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
                         String idToken = credential.getGoogleIdToken();
                         Log.d(TAG, idToken);
                         if(idToken!=null){
-                            // Construct the JSON payload
-                            JSONObject json = new JSONObject();
-                            try {
-                                json.put("idToken", idToken);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                return; // If there's an error creating the JSON, don't proceed with the request.
-                            }
-                            Log.d(TAG, json.toString());
 
-                            // Creating a RequestBody with the JSON
-                            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                            service.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    JSONObject json = new JSONObject();
+                                    try {
+                                        json.put("idToken", idToken);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                        return;
+                                    }
+                                    Log.d(TAG, json.toString());
 
-                            RequestBody body = RequestBody.create(json.toString(), JSON);
-                            OkHttpClient client = new OkHttpClient();
+                                    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-                            Request request = new Request.Builder()
-                                    .url("https://localhost:8081/users/login")
-                                    .post(body)
-                                    .build();
-                            Log.d(TAG, body.toString());
-                            client.newCall(request).execute();
+                                    RequestBody body = RequestBody.create(json.toString(), JSON);
+                                    OkHttpClient client = new OkHttpClient();
 
+                                    Request request = new Request.Builder()
+                                            .url("https://10.0.2.2:8081/users/login")
+                                            .post(body)
+                                            .build();
+                                    Log.d(TAG, body.toString());
+                                    client.newCall(request).enqueue(new Callback() {
+                                        @Override
+                                        public void onFailure(Call call, IOException e) {
+                                            e.printStackTrace();
+                                            Log.d(TAG, call.toString());
+                                        }
 
-                            Log.d(TAG,idToken);
-                            Toast.makeText(getApplicationContext(),"ID token: "+idToken,Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                            startActivity(intent);
+                                        @Override
+                                        public void onResponse(Call call, Response response) throws IOException {
+                                            if (response.isSuccessful()){
+                                                Log.d(TAG, "hello");
+                                                String responseBody = response.body().string();
+                                                Log.d(TAG, responseBody);
+                                            } else {
+                                                Log.d(TAG, "handleError");
+                                            }
+                                        }
+                                    });
+
+                                }
+                            });
                         }
                     } catch (ApiException e) {
-                        throw new RuntimeException(e);
-                    } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
