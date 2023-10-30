@@ -13,7 +13,6 @@ router.get('/username', (req, res) => {
 
 router.post('/login', async (req, res) => {
   const idToken = req.body.idToken;
-  console.log(idToken);
 
   async function verify() {
     const ticket = await client.verifyIdToken({
@@ -27,12 +26,14 @@ router.post('/login', async (req, res) => {
     // If request specified a G Suite domain:
     // const domain = payload['hd'];
   }
+
   verify()
     .then(() => {
       console.log('Sucess');
       res.status(200).send('success');
     })
     .catch(console.error);
+
 });
 
 module.exports = router;
