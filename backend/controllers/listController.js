@@ -46,14 +46,34 @@ router.put('/add/place', async (req, res) => {
   let place = req.body.place;
 
   try {
-    await listService.addPlaceToList(place, listId);
+    await listService.addPlaceToList(listId, place);
     res.send('success');
   } catch (error) {
     res.status(500).send({ errorMessage: 'Failed to add a place to list ' });
   }
 });
 
-router.delete('/:listId/deleteFromList/:activityId', (req, res) => {});
-router.delete('/:listId/delete', (req, res) => {});
+router.put('/remove/place', async (req, res) => {
+  const listId = req.body.listId;
+  const placeId = req.body.placeId;
+
+  try {
+    const resp = await listService.removePlaceFromList(listId, placeId);
+    console.log(resp);
+    res.send('successfully removed place from list');
+  } catch (error) {}
+});
+
+// router.delete('/:listId/deleteFromList/:activityId', (req, res) => {});
+router.delete('/:id/delete', async (req, res) => {
+  const listId = req.params.id;
+
+  try {
+    await listService.deleteListById(listId);
+    res.send('list successfully deleted');
+  } catch (error) {
+    res.status(500).send({ errorMessage: 'Failed to delete the list.' });
+  }
+});
 
 module.exports = router;

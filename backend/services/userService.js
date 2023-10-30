@@ -1,5 +1,5 @@
 const { OAuth2Client } = require('google-auth-library');
-const { User, checkUserExists } = require('../models/userModel.js');
+const userModel = require('../models/userModel.js');
 
 const client = new OAuth2Client();
 
@@ -16,7 +16,7 @@ async function verify(idToken) {
 
 async function createUser(userData) {
   try {
-    var userExists = await checkUserExists(userData.userId);
+    var userExists = await userModel.checkUserExists(userData.userId);
   } catch (error) {
     throw new Error('Error while checking if user exists: ' + error.message);
   }
@@ -27,14 +27,24 @@ async function createUser(userData) {
       googleId: userData.userId
     };
     try {
-      const createdUser = await User.create(user);
+      const createdUser = await userModel.User.create(user);
       return createdUser.username;
     } catch (error) {
-      throw new Error('Error while creating user: ' + error.message);
+      throw new Error('Error in service while creating user: ' + error.message);
     }
   } else {
     return userData.username;
   }
 }
 
-module.exports = { verify, createUser };
+async function getUserByGoogleId(googleId) {
+  const user = await userModel.getUserByGoogleId(googleId);
+
+  if (user === null || user === undefined) {
+    throw new Error('Could not find user with the given google id');
+  }
+
+  return user;
+}
+
+module.exports = { verify, createUser, getUserByGoogleId };
