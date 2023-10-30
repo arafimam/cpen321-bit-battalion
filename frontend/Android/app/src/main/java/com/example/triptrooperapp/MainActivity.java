@@ -143,6 +143,8 @@ public class MainActivity extends AppCompatActivity {
                                                 Log.d(TAG, "hello");
                                                 String responseBody = response.body().string();
                                                 Log.d(TAG, responseBody);
+                                                Intent intent = new Intent(MainActivity.this,HomeActivity.class);
+                                                startActivity(intent);
                                             } else {
                                                 Log.d(TAG, "handleError");
                                             }
@@ -151,8 +153,11 @@ public class MainActivity extends AppCompatActivity {
 
                                 }
                             });
+                            Intent intent = new Intent(MainActivity.this,HomeActivity.class);
+                            startActivity(intent);
 
                         }
+
                     } catch (ApiException e) {
                         throw new RuntimeException(e);
                     }

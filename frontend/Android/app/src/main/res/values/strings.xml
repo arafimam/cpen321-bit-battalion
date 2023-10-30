@@ -22,11 +22,9 @@
     <string name="delete_btn">Delete</string>
 
     <!-- User Auth -->
-<<<<<<< HEAD
-    <string name="web_client_id">341689223031-547ca9idtu3985lrl0uduo6ifpatgd7f.apps.googleusercontent.com</string>
-=======
-    <string name="web_client_id">assds</string>
->>>>>>> main
+
+    <string name="web_client_id">asdasd</string>
+
 
 
 </resources>
