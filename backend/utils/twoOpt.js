@@ -25,11 +25,10 @@ function calculateTotalDistance(path, places) {
 }
 
 // 2-Opt Algorithm using Haversine distance
-function twoOpt(places, useStartPoint = false) {
-  const startIndex = useStartPoint ? 1 : 0;
+function twoOpt(places) {
   let bestPath = [...places.keys()];
 
-  for (let i = startIndex; i < places.length - 1; i++) {
+  for (let i = 1; i < places.length - 1; i++) {
     for (let j = i + 1; j < places.length; j++) {
       const newPath = bestPath.slice();
       newPath[i] = bestPath[j];
