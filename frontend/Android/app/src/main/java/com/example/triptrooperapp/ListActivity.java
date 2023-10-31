@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,28 +40,8 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
 
         listBoxContainer = findViewById(R.id.list_layout_container);
+        retrieveListForUser();
 
-        // TODO: REPLACE WITH BACKEND API CALL TO RETRIEVE LIST. CREATE A DS. TO HOLD THE BACKEND API CALL THEN USE THE FOR LOOP BELOW.
-        for (int i=0; i<10;i++){
-            ListBoxComponentView listBoxComponentView = new ListBoxComponentView(this);
-
-            listBoxComponentView.setMainTitleText("List- " + (i + 1));
-            listBoxComponentView.setSubTitleText("Number of items " + (i + 15));
-            listBoxComponentView.setVisibilityOfTextViews(View.VISIBLE, View.INVISIBLE, View.VISIBLE);
-            int finalI = i;
-            listBoxComponentView.setActionOnCardClick(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // TODO: pass the list id to the list activity page instead of the list name.
-                    Intent intent = new Intent(ListActivity.this, ListDetailsActivity.class);
-                    intent.putExtra("listName", "List- " + (finalI + 1));
-                    startActivity(intent);
-                    overridePendingTransition(0,0);
-
-                }
-            });
-            listBoxContainer.addView(listBoxComponentView);
-        }
 
         /**
          * Create List, Floating action Button.
@@ -85,7 +66,6 @@ public class ListActivity extends AppCompatActivity {
                             dialog.dismiss();
                         }
                         else {
-                            // TODO: send back end api call to make list with name and also update the lists.
                             createListByUser(listNameText.getText().toString());
                             dialog.dismiss();
                         }
@@ -97,6 +77,60 @@ public class ListActivity extends AppCompatActivity {
         });
     }
 
+    private void retrieveListForUser(){
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ListActivity.this);
+        BackendServiceClass backendService = new BackendServiceClass("users/lists", "authorization", account.getIdToken());
+        Request request = backendService.getGetRequestWithHeaderOnly();
+
+        new Thread(() -> {
+            Response response = backendService.getResponseFromRequest(request);
+            if (response.isSuccessful()){
+                try {
+                    String responseBody = response.body().string();
+                    JSONObject jsonResponse = new JSONObject(responseBody);
+                    JSONArray listArray = jsonResponse.getJSONArray("lists");
+
+                    runOnUiThread(() -> {
+                        for (int i=0; i<listArray.length();i++){
+                            try {
+                                JSONObject list = listArray.getJSONObject(i);
+                                ListBoxComponentView listBox = new ListBoxComponentView(ListActivity.this);
+                                final String listName = list.getString("listName");
+                                final String listId = list.getString("_id");
+                                listBox.setMainTitleText(listName);
+                                listBox.setVisibilityOfTextViews(View.VISIBLE, View.INVISIBLE, View.INVISIBLE);
+                                listBox.setActionOnCardClick(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(ListActivity.this, ListDetailsActivity.class);
+                                        intent.putExtra("listName", listName);
+                                        intent.putExtra("id",listId);
+                                        intent.putExtra("context", "userList");
+                                        startActivity(intent);
+                                    }
+                                });
+                                listBoxContainer.addView(listBox);
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else {
+                try {
+                    Log.d("TAG", response.body().string());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+    }
 
     private void createListByUser(String listName){
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ListActivity.this);
@@ -114,6 +148,7 @@ public class ListActivity extends AppCompatActivity {
             if (response.isSuccessful()){
                 runOnUiThread(() -> {
                     Toast.makeText(ListActivity.this, "Created list " + listName, Toast.LENGTH_SHORT).show();
+                    recreate();
                 });
             }
             else {
