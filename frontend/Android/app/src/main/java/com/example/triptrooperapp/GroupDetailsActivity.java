@@ -62,6 +62,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         listBtn = findViewById(R.id.list_btn);
         listBtn.setMainTitleText("View Lists");
+        listBtn.setActionForOnClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentTo = new Intent(GroupDetailsActivity.this, GroupListActivity.class);
+                intentTo.putExtra("groupId",groupId);
+                startActivity(intentTo);
+            }
+        });
 
         expenseBtn = findViewById(R.id.expense_btn);
         expenseBtn.setMainTitleText("View Expenses");
