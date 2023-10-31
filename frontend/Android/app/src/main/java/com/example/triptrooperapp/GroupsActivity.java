@@ -74,7 +74,7 @@ public class GroupsActivity extends AppCompatActivity {
                             ListBoxComponentView listBoxComponentView = new ListBoxComponentView(GroupsActivity.this);
                             JSONObject groupInfo = groupsArray.getJSONObject(i);
                             listBoxComponentView.setMainTitleText(groupInfo.getString("groupName"));
-                            listBoxComponentView.setSideTitleText(groupInfo.getString("groupCode"));
+                            //listBoxComponentView.setSideTitleText(groupInfo.getString("groupCode"));
                             listBoxComponentView.setVisibilityOfTextViews(View.VISIBLE, View.VISIBLE, View.INVISIBLE);
                             listBoxContainer.addView(listBoxComponentView);
 

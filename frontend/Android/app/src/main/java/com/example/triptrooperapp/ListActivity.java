@@ -6,13 +6,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * List screen.
@@ -75,7 +86,7 @@ public class ListActivity extends AppCompatActivity {
                         }
                         else {
                             // TODO: send back end api call to make list with name and also update the lists.
-                            Toast.makeText(ListActivity.this, "Created List", Toast.LENGTH_SHORT).show();
+                            createListByUser(listNameText.getText().toString());
                             dialog.dismiss();
                         }
                     }
@@ -84,5 +95,35 @@ public class ListActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+
+    private void createListByUser(String listName){
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ListActivity.this);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("listName", listName);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        BackendServiceClass backendService = new BackendServiceClass("users/add/list", json,
+                "authorization", account.getIdToken());
+        Request request = backendService.doPutRequestWithJsonAndHeader();
+        new Thread(() -> {
+            Response response = backendService.getResponseFromRequest(request);
+            if (response.isSuccessful()){
+                runOnUiThread(() -> {
+                    Toast.makeText(ListActivity.this, "Created list " + listName, Toast.LENGTH_SHORT).show();
+                });
+            }
+            else {
+                try {
+                    Log.d("TAG", response.body().string());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+
     }
 }
