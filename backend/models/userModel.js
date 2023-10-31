@@ -38,17 +38,34 @@ async function getUserByGoogleId(googleId) {
   }
 }
 
-async function addList(userId) {
-  const filter = { _id: userId };
-
+async function getUserLists(userId) {
   try {
-    //create the list first
-
-    const update = { $push: { lists: listId } };
-    return await User.findOneAndUpdate(filter, update, { new: true });
+    return await User.findById(userId).select({ _id: 1, lists: 1 });
   } catch (error) {
-    throw new Error('Error in DB while adding list to the group: ' + error.message);
+    throw new Error('Error in DB while getting lists for a user' + error.message);
   }
 }
 
-module.exports = { User, checkUserExists, getUserByGoogleId };
+async function addListForUser(userId, listId) {
+  const filter = { _id: userId };
+
+  try {
+    const update = { $push: { lists: listId } };
+    return await User.findOneAndUpdate(filter, update, { new: true });
+  } catch (error) {
+    throw new Error('Error occured while adding list for the user: ' + error.message);
+  }
+}
+
+async function removeListForUser(userId, listId) {
+  const filter = { _id: userId };
+
+  try {
+    const update = { $pull: { lists: listId } };
+    return await User.findOneAndUpdate(filter, update, { new: true });
+  } catch (error) {
+    throw new Error('Error occured while removing list for the user: ' + error.message);
+  }
+}
+
+module.exports = { User, checkUserExists, getUserByGoogleId, getUserLists, addListForUser, removeListForUser };

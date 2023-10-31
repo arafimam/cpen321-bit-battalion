@@ -62,7 +62,30 @@ async function deleteList(listId) {
 }
 
 async function getListById(listId) {
-  return await List.findById(listId);
+  try {
+    return await List.findById(listId);
+  } catch (error) {
+    throw new Error('Error in DB while getting list name: ' + error.message);
+  }
+}
+
+async function getListName(listId) {
+  try {
+    const list = await List.findById(listId).select({ _id: 1, listName: 1 });
+    return list;
+  } catch (error) {
+    throw new Error('Error in DB while getting list name: ' + error.message);
+  }
+}
+
+async function getPlaces(listId) {
+  try {
+    const list = await List.findById(listId).select({ _id: 0, places: 1 });
+    console.log('db list: ' + list);
+    return list;
+  } catch (error) {
+    throw new Error('Error in DB while getting places for list ' + error.message);
+  }
 }
 
 async function addPlaceToList(listId, place) {
@@ -88,4 +111,13 @@ async function removePlaceFromList(listId, placeId) {
   }
 }
 
-module.exports = { List, getListById, deleteList, addPlaceToList, removePlaceFromList, createList };
+module.exports = {
+  List,
+  getListById,
+  getListName,
+  deleteList,
+  addPlaceToList,
+  removePlaceFromList,
+  createList,
+  getPlaces
+};

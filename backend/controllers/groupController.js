@@ -118,6 +118,17 @@ router.put('/:id/leave', middleware.verifyToken, middleware.getUser, async (req,
   }
 });
 
+router.get('/:id/lists', middleware.verifyToken, async (req, res) => {
+  const groupId = req.params.id;
+
+  try {
+    const lists = await groupService.getListsforGroup(groupId);
+    res.send({ lists: lists });
+  } catch (error) {
+    res.status(500).send({ errorMessage: 'Failed to get lists for group' });
+  }
+});
+
 // Adding a list to the group
 router.put('/:id/add/list', middleware.verifyToken, async (req, res) => {
   const groupId = req.params.id;

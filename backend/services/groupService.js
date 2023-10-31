@@ -12,12 +12,7 @@ async function getAllGroups(userId) {
 }
 
 async function getGroupById(groupId) {
-  try {
-    const group = await groupModel.getGroupById(groupId);
-    return group;
-  } catch (error) {
-    throw new Error('Error while getting group by id', error.message);
-  }
+  return await groupModel.getGroup(groupId);
 }
 
 async function createGroup(groupData) {
@@ -56,6 +51,22 @@ async function removeUserFromGroup(userId, groupCode) {
   return await groupModel.removeUserFromGroup(userId, groupCode);
 }
 
+async function getListsforGroup(groupId) {
+  try {
+    const output = await groupModel.getGroupLists(groupId);
+    const listIds = output.lists;
+    console.log('list ids: ', listIds);
+    let lists = [];
+    for (let listId of listIds) {
+      let list = await listService.getListName(listId);
+      lists.push(list);
+    }
+    return lists;
+  } catch (error) {
+    throw new Error('Error in service while getting lists for group: ' + error.message);
+  }
+}
+
 async function addListToGroup(groupId, listName) {
   const list = await listService.createList(listName);
 
@@ -79,6 +90,7 @@ module.exports = {
   deleteGroup,
   addUserToGroup,
   removeUserFromGroup,
+  getListsforGroup,
   addListToGroup,
   removeListFromGroup
 };

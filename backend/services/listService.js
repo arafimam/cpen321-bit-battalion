@@ -12,28 +12,26 @@ const listModel = require('../models/listModel');
 
 async function createList(listName) {
   try {
-    const list = await listModel.createList(listName);
-    return list;
+    return await listModel.createList(listName);
   } catch (error) {
     throw new Error('Error in service while creating list: ' + error.message);
   }
 }
 
 async function deleteListById(listId) {
-  try {
-    return await listModel.deleteList(listId);
-  } catch (error) {
-    throw error;
-  }
+  return await listModel.deleteList(listId);
 }
 
 async function getListById(listId) {
-  try {
-    const list = await listModel.getListById(listId);
-    return list;
-  } catch (error) {
-    throw new Error('Error in service while getting list by id. ', error.message);
-  }
+  return await listModel.getListById(listId);
+}
+
+async function getListName(listId) {
+  return await listModel.getListName(listId);
+}
+
+async function getPlacesByListId(listId) {
+  return await listModel.getPlaces(listId);
 }
 
 async function addPlaceToList(listId, placeData) {
@@ -57,8 +55,10 @@ async function removePlaceFromList(listId, placeId) {
 
 module.exports = {
   getListById,
+  getListName,
   createList,
   addPlaceToList,
+  getPlacesByListId,
   deleteListById,
   removePlaceFromList
 };

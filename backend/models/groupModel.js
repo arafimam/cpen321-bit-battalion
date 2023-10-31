@@ -50,15 +50,27 @@ async function deleteGroup(groupId) {
 
 async function getAllGroups(userId) {
   try {
-    const groups = await Group.find({ 'members.userId': userId });
+    const groups = await Group.find({ 'members.userId': userId }).select('groupName');
     return groups;
   } catch (error) {
     throw new Error('Error in DB while getting all groups for a user' + error.message);
   }
 }
 
-async function getGroupById(groupId) {
-  return await Group.findById(groupId);
+async function getGroup(groupId) {
+  try {
+    return Group.findById(groupId);
+  } catch (error) {
+    throw new Error('Error in DB while getting group by id' + error.message);
+  }
+}
+
+async function getGroupLists(groupId) {
+  try {
+    return await Group.findById(groupId).select({ _id: 1, lists: 1 });
+  } catch (error) {
+    throw new Error('Error in DB while getting lists for a group' + error.message);
+  }
 }
 
 // Function to generate a unique group code
@@ -102,7 +114,6 @@ async function addListToGroup(groupId, listId) {
   const filter = { _id: groupId };
 
   try {
-    //create the list first
     const update = { $push: { lists: listId } };
     return await Group.findOneAndUpdate(filter, update, { new: true });
   } catch (error) {
@@ -126,7 +137,8 @@ module.exports = {
   createGroup,
   generateUniqueGroupCode,
   getAllGroups,
-  getGroupById,
+  getGroup,
+  getGroupLists,
   addUserToGroup,
   removeUserFromGroup,
   addListToGroup,
