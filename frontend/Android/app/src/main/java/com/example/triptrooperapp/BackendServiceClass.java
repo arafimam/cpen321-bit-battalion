@@ -45,7 +45,16 @@ public class BackendServiceClass {
         this.json = json;
         this.headerKey = headerKey;
         this.headerValue = headerValue;
+        this.client = getOkHttpClient();
     }
+
+    BackendServiceClass(String apiEndpoint, String headerKey, String headerValue){
+        this.url = ipAddress + apiEndpoint;
+        this.headerValue = headerValue;
+        this.headerKey = headerKey;
+        this.client = getOkHttpClient();
+    }
+
 
     public Request getPostRequestWithHeaderAndJsonParameter(){
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -54,6 +63,25 @@ public class BackendServiceClass {
                 .url(url)
                 .header(headerKey, headerValue)
                 .post(body)
+                .build();
+        return request;
+    }
+
+    public Request doDeleteRequestWithHeaderOnly(){
+        Request request = new Request.Builder()
+                .url(url)
+                .header(headerKey, headerValue)
+                .delete()
+                .build();
+        return request;
+
+    }
+
+    public  Request getGetRequestWithHeaderOnly(){
+        Request request = new Request.Builder()
+                .url(url)
+                .header(headerKey, headerValue)
+                .get()
                 .build();
         return request;
     }

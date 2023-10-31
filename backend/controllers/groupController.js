@@ -49,12 +49,12 @@ router.post('/create', middleware.verifyToken, middleware.getUser, async (req, r
 
   const googleId = req.googleId;
   console.log(googleId);
-  try {
-    var user = await userService.getUserByGoogleId(googleId);
-  } catch (error) {
-    res.status(400).send({ errorMessage: 'Failed to get user by google id' });
-    return;
-  }
+  // try {
+  //   var user = await userService.getUserByGoogleId(googleId);
+  // } catch (error) {
+  //   res.status(400).send({ errorMessage: 'Failed to get user by google id' });
+  //   return;
+  // }
 
   let groupData = {
     groupName,

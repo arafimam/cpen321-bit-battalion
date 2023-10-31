@@ -7,15 +7,28 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class GroupDetailsActivity extends AppCompatActivity {
@@ -29,9 +42,12 @@ public class GroupDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_details);
+        Intent intent = getIntent();
+        String groupId = intent.getStringExtra("id");
+
 
         memberBtn = findViewById(R.id.member_btn);
-        memberBtn.setMainTitleText("Members (10)");
+        //memberBtn.setMainTitleText("Members (10)");
 
         listBtn = findViewById(R.id.list_btn);
         listBtn.setMainTitleText("View Lists");
@@ -39,6 +55,53 @@ public class GroupDetailsActivity extends AppCompatActivity {
         expenseBtn = findViewById(R.id.expense_btn);
         expenseBtn.setMainTitleText("View Expenses");
 
+        setScreenContentByBackend();
+
+
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    private void setScreenContentByBackend(){
+        Intent intent = getIntent();
+        String groupId = intent.getStringExtra("id");
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
+        BackendServiceClass backendService = new BackendServiceClass("groups/"+groupId, "authorization", account.getIdToken());
+
+        Request request = backendService.getGetRequestWithHeaderOnly();
+        new Thread(() -> {
+            Response response = backendService.getResponseFromRequest(request);
+            if (response.isSuccessful()){
+                try {
+                    String responseBody = response.body().string();
+                    JSONObject jsonResponse = new JSONObject(responseBody);
+                    JSONObject groupObject = jsonResponse.getJSONObject("group");
+                    JSONArray members = groupObject.getJSONArray("members");
+
+                    //JSONArray memberArray = jsonResponse.getJSONArray("members");
+
+                    runOnUiThread(() -> {
+                        setMemberInformation(members);
+                        // TODO: add a function for list and view expenses.
+                    });
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else {
+                Log.d("TAG", "Sdsda");
+            }
+        }).start();
+    }
+
+    private void setMemberInformation(JSONArray memberArray){
+        memberBtn.setMainTitleText(String.format("Members (%d)", memberArray.length()));
         memberBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -46,17 +109,16 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 View dialogView = LayoutInflater.from(GroupDetailsActivity.this).inflate(R.layout.member_list_view,null);
                 final LinearLayout memberList = dialogView.findViewById(R.id.member_list_container);
 
-                List<String> nameList = new ArrayList<>();
-                nameList.add("John Chen");
-                nameList.add("Bob Vho");
-                nameList.add("Some Dude");
-                nameList.add("Another Dude");
 
-                for (int i=0 ; i<nameList.size(); i++){
+                for (int i=0 ; i<memberArray.length(); i++){
                     DefaultCardButtonView cardButtonView = new DefaultCardButtonView(GroupDetailsActivity.this);
-
-                    cardButtonView.setMainTitleText(nameList.get(i));
-
+                    try {
+                        JSONObject member = memberArray.getJSONObject(i);
+                        String username = member.getString("username");
+                        cardButtonView.setMainTitleText(username);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                     memberList.addView(cardButtonView);
                 }
 
@@ -73,24 +135,58 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
             }
         });
-
-        toolbar = findViewById(R.id.toolbar);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Intent intent = new Intent(this, GroupsActivity.class);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(this, GroupsActivity.class);
+            startActivity(intent);
+            overridePendingTransition(0,0);
+            return true;
+        } else if (item.getItemId() == R.id.action_delete) {
+            deleteGroupViaBackend();
+            //Toast.makeText(this, "Delete List Clicked", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.header_bar_menu_delete, menu);
+        return true;
+    }
+
+    private void deleteGroupViaBackend(){
+        Intent intent = getIntent();
+        String groupId = intent.getStringExtra("id");
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
+        BackendServiceClass backendService = new BackendServiceClass("groups/" + groupId + "/delete", "authorization", account.getIdToken());
+        Request request = backendService.doDeleteRequestWithHeaderOnly();
+
+        new Thread(() -> {
+            Response response = backendService.getResponseFromRequest(request);
+            if (response.isSuccessful()){
+                runOnUiThread(()-> {
+                    Toast.makeText(GroupDetailsActivity.this, "Deleted group", Toast.LENGTH_SHORT).show();
+                    Intent intentToShift = new Intent(GroupDetailsActivity.this, GroupsActivity.class);
+                    startActivity(intentToShift);
+                });
+            }
+            else {
+                runOnUiThread(() -> {
+                    try {
+                        Log.d("TAG", response.body().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Toast.makeText(GroupDetailsActivity.this, "Unable to delete group", Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
+
+
     }
 }

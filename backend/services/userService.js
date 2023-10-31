@@ -39,7 +39,8 @@ async function createUser(userData) {
 
 async function getUserByGoogleId(googleId) {
   const user = await userModel.getUserByGoogleId(googleId);
-
+  console.log("here");
+  console.log(user);
   if (user === null || user === undefined) {
     throw new Error('Could not find user with the given google id');
   }
