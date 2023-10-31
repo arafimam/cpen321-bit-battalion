@@ -1,14 +1,7 @@
 const listModel = require('../models/listModel');
+const { twoOpt } = require('../utils/twoOpt');
 
-// async function getAllLists() {
-//   try {
-//     const lists = await listModel.getAllLists();
-//     console.log(lists);
-//     return lists;
-//   } catch (error) {
-//     throw new Error('Error in service while getting lists', error.message);
-//   }
-// }
+//TODO: check list exists function
 
 async function createList(listName) {
   try {
@@ -53,6 +46,22 @@ async function removePlaceFromList(listId, placeId) {
   return await listModel.removePlaceFromList(listId, placeId);
 }
 
+async function createScheduleForList(listId, placeIds) {
+  let places = [];
+
+  for (const placeId of placeIds) {
+    const place = await listModel.getPlace(listId, placeId);
+    if (!place) {
+      throw new Error('Place not found in list');
+    }
+    places.push(place);
+  }
+
+  console.log('places: ' + places);
+
+  return twoOpt(places);
+}
+
 module.exports = {
   getListById,
   getListName,
@@ -60,5 +69,6 @@ module.exports = {
   addPlaceToList,
   getPlacesByListId,
   deleteListById,
-  removePlaceFromList
+  removePlaceFromList,
+  createScheduleForList
 };
