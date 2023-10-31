@@ -114,7 +114,6 @@ async function addListToGroup(groupId, listId) {
   const filter = { _id: groupId };
 
   try {
-    //create the list first
     const update = { $push: { lists: listId } };
     return await Group.findOneAndUpdate(filter, update, { new: true });
   } catch (error) {

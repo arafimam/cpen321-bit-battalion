@@ -22,7 +22,6 @@ async function verifyToken(req, res, next) {
 
 async function getUser(req, res, next) {
   const googleId = res.locals.googleId;
-  console.log(googleId);
   try {
     const user = await userService.getUserByGoogleId(googleId);
     res.locals.user = user;
