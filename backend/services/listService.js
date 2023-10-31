@@ -28,12 +28,11 @@ async function deleteListById(listId) {
 }
 
 async function getListById(listId) {
-  try {
-    const list = await listModel.getListById(listId);
-    return list;
-  } catch (error) {
-    throw new Error('Error in service while getting list by id. ', error.message);
-  }
+  return await listModel.getListById(listId);
+}
+
+async function getListName(listId) {
+  return await listModel.getListName(listId);
 }
 
 async function addPlaceToList(listId, placeData) {
@@ -57,6 +56,7 @@ async function removePlaceFromList(listId, placeId) {
 
 module.exports = {
   getListById,
+  getListName,
   createList,
   addPlaceToList,
   deleteListById,
