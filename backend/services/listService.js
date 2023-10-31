@@ -76,7 +76,7 @@ async function createScheduleForList(listId, placeIds) {
   });
   console.log('places: ' + places);
 
-  return twoOpt(filteredPlaces, true);
+  return twoOpt(filteredPlaces);
 }
 
 module.exports = {
