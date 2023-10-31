@@ -9,6 +9,7 @@ const listSchema = new mongoose.Schema({
     type: [
       {
         placeId: { type: String, required: true },
+        shortFormattedAddress: { type: String, required: true },
         displayName: { type: String, required: true },
         location: {
           latitude: { type: Number, required: true },

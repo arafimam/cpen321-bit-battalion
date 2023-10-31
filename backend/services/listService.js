@@ -46,20 +46,37 @@ async function removePlaceFromList(listId, placeId) {
   return await listModel.removePlaceFromList(listId, placeId);
 }
 
+// async function createScheduleForList(listId, placeIds) {
+//   let places = [];
+
+//   for (const placeId of placeIds) {
+//     const place = await listModel.getPlace(listId, placeId);
+//     if (!place) {
+//       throw new Error('Place not found in list');
+//     }
+//     places.push(place);
+//   }
+
+//   console.log('places: ' + places);
+
+//   return twoOpt(places);
+// }
 async function createScheduleForList(listId, placeIds) {
-  let places = [];
+  const list = await listModel.getPlaces(listId);
+  const places = list.places;
 
-  for (const placeId of placeIds) {
-    const place = await listModel.getPlace(listId, placeId);
-    if (!place) {
-      throw new Error('Place not found in list');
+  // TODO: make sure place ID exists
+
+  const filteredPlaces = places.filter((place) => {
+    for (let placeId of placeIds) {
+      if (place.placeId === placeId) {
+        return true;
+      }
     }
-    places.push(place);
-  }
-
+  });
   console.log('places: ' + places);
 
-  return twoOpt(places);
+  return twoOpt(filteredPlaces, true);
 }
 
 module.exports = {
