@@ -138,6 +138,36 @@ public class CreateGroupActivity extends AppCompatActivity {
                     }
                 }).start();
             }
+
+            // join group
+            else {
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("groupCode", textToValidate);
+                    GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+                    BackendServiceClass backendService = new BackendServiceClass("groups/join", json, "authorization",account.getIdToken());
+                    Request request = backendService.doPutRequestWithJsonAndHeader();
+
+                    new Thread(() -> {
+                        Response response = backendService.getResponseFromRequest(request);
+                        if (response.isSuccessful()){
+                            runOnUiThread(() -> {
+                                Toast.makeText(CreateGroupActivity.this, "Join group successful", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                        else {
+                            try {
+                                Log.d("TAG", response.body().string());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }).start();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
         }
 
     }

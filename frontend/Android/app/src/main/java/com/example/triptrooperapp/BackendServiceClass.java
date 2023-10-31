@@ -77,6 +77,26 @@ public class BackendServiceClass {
 
     }
 
+    public Request doPutRequestWithJsonAndHeader(){
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(json.toString(), JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .header(headerKey, headerValue)
+                .put(body)
+                .build();
+        return  request;
+    }
+
+    public Request doPutRequestWithHeaderOnly(){
+        Request request = new Request.Builder()
+                .url(url)
+                .header(headerKey, headerValue)
+                .put(RequestBody.create(new byte[0]))
+                .build();
+        return  request;
+    }
+
     public  Request getGetRequestWithHeaderOnly(){
         Request request = new Request.Builder()
                 .url(url)

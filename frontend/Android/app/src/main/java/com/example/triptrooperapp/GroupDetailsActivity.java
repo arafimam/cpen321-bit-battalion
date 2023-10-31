@@ -38,6 +38,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private DefaultCardButtonView expenseBtn;
     private Toolbar toolbar;
 
+    private GreenButtonView leaveGroupBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,15 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         memberBtn = findViewById(R.id.member_btn);
         //memberBtn.setMainTitleText("Members (10)");
+
+        leaveGroupBtn = findViewById(R.id.leave_group);
+        leaveGroupBtn.setButtonText("Leave Group");
+        leaveGroupBtn.setButtonActionOnClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                leaveGroupViaBackend();
+            }
+        });
 
         listBtn = findViewById(R.id.list_btn);
         listBtn.setMainTitleText("View Lists");
@@ -65,6 +76,34 @@ public class GroupDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
+
+    private void leaveGroupViaBackend(){
+        Intent intent = getIntent();
+        String groupId = intent.getStringExtra("id");
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
+
+        BackendServiceClass backendServiceClass = new BackendServiceClass("groups/"+groupId+"/leave","authorization", account.getIdToken());
+        Request request = backendServiceClass.doPutRequestWithHeaderOnly();
+        new Thread(() -> {
+            Response response = backendServiceClass.getResponseFromRequest(request);
+            if (response.isSuccessful()){
+                runOnUiThread(() -> {
+                    Toast.makeText(GroupDetailsActivity.this, "Left group", Toast.LENGTH_SHORT).show();
+                    Intent intentTo = new Intent(GroupDetailsActivity.this, GroupsActivity.class);
+                    startActivity(intentTo);
+                });
+            }
+            else {
+                try {
+                    Log.d("TAG", response.body().string());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+
+    }
+
 
     private void setScreenContentByBackend(){
         Intent intent = getIntent();
