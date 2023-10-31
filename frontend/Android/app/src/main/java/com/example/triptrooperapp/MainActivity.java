@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "You need to log in to open this page.", Toast.LENGTH_LONG).show();
         }
         else{
-            setTokenToBackend(account.getIdToken(), account.getId());
+            setTokenToBackend(account.getIdToken(), account.getDisplayName());
         }
     }
 

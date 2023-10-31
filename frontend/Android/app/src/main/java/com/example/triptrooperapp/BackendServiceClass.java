@@ -27,6 +27,8 @@ public class BackendServiceClass {
     private JSONObject json;
     private final String ipAddress = "https://128.189.128.116:8081/"; // this if for ubc secure.
     private OkHttpClient client;
+    private String headerKey;
+    private String headerValue;
     BackendServiceClass(String apiEndpoint, JSONObject json){
         this.url = ipAddress+ apiEndpoint;
         this.json = json;
@@ -36,6 +38,72 @@ public class BackendServiceClass {
     BackendServiceClass(String apiEndpoint){
         this.url = ipAddress+ apiEndpoint;
         this.client = getOkHttpClient();
+    }
+
+    BackendServiceClass(String apiEndpoint, JSONObject json, String headerKey, String headerValue){
+        this.url = ipAddress + apiEndpoint;
+        this.json = json;
+        this.headerKey = headerKey;
+        this.headerValue = headerValue;
+        this.client = getOkHttpClient();
+    }
+
+    BackendServiceClass(String apiEndpoint, String headerKey, String headerValue){
+        this.url = ipAddress + apiEndpoint;
+        this.headerValue = headerValue;
+        this.headerKey = headerKey;
+        this.client = getOkHttpClient();
+    }
+
+
+    public Request getPostRequestWithHeaderAndJsonParameter(){
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(json.toString(), JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .header(headerKey, headerValue)
+                .post(body)
+                .build();
+        return request;
+    }
+
+    public Request doDeleteRequestWithHeaderOnly(){
+        Request request = new Request.Builder()
+                .url(url)
+                .header(headerKey, headerValue)
+                .delete()
+                .build();
+        return request;
+
+    }
+
+    public Request doPutRequestWithJsonAndHeader(){
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(json.toString(), JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .header(headerKey, headerValue)
+                .put(body)
+                .build();
+        return  request;
+    }
+
+    public Request doPutRequestWithHeaderOnly(){
+        Request request = new Request.Builder()
+                .url(url)
+                .header(headerKey, headerValue)
+                .put(RequestBody.create(new byte[0]))
+                .build();
+        return  request;
+    }
+
+    public  Request getGetRequestWithHeaderOnly(){
+        Request request = new Request.Builder()
+                .url(url)
+                .header(headerKey, headerValue)
+                .get()
+                .build();
+        return request;
     }
 
     /**

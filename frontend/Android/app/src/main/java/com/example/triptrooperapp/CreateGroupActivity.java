@@ -3,12 +3,26 @@ package com.example.triptrooperapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class CreateGroupActivity extends AppCompatActivity {
 
@@ -86,8 +100,74 @@ public class CreateGroupActivity extends AppCompatActivity {
             Toast.makeText(CreateGroupActivity.this, failureMessage, Toast.LENGTH_SHORT).show();
         }
         else {
-            // TODO: if isCreateNewGroup true make backend call to create group else make backend call to join group.
-            Toast.makeText(CreateGroupActivity.this, successMessage, Toast.LENGTH_SHORT).show();
+            if (isCreatingNewGroup){
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("groupName", textToValidate);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+                BackendServiceClass backendServiceClass = new BackendServiceClass("groups/create",json, "authorization", account.getIdToken());
+                Request request = backendServiceClass.getPostRequestWithHeaderAndJsonParameter();
+
+                new Thread(()-> {
+                    Response response = backendServiceClass.getResponseFromRequest(request);
+                    if (response.isSuccessful()){
+                        String responseBody = backendServiceClass.getResponseBody(response);
+                        try {
+                            JSONObject jsonResponse = new JSONObject(responseBody);
+                            String groupCode = jsonResponse.getString("groupCode");
+                            runOnUiThread(() -> {
+                                Toast.makeText(CreateGroupActivity.this, "Created group with code: "+ groupCode, Toast.LENGTH_SHORT).show();
+                            });
+
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else {
+                        runOnUiThread(() -> {
+                            try {
+                                Log.d("TAG", response.body().string());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            Toast.makeText(CreateGroupActivity.this, "Unable to create group.", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                }).start();
+            }
+
+            // join group
+            else {
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("groupCode", textToValidate);
+                    GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+                    BackendServiceClass backendService = new BackendServiceClass("groups/join", json, "authorization",account.getIdToken());
+                    Request request = backendService.doPutRequestWithJsonAndHeader();
+
+                    new Thread(() -> {
+                        Response response = backendService.getResponseFromRequest(request);
+                        if (response.isSuccessful()){
+                            runOnUiThread(() -> {
+                                Toast.makeText(CreateGroupActivity.this, "Join group successful", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                        else {
+                            try {
+                                Log.d("TAG", response.body().string());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }).start();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
         }
 
     }
