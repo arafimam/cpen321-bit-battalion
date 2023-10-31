@@ -78,6 +78,19 @@ router.get('/:id/places', middleware.verifyToken, async (req, res) => {
   }
 });
 
+router.put('/:id/add/schedule', middleware.verifyToken, async (req, res) => {
+  const placeIds = req.body.placeIds;
+  const listId = req.params.id;
+
+  try {
+    const resp = await listService.createScheduleForList(listId, placeIds);
+    // console.log(resp);
+    res.send({ schedule: resp });
+  } catch (error) {
+    res.status(500).send({ errorMessage: 'Failed to create schedule for given list and places' });
+  }
+});
+
 router.delete('/:id/delete', middleware.verifyToken, async (req, res) => {
   const listId = req.params.id;
 

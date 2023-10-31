@@ -80,8 +80,18 @@ async function getListName(listId) {
 
 async function getPlaces(listId) {
   try {
-    const list = await List.findById(listId).select({ _id: 0, places: 1 });
-    console.log('db list: ' + list);
+    const places = await List.findById(listId).select({ _id: 0, places: 1 });
+    return places;
+  } catch (error) {
+    throw new Error('Error in DB while getting places for list ' + error.message);
+  }
+}
+
+async function getPlace(listId, placeId) {
+  const filter = { _id: listId, places: { placeId: placeId } };
+
+  try {
+    const list = await List.findOne(filter, '-_id');
     return list;
   } catch (error) {
     throw new Error('Error in DB while getting places for list ' + error.message);
@@ -119,5 +129,6 @@ module.exports = {
   addPlaceToList,
   removePlaceFromList,
   createList,
-  getPlaces
+  getPlaces,
+  getPlace
 };
