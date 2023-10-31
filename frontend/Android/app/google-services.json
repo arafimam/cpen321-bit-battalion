@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "341689223031",
+    "project_id": "cpen321-triptrooper",
+    "storage_bucket": "cpen321-triptrooper.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341689223031:android:b62f586214124383ac0372",
+        "android_client_info": {
+          "package_name": "com.example.triptrooperapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "341689223031-547ca9idtu3985lrl0uduo6ifpatgd7f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgqNrDx3jS8bMIx-4LgWIT7P1mnxFsJqk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "341689223031-547ca9idtu3985lrl0uduo6ifpatgd7f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
