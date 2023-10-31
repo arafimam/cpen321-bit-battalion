@@ -8,12 +8,11 @@
 const express = require('express');
 
 const listService = require('../services/listService.js');
+const middleware = require('../middleware/middleware.js');
 
 const router = express.Router();
 
-// router.get("/", (req, res) => {}); // Implement after user module is ready
-
-router.get('/:id', async (req, res) => {
+router.get('/:id', middleware.verifyToken, async (req, res) => {
   try {
     const listId = req.params.id;
     console.log(listId);
@@ -30,7 +29,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/create', async (req, res) => {
+router.post('/create', middleware.verifyToken, async (req, res) => {
   let listName = req.body.listName;
 
   try {
@@ -41,36 +40,50 @@ router.post('/create', async (req, res) => {
   }
 });
 
-router.put('/add/place', async (req, res) => {
-  let listId = req.body.listId;
+router.put('/:id/add/place', middleware.verifyToken, async (req, res) => {
+  let listId = req.params.id;
   let place = req.body.place;
 
   try {
-    await listService.addPlaceToList(listId, place);
-    res.send('success');
+    const placeResp = await listService.addPlaceToList(listId, place);
+    console.log(placeResp);
+    res.send({ message: 'Successfully added place to list' });
   } catch (error) {
     res.status(500).send({ errorMessage: 'Failed to add a place to list ' });
   }
 });
 
-router.put('/remove/place', async (req, res) => {
-  const listId = req.body.listId;
+router.put('/:id/remove/place', middleware.verifyToken, async (req, res) => {
+  const listId = req.params.id;
   const placeId = req.body.placeId;
 
   try {
     const resp = await listService.removePlaceFromList(listId, placeId);
     console.log(resp);
-    res.send('successfully removed place from list');
-  } catch (error) {}
+    res.send({ message: 'successfully removed place from list' });
+  } catch (error) {
+    res.status(500).send({ errorMessage: 'Failed to remove place from list' });
+  }
 });
 
-// router.delete('/:listId/deleteFromList/:activityId', (req, res) => {});
-router.delete('/:id/delete', async (req, res) => {
+router.get('/:id/places', middleware.verifyToken, async (req, res) => {
+  const listId = req.params.id;
+
+  try {
+    const places = await listService.getPlacesByListId(listId);
+    console.log(places);
+    res.send({ places: places.places });
+  } catch (error) {
+    res.status(500).send({ errorMessage: 'Failed to get places in the list' });
+  }
+});
+
+router.delete('/:id/delete', middleware.verifyToken, async (req, res) => {
   const listId = req.params.id;
 
   try {
     await listService.deleteListById(listId);
-    res.send('list successfully deleted');
+    res.send({ message: 'List successfully deleted' });
   } catch (error) {
     res.status(500).send({ errorMessage: 'Failed to delete the list.' });
   }
