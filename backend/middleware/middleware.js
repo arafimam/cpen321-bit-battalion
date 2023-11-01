@@ -16,6 +16,7 @@ async function verifyToken(req, res, next) {
     res.locals.googleId = payload['sub'];
     next();
   } catch (error) {
+    console.log(error);
     return res.status(401).json({ message: 'Invalid Google ID token.' });
   }
 }

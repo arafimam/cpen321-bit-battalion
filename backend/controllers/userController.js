@@ -6,6 +6,7 @@ const express = require('express');
 
 const middleware = require('../middleware/middleware.js');
 const userService = require('../services/userService.js');
+const listNotification = require('../notifications/listNotification.js');
 
 const router = express.Router();
 
@@ -61,7 +62,7 @@ router.get('/lists', middleware.verifyToken, middleware.getUser, async (req, res
 
 // Adding list for user
 router.put('/add/list', middleware.verifyToken, middleware.getUser, async (req, res) => {
-  const userId = res.locals.user.userId;
+  const userData = res.locals.user;
   const listName = req.body.listName;
 
   if (listName === null || listName === undefined) {
@@ -70,8 +71,13 @@ router.put('/add/list', middleware.verifyToken, middleware.getUser, async (req, 
   }
 
   try {
-    await userService.addListForUser(userId, listName);
+    await userService.addListForUser(userData.userId, listName);
     res.send({ message: 'New list successfully added for user' });
+    try {
+      await listNotification.createList(userData.userId, listName);
+    } catch (error) {
+      console.log('Error while sending notification about a new list being created: ', error.message);
+    }
   } catch (error) {
     res.status(500).send({ errorMessage: 'Failed to add list for user' });
   }
