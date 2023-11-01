@@ -9,15 +9,10 @@ const userService = require('../services/userService.js');
 
 const router = express.Router();
 
-// router.get('/username', (req, res) => {
-//   // get username from database or Google Auth
-//   res.send('Username');
-// });
-
 router.post('/login', async (req, res) => {
   const idToken = req.body.idToken;
   const username = req.body.username;
-  console.log(idToken);
+  const deviceRegistrationToken = req.body.deviceRegistrationToken;
 
   try {
     var userId = await userService.verify(idToken);
@@ -30,13 +25,26 @@ router.post('/login', async (req, res) => {
   try {
     let userData = {
       userId,
-      username
+      username,
+      deviceRegistrationToken
     };
     response = await userService.createUser(userData);
     res.send({ response: response });
   } catch (error) {
     console.log(error);
     res.status(500).send('Error while creating user');
+  }
+});
+
+router.put('/device-registration-token/update', middleware.verifyToken, middleware.getUser, async (req, res) => {
+  const userId = res.locals.user.userId;
+  const deviceRegistrationToken = req.body.deviceRegistrationToken;
+
+  try {
+    await userService.updateDeviceRegistrationToken(userId, deviceRegistrationToken);
+    res.send({ message: 'Device registration token updated' });
+  } catch (error) {
+    res.status(500).send({ errorMessage: 'Failed to update device registration token' });
   }
 });
 

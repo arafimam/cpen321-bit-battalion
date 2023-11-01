@@ -26,7 +26,8 @@ async function createUser(userData) {
   if (!userExists) {
     const user = {
       username: userData.username,
-      googleId: userData.userId
+      googleId: userData.userId,
+      deviceRegistrationToken: userData.deviceRegistrationToken
     };
     try {
       const createdUser = await userModel.User.create(user);
@@ -41,21 +42,27 @@ async function createUser(userData) {
 
 async function getUserByGoogleId(googleId) {
   const user = await userModel.getUserByGoogleId(googleId);
-  console.log("here");
-  console.log(user);
   if (user === null || user === undefined) {
     throw new Error('Could not find user with the given google id');
   }
 
   return {
     userId: user[0]._id,
-    username: user[0].username
+    username: user[0].username,
+    deviceRegistrationToken: user[0].deviceRegistrationToken
   };
+}
+
+async function updateDeviceRegistrationToken(userId, deviceRegistrationToken) {
+  try {
+    return await userModel.updateDeviceRegistrationToken(userId, deviceRegistrationToken);
+  } catch (error) {
+    throw new Error('Error in service while updating device registration token: ' + error.message);
+  }
 }
 
 async function addListForUser(userId, listName) {
   const list = await listService.createList(listName);
-  console.log(list);
 
   try {
     return await userModel.addListForUser(userId, list._id);
@@ -77,16 +84,25 @@ async function getListsforUser(userId) {
   try {
     const output = await userModel.getUserLists(userId);
     const listIds = output.lists;
-    console.log('list ids: ', listIds);
+
     let lists = [];
     for (let listId of listIds) {
       let list = await listService.getListName(listId);
       lists.push(list);
     }
+
     return lists;
   } catch (error) {
     throw new Error('Error in service while getting lists for user: ' + error.message);
   }
 }
 
-module.exports = { verify, createUser, getUserByGoogleId, getListsforUser, addListForUser, removeListForUser };
+module.exports = {
+  verify,
+  createUser,
+  getUserByGoogleId,
+  updateDeviceRegistrationToken,
+  getListsforUser,
+  addListForUser,
+  removeListForUser
+};
