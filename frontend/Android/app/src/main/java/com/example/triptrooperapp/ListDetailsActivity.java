@@ -3,18 +3,22 @@ package com.example.triptrooperapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,12 +34,20 @@ public class ListDetailsActivity extends AppCompatActivity {
     private LinearLayout activityLayout;
     private Toolbar toolbar;
 
+    private FloatingActionButton addActivity;
+
+    private FloatingActionButton optimizeButton;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_details);
 
         toolbar = findViewById(R.id.toolbar);
+
+        addActivity = findViewById(R.id.create_list);
+        optimizeButton = findViewById(R.id.optimize_button);
 
         Intent intent = getIntent();
         String listNamePassed = intent.getStringExtra("listName");
@@ -60,6 +72,21 @@ public class ListDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        addActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ListDetailsActivity.this, ActivitiesActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        optimizeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
     }
 
