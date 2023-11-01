@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                         // Log and toast
 
                         Log.d(TAG, token);
-                        Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
                         //TODO:Send token to backend here
                     }
                 });
