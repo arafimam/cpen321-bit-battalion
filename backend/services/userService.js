@@ -11,14 +11,13 @@ async function verify(idToken) {
     audience: process.env.WEB_CLIENT_ID_RITAM
   });
   const payload = ticket.getPayload();
-  const userId = payload['sub'];
-  console.log(userId);
-  return userId;
+  const googleId = payload['sub'];
+  return googleId;
 }
 
 async function createUser(userData) {
   try {
-    var userExists = await userModel.checkUserExists(userData.userId);
+    var userExists = await userModel.checkUserExists(userData.googleId);
   } catch (error) {
     throw new Error('Error while checking if user exists: ' + error.message);
   }
@@ -26,7 +25,7 @@ async function createUser(userData) {
   if (!userExists) {
     const user = {
       username: userData.username,
-      googleId: userData.userId,
+      googleId: userData.googleId,
       deviceRegistrationToken: userData.deviceRegistrationToken
     };
     try {
@@ -37,9 +36,10 @@ async function createUser(userData) {
     }
   } else {
     try {
-      await userModel.updateDeviceRegistrationToken(userData.userId, userData.deviceRegistrationToken);
+      await userModel.updateDeviceRegistrationToken(userData.googleId, userData.deviceRegistrationToken);
       return userData.username;
     } catch (error) {
+      console.log(error);
       throw new Error('Error in service while updating device registration token: ' + error.message);
     }
   }
@@ -71,9 +71,9 @@ async function getUserById(userId) {
   };
 }
 
-async function updateDeviceRegistrationToken(userId, deviceRegistrationToken) {
+async function updateDeviceRegistrationToken(googleId, deviceRegistrationToken) {
   try {
-    return await userModel.updateDeviceRegistrationToken(userId, deviceRegistrationToken);
+    return await userModel.updateDeviceRegistrationToken(googleId, deviceRegistrationToken);
   } catch (error) {
     throw new Error('Error in service while updating device registration token: ' + error.message);
   }

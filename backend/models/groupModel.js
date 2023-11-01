@@ -41,6 +41,7 @@ async function createGroup(group) {
 }
 
 async function deleteGroup(groupId) {
+  // TODO: delete lists in group
   try {
     return await Group.findByIdAndDelete(groupId);
   } catch (error) {
