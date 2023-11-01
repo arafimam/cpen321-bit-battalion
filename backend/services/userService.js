@@ -29,8 +29,10 @@ async function createUser(userData) {
       googleId: userData.userId,
       deviceRegistrationToken: userData.deviceRegistrationToken
     };
+    console.log('user: ', user);
     try {
       const createdUser = await userModel.User.create(user);
+      console.log('createdUser: ', createdUser);
       return createdUser.username;
     } catch (error) {
       throw new Error('Error in service while creating user: ' + error.message);
