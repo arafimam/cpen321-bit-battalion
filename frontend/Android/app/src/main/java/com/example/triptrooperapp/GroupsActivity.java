@@ -1,7 +1,5 @@
 package com.example.triptrooperapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +7,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -48,41 +48,51 @@ public class GroupsActivity extends AppCompatActivity {
         createGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(GroupsActivity.this, CreateGroupActivity.class);
+                Intent intent = new Intent(GroupsActivity.this,
+                        CreateGroupActivity.class);
                 startActivity(intent);
             }
         });
     }
 
-    private void retrieveUserGroups(){
+    private void retrieveUserGroups() {
         loader.setVisibility(View.VISIBLE);
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(GroupsActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass("groups/all","authorization", account.getIdToken());
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(GroupsActivity.this);
+        BackendServiceClass backendService = new BackendServiceClass("groups" +
+                "/all", "authorization", account.getIdToken());
         Request request = backendService.getGetRequestWithHeaderOnly();
 
         new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
-            if (response.isSuccessful()){
-                runOnUiThread(()-> {
+            if (response.isSuccessful()) {
+                runOnUiThread(() -> {
 
                     try {
                         String responseBody = response.body().string();
                         JSONObject jsonObject = new JSONObject(responseBody);
-                        JSONArray groupsArray = jsonObject.getJSONArray("groups");
+                        JSONArray groupsArray = jsonObject.getJSONArray(
+                                "groups");
 
-                        for (int i=0; i< groupsArray.length(); i++){
-                            ListBoxComponentView listBoxComponentView = new ListBoxComponentView(GroupsActivity.this);
+                        for (int i = 0; i < groupsArray.length(); i++) {
+                            ListBoxComponentView listBoxComponentView =
+                                    new ListBoxComponentView(GroupsActivity.this);
                             JSONObject groupInfo = groupsArray.getJSONObject(i);
-                            listBoxComponentView.setMainTitleText(groupInfo.getString("groupName"));
-                            listBoxComponentView.setSideTitleText(groupInfo.getString("groupCode"));
-                            listBoxComponentView.setVisibilityOfTextViews(View.VISIBLE, View.VISIBLE, View.INVISIBLE);
+                            listBoxComponentView.setMainTitleText(
+                                    groupInfo.getString("groupName"));
+                            listBoxComponentView.setSideTitleText(
+                                    groupInfo.getString("groupCode"));
+                            listBoxComponentView.setVisibilityOfTextViews(
+                                    View.VISIBLE, View.VISIBLE, View.INVISIBLE);
                             listBoxContainer.addView(listBoxComponentView);
 
                             final String groupId = groupInfo.getString("_id");
                             listBoxComponentView.setActionOnCardClick(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    Intent intent = new Intent(GroupsActivity.this, GroupDetailsActivity.class);
+                                    Intent intent =
+                                            new Intent(GroupsActivity.this,
+                                                    GroupDetailsActivity.class);
                                     intent.putExtra("id", groupId);
                                     startActivity(intent);
                                 }
@@ -97,7 +107,7 @@ public class GroupsActivity extends AppCompatActivity {
 
                     loader.setVisibility(View.INVISIBLE);
                 });
-            }else {
+            } else {
                 runOnUiThread(() -> {
                     try {
                         Log.d("TAG", response.body().string());
@@ -105,7 +115,8 @@ public class GroupsActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     loader.setVisibility(View.INVISIBLE);
-                    Toast.makeText(GroupsActivity.this, "Something wrong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupsActivity.this, "Something wrong",
+                            Toast.LENGTH_SHORT).show();
                 });
             }
         }).start();

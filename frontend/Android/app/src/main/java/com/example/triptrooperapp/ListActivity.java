@@ -1,9 +1,5 @@
 package com.example.triptrooperapp;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +8,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -50,10 +49,15 @@ public class ListActivity extends AppCompatActivity {
         createListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ListActivity.this);
-                View dialogView = LayoutInflater.from(ListActivity.this).inflate(R.layout.create_list_dialog_view,null);
-                final EditText listNameText = dialogView.findViewById(R.id.list_name_textField);
-                GreenButtonView createListButton = dialogView.findViewById(R.id.create_list_button);
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(ListActivity.this);
+                View dialogView =
+                        LayoutInflater.from(ListActivity.this).inflate(
+                                R.layout.create_list_dialog_view, null);
+                final EditText listNameText =
+                        dialogView.findViewById(R.id.list_name_textField);
+                GreenButtonView createListButton =
+                        dialogView.findViewById(R.id.create_list_button);
                 createListButton.setButtonText("Create List");
                 builder.setView(dialogView);
 
@@ -61,11 +65,11 @@ public class ListActivity extends AppCompatActivity {
                 createListButton.setButtonActionOnClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (listNameText.getText().toString().equals("")){
-                            Toast.makeText(ListActivity.this, "List Name Empty", Toast.LENGTH_SHORT).show();
+                        if (listNameText.getText().toString().equals("")) {
+                            Toast.makeText(ListActivity.this, "List Name " +
+                                    "Empty", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
-                        }
-                        else {
+                        } else {
                             createListByUser(listNameText.getText().toString());
                             dialog.dismiss();
                         }
@@ -77,34 +81,41 @@ public class ListActivity extends AppCompatActivity {
         });
     }
 
-    private void retrieveListForUser(){
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ListActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass("users/lists", "authorization", account.getIdToken());
+    private void retrieveListForUser() {
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(ListActivity.this);
+        BackendServiceClass backendService = new BackendServiceClass("users" +
+                "/lists", "authorization", account.getIdToken());
         Request request = backendService.getGetRequestWithHeaderOnly();
 
         new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
                     JSONObject jsonResponse = new JSONObject(responseBody);
                     JSONArray listArray = jsonResponse.getJSONArray("lists");
 
                     runOnUiThread(() -> {
-                        for (int i=0; i<listArray.length();i++){
+                        for (int i = 0; i < listArray.length(); i++) {
                             try {
                                 JSONObject list = listArray.getJSONObject(i);
-                                ListBoxComponentView listBox = new ListBoxComponentView(ListActivity.this);
-                                final String listName = list.getString("listName");
+                                ListBoxComponentView listBox =
+                                        new ListBoxComponentView(ListActivity.this);
+                                final String listName = list.getString(
+                                        "listName");
                                 final String listId = list.getString("_id");
                                 listBox.setMainTitleText(listName);
-                                listBox.setVisibilityOfTextViews(View.VISIBLE, View.INVISIBLE, View.INVISIBLE);
+                                listBox.setVisibilityOfTextViews(View.VISIBLE
+                                        , View.INVISIBLE, View.INVISIBLE);
                                 listBox.setActionOnCardClick(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        Intent intent = new Intent(ListActivity.this, ListDetailsActivity.class);
+                                        Intent intent =
+                                                new Intent(ListActivity.this,
+                                                        ListDetailsActivity.class);
                                         intent.putExtra("listName", listName);
-                                        intent.putExtra("id",listId);
+                                        intent.putExtra("id", listId);
                                         intent.putExtra("context", "userList");
                                         startActivity(intent);
                                     }
@@ -121,8 +132,7 @@ public class ListActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            else {
+            } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -132,26 +142,28 @@ public class ListActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void createListByUser(String listName){
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ListActivity.this);
+    private void createListByUser(String listName) {
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(ListActivity.this);
         JSONObject json = new JSONObject();
         try {
             json.put("listName", listName);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        BackendServiceClass backendService = new BackendServiceClass("users/add/list", json,
+        BackendServiceClass backendService = new BackendServiceClass("users" +
+                "/add/list", json,
                 "authorization", account.getIdToken());
         Request request = backendService.doPutRequestWithJsonAndHeader();
         new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ListActivity.this, "Created list " + listName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ListActivity.this,
+                            "Created list " + listName, Toast.LENGTH_SHORT).show();
                     recreate();
                 });
-            }
-            else {
+            } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {

@@ -1,6 +1,7 @@
 package com.example.triptrooperapp;
 
 
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -26,24 +27,26 @@ import okhttp3.Response;
  */
 public class BackendServiceClass {
 
-    private String url;
+    private final String url;
     private JSONObject json;
-    private final String ipAddress = "https://44.225.75.82:8081/"; // this if for ubc secure.
-    private OkHttpClient client;
+    private final String ipAddress = "https://44.225.75.82:8081/";
+    private final OkHttpClient client;
     private String headerKey;
     private String headerValue;
-    BackendServiceClass(String apiEndpoint, JSONObject json){
-        this.url = ipAddress+ apiEndpoint;
+
+    BackendServiceClass(String apiEndpoint, JSONObject json) {
+        this.url = ipAddress + apiEndpoint;
         this.json = json;
         this.client = getOkHttpClient();
     }
 
-    BackendServiceClass(String apiEndpoint){
-        this.url = ipAddress+ apiEndpoint;
+    BackendServiceClass(String apiEndpoint) {
+        this.url = ipAddress + apiEndpoint;
         this.client = getOkHttpClient();
     }
 
-    BackendServiceClass(String apiEndpoint, JSONObject json, String headerKey, String headerValue){
+    BackendServiceClass(String apiEndpoint, JSONObject json, String headerKey
+            , String headerValue) {
         this.url = ipAddress + apiEndpoint;
         this.json = json;
         this.headerKey = headerKey;
@@ -51,7 +54,8 @@ public class BackendServiceClass {
         this.client = getOkHttpClient();
     }
 
-    BackendServiceClass(String apiEndpoint, String headerKey, String headerValue){
+    BackendServiceClass(String apiEndpoint, String headerKey,
+                        String headerValue) {
         this.url = ipAddress + apiEndpoint;
         this.headerValue = headerValue;
         this.headerKey = headerKey;
@@ -59,8 +63,9 @@ public class BackendServiceClass {
     }
 
 
-    public Request getPostRequestWithHeaderAndJsonParameter(){
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public Request getPostRequestWithHeaderAndJsonParameter() {
+        MediaType JSON = MediaType.parse(
+                "application/json; charset=utf-8");
         RequestBody body = RequestBody.create(json.toString(), JSON);
         Request request = new Request.Builder()
                 .url(url)
@@ -70,7 +75,7 @@ public class BackendServiceClass {
         return request;
     }
 
-    public Request doDeleteRequestWithHeaderOnly(){
+    public Request doDeleteRequestWithHeaderOnly() {
         Request request = new Request.Builder()
                 .url(url)
                 .header(headerKey, headerValue)
@@ -80,27 +85,28 @@ public class BackendServiceClass {
 
     }
 
-    public Request doPutRequestWithJsonAndHeader(){
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public Request doPutRequestWithJsonAndHeader() {
+        MediaType JSON = MediaType.parse(
+                "application/json; charset=utf-8");
         RequestBody body = RequestBody.create(json.toString(), JSON);
         Request request = new Request.Builder()
                 .url(url)
                 .header(headerKey, headerValue)
                 .put(body)
                 .build();
-        return  request;
+        return request;
     }
 
-    public Request doPutRequestWithHeaderOnly(){
+    public Request doPutRequestWithHeaderOnly() {
         Request request = new Request.Builder()
                 .url(url)
                 .header(headerKey, headerValue)
                 .put(RequestBody.create(new byte[0]))
                 .build();
-        return  request;
+        return request;
     }
 
-    public  Request getGetRequestWithHeaderOnly(){
+    public Request getGetRequestWithHeaderOnly() {
         Request request = new Request.Builder()
                 .url(url)
                 .header(headerKey, headerValue)
@@ -112,10 +118,12 @@ public class BackendServiceClass {
     /**
      * POST REQUEST
      * Makes a post request object with the json object.
+     *
      * @return Request
      */
-    public Request getPostRequestWithJsonParameter(){
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public Request getPostRequestWithJsonParameter() {
+        MediaType JSON = MediaType.parse(
+                "application/json; charset=utf-8");
 
         RequestBody body = RequestBody.create(json.toString(), JSON);
         Request request = new Request.Builder()
@@ -127,9 +135,10 @@ public class BackendServiceClass {
 
     /**
      * GET REQUEST without JSON parameter.
+     *
      * @return request object
      */
-    public Request getGetRequestWithoutJsonParameter(){
+    public Request getGetRequestWithoutJsonParameter() {
         Request request = new Request.Builder()
                 .url(url)
                 .get()
@@ -139,15 +148,15 @@ public class BackendServiceClass {
 
     /**
      * Gets the response body.
+     *
      * @param response
      * @return
      */
-    public String getResponseBody(Response response){
+    public String getResponseBody(Response response) {
         try {
-            if (response.body() != null){
+            if (response.body() != null) {
                 return response.body().string();
-            }
-            else {
+            } else {
                 return "";
             }
         } catch (IOException e) {
@@ -157,10 +166,11 @@ public class BackendServiceClass {
 
     /**
      * Gets response object for any request.
+     *
      * @param request
      * @return
      */
-    public Response getResponseFromRequest(Request request){
+    public Response getResponseFromRequest(Request request) {
         try {
             return this.client.newCall(request).execute();
         } catch (IOException e) {
@@ -170,20 +180,26 @@ public class BackendServiceClass {
 
     /**
      * Taken from CHAT GPT.
+     *
      * @return
      */
 
     private OkHttpClient getOkHttpClient() {
         try {
             // Create a trust manager that does not validate certificate chains
-            final TrustManager[] trustAllCerts = new TrustManager[] {
+            final TrustManager[] trustAllCerts = new TrustManager[]{
                     new X509TrustManager() {
                         @Override
-                        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        public void checkClientTrusted(X509Certificate[] chain,
+                                                       String authType)
+                                throws CertificateException {
+                            Log.d("TAG", "Checking client trusted..");
                         }
 
                         @Override
-                        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        public void checkServerTrusted(X509Certificate[] chain, String authType)
+                                throws CertificateException {
+                            Log.d("TAG", "Checking server trusted..");
                         }
 
                         @Override
@@ -195,13 +211,16 @@ public class BackendServiceClass {
 
             // Install the all-trusting trust manager
             final SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            sslContext.init(null, trustAllCerts,
+                    new java.security.SecureRandom());
 
             // Create an ssl socket factory with our all-trusting manager
-            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+            final SSLSocketFactory sslSocketFactory =
+                    sslContext.getSocketFactory();
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager)trustAllCerts[0]);
+            builder.sslSocketFactory(sslSocketFactory,
+                    (X509TrustManager) trustAllCerts[0]);
             builder.hostnameVerifier(new HostnameVerifier() {
                 @Override
                 public boolean verify(String hostname, SSLSession session) {

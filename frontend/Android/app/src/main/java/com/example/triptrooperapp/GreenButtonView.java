@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
-public class GreenButtonView extends LinearLayout{
+public class GreenButtonView extends LinearLayout {
 
     private Button button;
 
@@ -25,27 +25,31 @@ public class GreenButtonView extends LinearLayout{
 
     /**
      * Initializes the button.
+     *
      * @param context
      */
-    private void initializeTheButton(Context context){
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    private void initializeTheButton(Context context) {
+        LayoutInflater inflater =
+                (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.green_button, this, true);
         button = findViewById(R.id.green_button);
     }
 
     /**
      * Setter method for the button text.
+     *
      * @param buttonTextToEnter
      */
-    public void setButtonText(String buttonTextToEnter){
+    public void setButtonText(String buttonTextToEnter) {
         button.setText(buttonTextToEnter);
     }
 
     /**
      * Setter method for the button on click listener.
+     *
      * @param listener
      */
-    public void setButtonActionOnClick(View.OnClickListener listener){
+    public void setButtonActionOnClick(View.OnClickListener listener) {
         button.setOnClickListener(listener);
     }
 }

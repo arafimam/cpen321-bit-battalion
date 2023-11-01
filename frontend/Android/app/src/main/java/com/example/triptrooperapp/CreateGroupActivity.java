@@ -1,17 +1,15 @@
 package com.example.triptrooperapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -42,14 +40,12 @@ public class CreateGroupActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Intent intent = new Intent(this, GroupsActivity.class);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(this, GroupsActivity.class);
+            startActivity(intent);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -68,7 +64,8 @@ public class CreateGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setButtonClickValidation(groupNameField.getText().toString(),
-                        groupNameField.getText().toString(), "Group name not entered", true);
+                        groupNameField.getText().toString(), "Group name not " +
+                                "entered", true);
             }
         });
 
@@ -76,7 +73,8 @@ public class CreateGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setButtonClickValidation(groupCodeField.getText().toString(),
-                        groupCodeField.getText().toString(), "Group code not entered", false);
+                        groupCodeField.getText().toString(), "Group code not " +
+                                "entered", false);
             }
         });
 
@@ -90,50 +88,63 @@ public class CreateGroupActivity extends AppCompatActivity {
     /**
      * Set Button Click validation. Upon successful validation do backend call.
      * if text to validate is empty shows a toast message with failureMessage
+     *
      * @param textToValidate
      * @param successMessage
      * @param failureMessage
      */
-    private void setButtonClickValidation(String textToValidate, String successMessage,
-                                          String failureMessage, boolean isCreatingNewGroup) {
+    private void setButtonClickValidation(String textToValidate,
+                                          String successMessage,
+                                          String failureMessage,
+                                          boolean isCreatingNewGroup) {
         if (textToValidate.equals("")) {
-            Toast.makeText(CreateGroupActivity.this, failureMessage, Toast.LENGTH_SHORT).show();
-        }
-        else {
-            if (isCreatingNewGroup){
+            Toast.makeText(CreateGroupActivity.this, failureMessage,
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            if (isCreatingNewGroup) {
                 JSONObject json = new JSONObject();
                 try {
                     json.put("groupName", textToValidate);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-                BackendServiceClass backendServiceClass = new BackendServiceClass("groups/create",json, "authorization", account.getIdToken());
-                Request request = backendServiceClass.getPostRequestWithHeaderAndJsonParameter();
+                GoogleSignInAccount account =
+                        GoogleSignIn.getLastSignedInAccount(this);
+                BackendServiceClass backendServiceClass =
+                        new BackendServiceClass("groups/create", json,
+                                "authorization", account.getIdToken());
+                Request request =
+                        backendServiceClass.getPostRequestWithHeaderAndJsonParameter();
 
-                new Thread(()-> {
-                    Response response = backendServiceClass.getResponseFromRequest(request);
-                    if (response.isSuccessful()){
-                        String responseBody = backendServiceClass.getResponseBody(response);
+                new Thread(() -> {
+                    Response response =
+                            backendServiceClass.getResponseFromRequest(request);
+                    if (response.isSuccessful()) {
+                        String responseBody =
+                                backendServiceClass.getResponseBody(response);
                         try {
-                            JSONObject jsonResponse = new JSONObject(responseBody);
-                            String groupCode = jsonResponse.getString("groupCode");
+                            JSONObject jsonResponse =
+                                    new JSONObject(responseBody);
+                            String groupCode = jsonResponse.getString(
+                                    "groupCode");
                             runOnUiThread(() -> {
-                                Toast.makeText(CreateGroupActivity.this, "Created group with code: "+ groupCode, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CreateGroupActivity.this,
+                                        "Created group with code: " + groupCode,
+                                        Toast.LENGTH_SHORT).show();
                             });
 
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-                    }
-                    else {
+                    } else {
                         runOnUiThread(() -> {
                             try {
                                 Log.d("TAG", response.body().string());
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
-                            Toast.makeText(CreateGroupActivity.this, "Unable to create group.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreateGroupActivity.this, "Unable " +
+                                    "to create group.", Toast.LENGTH_SHORT).show();
                         });
                     }
                 }).start();
@@ -144,18 +155,24 @@ public class CreateGroupActivity extends AppCompatActivity {
                 JSONObject json = new JSONObject();
                 try {
                     json.put("groupCode", textToValidate);
-                    GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-                    BackendServiceClass backendService = new BackendServiceClass("groups/join", json, "authorization",account.getIdToken());
-                    Request request = backendService.doPutRequestWithJsonAndHeader();
+                    GoogleSignInAccount account =
+                            GoogleSignIn.getLastSignedInAccount(this);
+                    BackendServiceClass backendService =
+                            new BackendServiceClass("groups/join", json,
+                                    "authorization", account.getIdToken());
+                    Request request =
+                            backendService.doPutRequestWithJsonAndHeader();
 
                     new Thread(() -> {
-                        Response response = backendService.getResponseFromRequest(request);
-                        if (response.isSuccessful()){
+                        Response response =
+                                backendService.getResponseFromRequest(request);
+                        if (response.isSuccessful()) {
                             runOnUiThread(() -> {
-                                Toast.makeText(CreateGroupActivity.this, "Join group successful", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CreateGroupActivity.this,
+                                        "Join group successful",
+                                        Toast.LENGTH_SHORT).show();
                             });
-                        }
-                        else {
+                        } else {
                             try {
                                 Log.d("TAG", response.body().string());
                             } catch (IOException e) {
