@@ -21,6 +21,8 @@
     <string name="list_name_place_holder">List Name</string>
     <string name="delete_btn">Delete</string>
     <string name="place_list_header">Your Places</string>
+    <string name="channel_name">NOTIF</string>
+    <string name="channel_description">NOTIFCHANNEL</string>
 
     <!-- User Auth -->
 

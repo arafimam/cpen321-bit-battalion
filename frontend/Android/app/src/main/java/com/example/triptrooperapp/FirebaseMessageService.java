@@ -6,6 +6,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import   androidx.activity.ComponentActivity;
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -40,7 +42,20 @@ public class FirebaseMessageService extends FirebaseMessagingService {
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            Log.d(TAG, "Message Notification Title: " + remoteMessage.getNotification().getTitle());
+
+//            NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"CHANNEL_ID")
+//                    .setContentTitle(remoteMessage.getNotification().getBody())
+//                    .setContentText(remoteMessage.getNotification().getTitle())
+//                    .setPriority(NotificationCompat.PRIORITY_HIGH);
+//
+//            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+//            notificationManager.notify(1, builder.build());
+
+
         }
+
+
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.

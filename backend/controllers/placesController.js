@@ -1,12 +1,13 @@
 const express = require('express');
 
+const middleware = require('../middleware/middleware.js');
 const placesService = require('../services/placesService.js');
 
 const router = express.Router();
 
 // Nearby Search
 // {location: {latitude, longitude}, category}
-router.get('/currLocation', async (req, res) => {
+router.get('/currLocation', middleware.verifyToken, async (req, res) => {
   const latitude = req.query.latitude;
   const longitude = req.query.longitude;
   const category = req.query.category;
@@ -24,7 +25,7 @@ router.get('/currLocation', async (req, res) => {
 
 // Text Search
 // {textQuery, category}
-router.get('/destination', async (req, res) => {
+router.get('/destination', middleware.verifyToken, async (req, res) => {
   const textQuery = req.query.textQuery;
   const category = req.query.category;
 

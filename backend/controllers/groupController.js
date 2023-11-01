@@ -10,6 +10,7 @@ const express = require('express');
 
 const groupService = require('../services/groupService.js');
 const middleware = require('../middleware/middleware.js');
+const groupNotifications = require('../notifications/groupNotification.js');
 
 const router = express.Router();
 
@@ -47,26 +48,16 @@ router.get('/:id', middleware.verifyToken, async (req, res) => {
 router.post('/create', middleware.verifyToken, middleware.getUser, async (req, res) => {
   let groupName = req.body.groupName;
 
-  const googleId = req.googleId;
-  console.log(googleId);
-  // try {
-  //   var user = await userService.getUserByGoogleId(googleId);
-  // } catch (error) {
-  //   res.status(400).send({ errorMessage: 'Failed to get user by google id' });
-  //   return;
-  // }
-
   let groupData = {
     groupName,
     ownerId: res.locals.user.userId,
     ownerName: res.locals.user.username
   };
 
-  console.log(groupData);
-
   try {
     const groupCode = await groupService.createGroup(groupData);
     res.send({ groupCode: groupCode });
+    groupNotifications.createGroup(res.locals.user, groupName, groupCode);
   } catch (error) {
     res.status(500).send({ errorMessage: 'Failed to create a group.' });
   }
