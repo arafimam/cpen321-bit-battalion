@@ -2,7 +2,9 @@ package com.example.triptrooperapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 /**
  * Activities screen.
@@ -20,6 +22,14 @@ public class ActivitiesActivity extends AppCompatActivity {
         initializeActivityScreenButton();
 
         //TODO: action for the above two buttons.
+
+        viewActivityByCurrentLocationButton.setButtonActionOnClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ActivitiesActivity.this, PlacesActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
