@@ -9,7 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 /**
@@ -36,6 +38,40 @@ public class ActivitiesActivity extends AppCompatActivity {
 
             }
         });
+
+        viewActivityByDestinationButton.setButtonActionOnClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ActivitiesActivity.this, "Hello", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(ActivitiesActivity.this);
+                View dialogView = LayoutInflater.from(ActivitiesActivity.this).inflate(R.layout.create_list_dialog_view,null);
+                final EditText destinationText = dialogView.findViewById(R.id.list_name_textField);
+                destinationText.setHint("Destination Name");
+                GreenButtonView createListButton = dialogView.findViewById(R.id.create_list_button);
+                createListButton.setButtonText("Enter destination");
+                builder.setView(dialogView);
+
+                final AlertDialog dialog = builder.create();
+                createListButton.setButtonActionOnClick(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (destinationText.getText().toString().equals("")){
+                            Toast.makeText(ActivitiesActivity.this, "No destination entered.", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                        else {
+                            Intent intentTo = new Intent(ActivitiesActivity.this, PlacesActivity.class);
+                            intentTo.putExtra("destination", destinationText.getText().toString());
+                            intentTo.putExtra("context", "byDestination");
+                            startActivity(intentTo);
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                dialog.show();
+
+            }
+        });
     }
 
     /**
@@ -56,6 +92,7 @@ public class ActivitiesActivity extends AppCompatActivity {
     private void checkLocationPermissionAndNavigate(){
         if (areLocationPermissionsAlreadyGranted()){
             Intent intent = new Intent(ActivitiesActivity.this, PlacesActivity.class);
+            intent.putExtra("context", "nearby");
             startActivity(intent);
             return;
         }
