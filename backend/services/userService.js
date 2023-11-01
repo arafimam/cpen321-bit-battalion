@@ -36,7 +36,12 @@ async function createUser(userData) {
       throw new Error('Error in service while creating user: ' + error.message);
     }
   } else {
-    return userData.username;
+    try {
+      await userModel.updateDeviceRegistrationToken(userData.userId, userData.deviceRegistrationToken);
+      return userData.username;
+    } catch (error) {
+      throw new Error('Error in service while updating device registration token: ' + error.message);
+    }
   }
 }
 
@@ -50,6 +55,19 @@ async function getUserByGoogleId(googleId) {
     userId: user[0]._id,
     username: user[0].username,
     deviceRegistrationToken: user[0].deviceRegistrationToken
+  };
+}
+
+async function getUserById(userId) {
+  const user = await userModel.getUserById(userId);
+  if (user === null || user === undefined) {
+    throw new Error('Could not find user with the given user id');
+  }
+
+  return {
+    userId: user._id,
+    username: user.username,
+    deviceRegistrationToken: user.deviceRegistrationToken
   };
 }
 
@@ -100,6 +118,7 @@ async function getListsforUser(userId) {
 module.exports = {
   verify,
   createUser,
+  getUserById,
   getUserByGoogleId,
   updateDeviceRegistrationToken,
   getListsforUser,

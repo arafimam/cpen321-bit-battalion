@@ -32,9 +32,17 @@ async function checkUserExists(googleId) {
 }
 
 async function getUserByGoogleId(googleId) {
-  //get user by google id
   try {
     const user = await User.find({ googleId: googleId });
+    return user;
+  } catch (error) {
+    throw new Error('Error while getting user by google id: ' + error.message);
+  }
+}
+
+async function getUserById(userId) {
+  try {
+    const user = await User.findById(userId);
     return user;
   } catch (error) {
     throw new Error('Error while getting user by google id: ' + error.message);
@@ -86,6 +94,7 @@ module.exports = {
   User,
   checkUserExists,
   updateDeviceRegistrationToken,
+  getUserById,
   getUserByGoogleId,
   getUserLists,
   addListForUser,

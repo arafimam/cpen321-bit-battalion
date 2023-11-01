@@ -23,7 +23,7 @@ router.get('/all', middleware.verifyToken, middleware.getUser, async (req, res) 
     res.send({ groups: groups });
   } catch (error) {
     console.log(error.message);
-    return res.status(401).json({ message: 'Invalid Google ID token.' });
+    return res.status(401).json({ message: 'Failed to find groups for the user' });
   }
 });
 
@@ -38,6 +38,7 @@ router.get('/:id', middleware.verifyToken, async (req, res) => {
       res.send({ group: group });
     }
   } catch (error) {
+    console.log(error.message);
     res.status(500).send({
       errorMessage: `Something went wrong while finding group with ID.`
     });
@@ -57,8 +58,14 @@ router.post('/create', middleware.verifyToken, middleware.getUser, async (req, r
   try {
     const groupCode = await groupService.createGroup(groupData);
     res.send({ groupCode: groupCode });
-    groupNotifications.createGroup(res.locals.user, groupName, groupCode);
+
+    try {
+      await groupNotifications.createGroup(res.locals.user, groupName, groupCode);
+    } catch (error) {
+      console.log('Error while notifying about a new group created: ', error.message);
+    }
   } catch (error) {
+    console.log(error.message);
     res.status(500).send({ errorMessage: 'Failed to create a group.' });
   }
 });
@@ -72,6 +79,7 @@ router.delete('/:id/delete', middleware.verifyToken, async (req, res) => {
     await groupService.deleteGroup(groupId);
     res.send({ message: 'group successfully deleted' });
   } catch (error) {
+    console.log(error.message);
     res.status(500).send({ errorMessage: 'Failed to delete the group.' });
   }
 });
@@ -81,7 +89,6 @@ router.put('/join', middleware.verifyToken, middleware.getUser, async (req, res)
   // Group code as part of request body
   const groupCode = req.body.groupCode;
   const user = res.locals.user;
-  console.log(user);
   try {
     const group = await groupService.addUserToGroup(groupCode, user);
 
@@ -89,8 +96,15 @@ router.put('/join', middleware.verifyToken, middleware.getUser, async (req, res)
       res.status(400).send({ errorMessage: 'Incorrect group code' });
     } else {
       res.send({ message: 'User successfully added to group' });
+
+      try {
+        await groupNotifications.joinGroup(user, group);
+      } catch (error) {
+        console.log('Error while notifying group members about a new member joining the group: ', error.message);
+      }
     }
   } catch (error) {
+    console.log(error.message);
     res.status(500).send({ errorMessage: 'Failed to add user to group' });
   }
 });
@@ -102,9 +116,9 @@ router.put('/:id/leave', middleware.verifyToken, middleware.getUser, async (req,
 
   try {
     let resp = await groupService.removeUserFromGroup(groupId, user.userId);
-    console.log(resp);
     res.send({ message: 'User successfully removed from group' });
   } catch (error) {
+    console.log(error.message);
     res.status(500).send({ errorMessage: 'Failed to remove user from group' });
   }
 });
@@ -116,6 +130,7 @@ router.get('/:id/lists', middleware.verifyToken, async (req, res) => {
     const lists = await groupService.getListsforGroup(groupId);
     res.send({ lists: lists });
   } catch (error) {
+    console.log(error.message);
     res.status(500).send({ errorMessage: 'Failed to get lists for group' });
   }
 });
@@ -134,6 +149,7 @@ router.put('/:id/add/list', middleware.verifyToken, async (req, res) => {
     await groupService.addListToGroup(groupId, listName);
     res.send({ message: 'New list successfully added to group' });
   } catch (error) {
+    console.log(error.message);
     res.status(500).send({ errorMessage: 'Failed to add list to group' });
   }
 });
@@ -152,6 +168,7 @@ router.put('/:id/remove/list', middleware.verifyToken, async (req, res) => {
     await groupService.removeListFromGroup(groupId, listId);
     res.send({ message: 'List successfully removed to group' });
   } catch (error) {
+    console.log(error.message);
     res.status(500).send({ errorMessage: 'Failed to remove list to group' });
   }
 });
