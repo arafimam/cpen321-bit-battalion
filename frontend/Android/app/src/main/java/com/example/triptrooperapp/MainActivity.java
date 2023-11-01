@@ -13,9 +13,12 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> signInActivityIntent;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ProgressBar progressbar;
+
+    private String deviceRegistrationToken;
 
 
     @Override
@@ -156,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
                         // Get new FCM registration token
                         String token = task.getResult();
 
+                        deviceRegistrationToken = token;
+
                         // Log and toast
 
                         //Log.d(TAG, token);
@@ -163,6 +170,26 @@ public class MainActivity extends AppCompatActivity {
                         //TODO:Send token to backend here
                     }
                 });
+
+        createNotificationChannel();
+
+
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is not in the Support Library.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("CHANNEL_ID", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system. You can't change the importance
+            // or other notification behaviors after this.
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -207,15 +234,19 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "You need to log in to open this page.", Toast.LENGTH_LONG).show();
         }
         else{
-            setTokenToBackend(account.getIdToken(), account.getDisplayName());
+
+            setTokenToBackend(account.getIdToken(), account.getDisplayName(),deviceRegistrationToken);
         }
     }
 
-    private void setTokenToBackend(String idToken, String username){
+    private void setTokenToBackend(String idToken, String username,String deviceRegistrationToken){
         JSONObject json = new JSONObject();
         try{
             json.put("idToken", idToken);
             json.put("username",username);
+            json.put("deviceRegistrationToken",deviceRegistrationToken);
+
+            Log.d("GOOGLETOKEN",idToken);
         }catch (Exception e){
             e.printStackTrace();
         }
