@@ -104,7 +104,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
     }
 
     private void retrievePlaces() {
-
+        Log.d("TAG", "Retrieving places...");
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(PlacesActivity.this);
         String url = "places/currLocation?latitude=" + latitude + "&longitude=" + longitude;
         BackendServiceClass backendService = new BackendServiceClass(url, "authorization", account.getIdToken());
@@ -130,6 +130,49 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                 listBox.setMainTitleText(placeName);
                                 listBox.setSubTitleText(address);
                                 listBox.setSideTitleText("     Rating: "+ rating+ "/5");
+
+                                Intent intentFrom = getIntent();
+                                if (intentFrom.getStringExtra("list").equals("list")){
+                                    listBox.setActionOnCardClick(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            String listId = intentFrom.getStringExtra("listId");
+                                            String url = "lists/"+listId+"/add/place";
+                                            Log.d("TAG", place.toString());
+
+                                            JSONObject jsonResponseForList = new JSONObject();
+                                            try {
+                                                jsonResponseForList.put("place", place);
+                                            } catch (JSONException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                            BackendServiceClass backendServiceClass = new BackendServiceClass(url,jsonResponseForList,"authorization", account.getIdToken());
+                                            Request request1 = backendServiceClass.doPutRequestWithJsonAndHeader();
+                                            new Thread(()-> {
+                                                Response response1 = backendServiceClass.getResponseFromRequest(request1);
+                                                if (response1.isSuccessful()){
+                                                    try {
+
+                                                        Log.d("TAG", response1.body().string());
+                                                    } catch (IOException e) {
+                                                        throw new RuntimeException(e);
+                                                    }
+                                                    runOnUiThread(()-> {
+                                                        Toast.makeText(PlacesActivity.this, "Added " + placeName+" in List", Toast.LENGTH_SHORT).show();
+                                                    });
+                                                }
+                                                else{
+                                                    try {
+                                                        Log.d("TAG", response1.body().string());
+                                                    } catch (IOException e) {
+                                                        throw new RuntimeException(e);
+                                                    }
+                                                }
+                                            }).start();
+                                        }
+                                    });
+
+                                }
 
                                 placesBoxContainer.addView(listBox);
 
@@ -186,6 +229,47 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                 listBox.setSubTitleText(address);
                                 listBox.setSideTitleText("     Rating: "+ rating+ "/5");
 
+                                if (intentFrom.getStringExtra("list").equals("list")){
+                                    listBox.setActionOnCardClick(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            String listId = intentFrom.getStringExtra("listId");
+                                            String url = "lists/"+listId+"/add/place";
+                                            Log.d("TAG", place.toString());
+
+                                            JSONObject jsonResponseForList = new JSONObject();
+                                            try {
+                                                jsonResponseForList.put("place", place);
+                                            } catch (JSONException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                            BackendServiceClass backendServiceClass = new BackendServiceClass(url,jsonResponseForList,"authorization", account.getIdToken());
+                                            Request request1 = backendServiceClass.doPutRequestWithJsonAndHeader();
+                                            new Thread(()-> {
+                                                Response response1 = backendServiceClass.getResponseFromRequest(request1);
+                                                if (response1.isSuccessful()){
+                                                    try {
+
+                                                        Log.d("TAG", response1.body().string());
+                                                    } catch (IOException e) {
+                                                        throw new RuntimeException(e);
+                                                    }
+                                                    runOnUiThread(()-> {
+                                                        Toast.makeText(PlacesActivity.this, "Added " + placeName+" in List", Toast.LENGTH_SHORT).show();
+                                                    });
+                                                }
+                                                else{
+                                                    try {
+                                                        Log.d("TAG", response1.body().string());
+                                                    } catch (IOException e) {
+                                                        throw new RuntimeException(e);
+                                                    }
+                                                }
+                                            }).start();
+                                        }
+                                    });
+                                }
+
                                 placesBoxContainer.addView(listBox);
 
                             } catch (JSONException e) {
@@ -214,9 +298,17 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(this, ActivitiesActivity.class);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
+            Intent intentFrom = getIntent();
+            if (intentFrom.getStringExtra("list").equals("list")){
+                Intent intent = new Intent(this, ListActivity.class);
+                startActivity(intent);
+            }
+            else{
+                Intent intent = new Intent(this, ActivitiesActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+
             return true;
         } else {
             return super.onOptionsItemSelected(item);

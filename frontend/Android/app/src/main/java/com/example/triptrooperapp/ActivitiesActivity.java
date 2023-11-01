@@ -29,8 +29,6 @@ public class ActivitiesActivity extends AppCompatActivity {
 
         initializeActivityScreenButton();
 
-        //TODO: action for the above two buttons.
-
         viewActivityByCurrentLocationButton.setButtonActionOnClick(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +61,7 @@ public class ActivitiesActivity extends AppCompatActivity {
                             Intent intentTo = new Intent(ActivitiesActivity.this, PlacesActivity.class);
                             intentTo.putExtra("destination", destinationText.getText().toString());
                             intentTo.putExtra("context", "byDestination");
+                            intentTo.putExtra("list","--");
                             startActivity(intentTo);
                             dialog.dismiss();
                         }
@@ -93,6 +92,7 @@ public class ActivitiesActivity extends AppCompatActivity {
         if (areLocationPermissionsAlreadyGranted()){
             Intent intent = new Intent(ActivitiesActivity.this, PlacesActivity.class);
             intent.putExtra("context", "nearby");
+            intent.putExtra("list","--");
             startActivity(intent);
             return;
         }
@@ -158,6 +158,7 @@ public class ActivitiesActivity extends AppCompatActivity {
         if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Intent phoneDetailsIntent = new Intent(ActivitiesActivity.this, PlacesActivity.class);
+                phoneDetailsIntent.putExtra("list","--");
                 startActivity(phoneDetailsIntent);
             } else {
                 Toast.makeText(this, "Location permission is required!", Toast.LENGTH_LONG).show();
