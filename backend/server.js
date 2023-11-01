@@ -13,7 +13,7 @@ const listRouter = require('./controllers/listController.js');
 const serviceAccount = require('./service-account.json');
 
 const app = express();
-const fbapp = admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 
 const httpsOptions = {
   key: fs.readFileSync('./certs/key.pem'),

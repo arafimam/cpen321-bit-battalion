@@ -10,8 +10,8 @@ async function createGroup(userData, groupName, groupCode) {
       body: 'Group Created Successfully'
     },
     data: {
-      groupCode: groupCode,
-      groupName: groupName
+      groupCode,
+      groupName
     },
     token: userData.deviceRegistrationToken
   };

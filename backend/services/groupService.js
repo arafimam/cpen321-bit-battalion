@@ -20,7 +20,7 @@ async function getGroupById(groupId) {
 async function createGroup(groupData) {
   const groupCode = await groupModel.generateUniqueGroupCode();
   const group = {
-    groupCode: groupCode,
+    groupCode,
     ownerId: groupData.ownerId,
     ownerName: groupData.ownerName,
     groupName: groupData.groupName,

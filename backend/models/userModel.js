@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { List } = require('./listModel.js');
 
 // Help from chatGPT
 const userSchema = new mongoose.Schema({
@@ -26,7 +25,7 @@ const User = mongoose.model('User', userSchema);
 
 async function checkUserExists(googleId) {
   try {
-    return await User.exists({ googleId: googleId });
+    return await User.exists({ googleId });
   } catch (error) {
     throw new Error('Error while checking if user exists: ' + error.message);
   }
@@ -34,7 +33,7 @@ async function checkUserExists(googleId) {
 
 async function getUserByGoogleId(googleId) {
   try {
-    const user = await User.find({ googleId: googleId });
+    const user = await User.find({ googleId });
     return user;
   } catch (error) {
     throw new Error('Error while getting user by google id: ' + error.message);
@@ -52,7 +51,7 @@ async function getUserById(userId) {
 
 async function updateDeviceRegistrationToken(googleId, deviceRegistrationToken) {
   const filter = { googleId: googleId };
-  const update = { deviceRegistrationToken: deviceRegistrationToken };
+  const update = { deviceRegistrationToken };
 
   try {
     return await User.findOneAndUpdate(filter, update, { new: true });

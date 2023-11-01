@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const randomstring = require('randomstring');
-const { List } = require('./listModel');
 
 const groupSchema = new mongoose.Schema({
   groupName: {
@@ -83,7 +82,7 @@ async function generateUniqueGroupCode() {
   let isNotUnique = true;
   while (true) {
     const groupCode = randomstring.generate(6).toUpperCase(); // Generate a 6-character alphanumeric code
-    const existingGroup = await Group.findOne({ groupCode: groupCode });
+    const existingGroup = await Group.findOne({ groupCode });
     isNotUnique = !!existingGroup; // Check if the code already exists
 
     if (!isNotUnique) return groupCode;
@@ -107,7 +106,7 @@ async function removeUserFromGroup(groupId, userId) {
   //TODO: check if user already in group
   //TODO: if group members becomes empty after removing user, then delete group
   const filter = { _id: groupId };
-  const update = { $pull: { members: { userId: userId } } };
+  const update = { $pull: { members: { userId } } };
 
   try {
     return await Group.findOneAndUpdate(filter, update, { new: true });
