@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  deviceRegistrationToken: {
+    type: String,
+    required: true
+  },
   lists: {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'List' }],
     default: []
@@ -31,10 +35,20 @@ async function getUserByGoogleId(googleId) {
   //get user by google id
   try {
     const user = await User.find({ googleId: googleId });
-    console.log(user);
     return user;
   } catch (error) {
     throw new Error('Error while getting user by google id: ' + error.message);
+  }
+}
+
+async function updateDeviceRegistrationToken(userId, deviceRegistrationToken) {
+  const filter = { _id: userId };
+  const update = { deviceRegistrationToken: deviceRegistrationToken };
+
+  try {
+    return await User.findOneAndUpdate(filter, update, { new: true });
+  } catch (error) {
+    throw new Error('Error occured while updating device registration token: ' + error.message);
   }
 }
 
@@ -48,9 +62,9 @@ async function getUserLists(userId) {
 
 async function addListForUser(userId, listId) {
   const filter = { _id: userId };
+  const update = { $push: { lists: listId } };
 
   try {
-    const update = { $push: { lists: listId } };
     return await User.findOneAndUpdate(filter, update, { new: true });
   } catch (error) {
     throw new Error('Error occured while adding list for the user: ' + error.message);
@@ -59,13 +73,21 @@ async function addListForUser(userId, listId) {
 
 async function removeListForUser(userId, listId) {
   const filter = { _id: userId };
+  const update = { $pull: { lists: listId } };
 
   try {
-    const update = { $pull: { lists: listId } };
     return await User.findOneAndUpdate(filter, update, { new: true });
   } catch (error) {
     throw new Error('Error occured while removing list for the user: ' + error.message);
   }
 }
 
-module.exports = { User, checkUserExists, getUserByGoogleId, getUserLists, addListForUser, removeListForUser };
+module.exports = {
+  User,
+  checkUserExists,
+  updateDeviceRegistrationToken,
+  getUserByGoogleId,
+  getUserLists,
+  addListForUser,
+  removeListForUser
+};

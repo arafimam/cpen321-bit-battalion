@@ -25,7 +25,6 @@ async function getUser(req, res, next) {
   try {
     const user = await userService.getUserByGoogleId(googleId);
     res.locals.user = user;
-    console.log(user);
     next();
   } catch (error) {
     res.status(400).send({ errorMessage: 'Failed to get user by google id' });
