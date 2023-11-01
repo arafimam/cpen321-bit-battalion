@@ -21,6 +21,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * Help from chat gpt.
+ */
 public class BackendServiceClass {
 
     private String url;
@@ -165,6 +168,10 @@ public class BackendServiceClass {
         }
     }
 
+    /**
+     * Taken from CHAT GPT.
+     * @return
+     */
 
     private OkHttpClient getOkHttpClient() {
         try {
