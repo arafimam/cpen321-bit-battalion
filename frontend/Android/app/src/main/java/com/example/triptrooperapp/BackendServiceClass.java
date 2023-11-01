@@ -25,7 +25,7 @@ public class BackendServiceClass {
 
     private String url;
     private JSONObject json;
-    private final String ipAddress = "https://128.189.128.116:8081/"; // this if for ubc secure.
+    private final String ipAddress = "https://44.225.75.82:8081/"; // this if for ubc secure.
     private OkHttpClient client;
     private String headerKey;
     private String headerValue;

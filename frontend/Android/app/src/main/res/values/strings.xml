@@ -20,6 +20,7 @@
     <string name="group_code_place_holder">Group Code</string>
     <string name="list_name_place_holder">List Name</string>
     <string name="delete_btn">Delete</string>
+    <string name="place_list_header">Your Places</string>
 
     <!-- User Auth -->
 
