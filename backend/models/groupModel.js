@@ -32,6 +32,7 @@ const groupSchema = new mongoose.Schema({
 
 const Group = mongoose.model('Group', groupSchema);
 
+// Help from chatGPT
 async function createGroup(group) {
   try {
     return await Group.create(group);
@@ -40,6 +41,7 @@ async function createGroup(group) {
   }
 }
 
+// Help from chatGPT
 async function deleteGroup(groupId) {
   // TODO: delete lists in group
   try {
@@ -66,6 +68,7 @@ async function getGroup(groupId) {
   }
 }
 
+// Help from chatGPT
 async function getGroupLists(groupId) {
   try {
     return await Group.findById(groupId).select({ _id: 1, lists: 1 });
@@ -74,6 +77,7 @@ async function getGroupLists(groupId) {
   }
 }
 
+// Help from chatGPT
 // Function to generate a unique group code
 async function generateUniqueGroupCode() {
   let isNotUnique = true;
@@ -98,6 +102,7 @@ async function addUserToGroup(groupCode, member) {
   }
 }
 
+// Help from chatGPT
 async function removeUserFromGroup(groupId, userId) {
   //TODO: check if user already in group
   //TODO: if group members becomes empty after removing user, then delete group
@@ -118,7 +123,7 @@ async function addListToGroup(groupId, listId) {
     const update = { $push: { lists: listId } };
     return await Group.findOneAndUpdate(filter, update, { new: true });
   } catch (error) {
-    throw new Error('Error occured while adding list to the group: ' + error.message);
+    throw new Error('Error in DB while adding list to the group: ' + error.message);
   }
 }
 

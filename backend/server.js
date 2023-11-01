@@ -20,6 +20,7 @@ const httpsOptions = {
   cert: fs.readFileSync('./certs/cert.pem')
 };
 
+// Help from chatGPT for routing to different services
 // Middleware
 app.use(express.json());
 app.use('/users', userRouter);
