@@ -73,6 +73,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         expenseBtn = findViewById(R.id.expense_btn);
         expenseBtn.setMainTitleText("View Expenses");
+        expenseBtn.setVisibility(View.INVISIBLE);
 
         setScreenContentByBackend();
 
