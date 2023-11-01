@@ -19,7 +19,7 @@ router.get('/currLocation', middleware.verifyToken, async (req, res) => {
   if (googleResponse.status === 200) {
     res.send(googleResponse.response);
   } else {
-    res.status(googleResponse.status).send({ errorMessage: googleReponse.errorMessage });
+    res.status(googleResponse.status).send({ errorMessage: googleResponse.errorMessage });
   }
 });
 
@@ -33,7 +33,7 @@ router.get('/destination', middleware.verifyToken, async (req, res) => {
   if (googleResponse.status === 200) {
     res.send(googleResponse.response);
   } else {
-    res.status(googleResponse.status).send({ errorMessage: googleReponse.errorMessage });
+    res.status(googleResponse.status).send({ errorMessage: googleResponse.errorMessage });
   }
 });
 

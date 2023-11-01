@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".ListDetailsActivity">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/optimize_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="35dp"
+        android:layout_marginBottom="10dp"
+        android:clickable="true"
+        android:src="@android:drawable/ic_menu_rotate"
+        app:layout_constraintBottom_toTopOf="@+id/create_list"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -31,13 +42,16 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <ScrollView
+        android:id="@+id/scrollView3"
         android:layout_width="407dp"
         android:layout_height="614dp"
         android:contentDescription="scroller"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/list_name_topic">
+        app:layout_constraintTop_toBottomOf="@+id/list_name_topic"
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:id="@+id/list_activity_container"
@@ -45,5 +59,18 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
     </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/create_list"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginBottom="35dp"
+
+        android:backgroundTint="#15E979"
+        android:contentDescription="Fab"
+        android:src="@drawable/add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
