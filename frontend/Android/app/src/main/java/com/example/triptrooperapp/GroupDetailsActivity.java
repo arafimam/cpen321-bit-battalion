@@ -31,11 +31,6 @@ import okhttp3.Response;
 public class GroupDetailsActivity extends AppCompatActivity {
 
     private DefaultCardButtonView memberBtn;
-    private DefaultCardButtonView listBtn;
-    private DefaultCardButtonView expenseBtn;
-    private Toolbar toolbar;
-
-    private GreenButtonView leaveGroupBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +43,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         memberBtn = findViewById(R.id.member_btn);
         //memberBtn.setMainTitleText("Members (10)");
 
-        leaveGroupBtn = findViewById(R.id.leave_group);
+        GreenButtonView leaveGroupBtn = findViewById(R.id.leave_group);
         leaveGroupBtn.setButtonText("Leave Group");
         leaveGroupBtn.setButtonActionOnClick(new View.OnClickListener() {
             @Override
@@ -57,7 +52,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
             }
         });
 
-        listBtn = findViewById(R.id.list_btn);
+        DefaultCardButtonView listBtn = findViewById(R.id.list_btn);
         listBtn.setMainTitleText("View Lists");
         listBtn.setActionForOnClick(new View.OnClickListener() {
             @Override
@@ -69,14 +64,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
             }
         });
 
-        expenseBtn = findViewById(R.id.expense_btn);
+        DefaultCardButtonView expenseBtn = findViewById(R.id.expense_btn);
         expenseBtn.setMainTitleText("View Expenses");
         expenseBtn.setVisibility(View.INVISIBLE);
 
         setScreenContentByBackend();
 
 
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -109,7 +104,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             }
         }).start();
@@ -144,9 +139,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
                         // TODO: add a function for list and view expenses.
                     });
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             } else {
                 Log.d("TAG", "Sdsda");
@@ -176,7 +171,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                         String username = member.getString("username");
                         cardButtonView.setMainTitleText(username);
                     } catch (JSONException e) {
-                        throw new RuntimeException(e);
+                        throw new CustomException("error", e);
                     }
                     memberList.addView(cardButtonView);
                 }
@@ -247,7 +242,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     try {
                         Log.d("TAG", response.body().string());
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new CustomException("error", e);
                     }
                     Toast.makeText(GroupDetailsActivity.this, "Unable to " +
                             "delete group", Toast.LENGTH_SHORT).show();

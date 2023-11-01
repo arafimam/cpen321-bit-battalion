@@ -31,7 +31,6 @@ import okhttp3.Response;
 public class ListActivity extends AppCompatActivity {
 
     private LinearLayout listBoxContainer;
-    private FloatingActionButton createListButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +44,7 @@ public class ListActivity extends AppCompatActivity {
         /**
          * Create List, Floating action Button.
          */
-        createListButton = findViewById(R.id.create_list);
+        FloatingActionButton createListButton = findViewById(R.id.create_list);
         createListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,21 +121,21 @@ public class ListActivity extends AppCompatActivity {
                                 });
                                 listBoxContainer.addView(listBox);
                             } catch (JSONException e) {
-                                throw new RuntimeException(e);
+                                throw new CustomException("error", e);
                             }
                         }
                     });
 
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             }
         }).start();
@@ -149,7 +148,7 @@ public class ListActivity extends AppCompatActivity {
         try {
             json.put("listName", listName);
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            throw new CustomException("error", e);
         }
         BackendServiceClass backendService = new BackendServiceClass("users" +
                 "/add/list", json,
@@ -167,7 +166,7 @@ public class ListActivity extends AppCompatActivity {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             }
         }).start();

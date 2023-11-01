@@ -21,7 +21,6 @@ import com.google.android.material.navigation.NavigationBarView;
  */
 public class BottomNavBarView extends RelativeLayout {
 
-    private BottomNavigationView bottomNavigationView;
     private static final String SHARED_PREFS_NAME = "BottomNavPrefs";
     private static final String SELECTED_ITEM_ID_KEY = "selectedItemId";
 
@@ -44,7 +43,8 @@ public class BottomNavBarView extends RelativeLayout {
         LayoutInflater inflater =
                 (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.bottom_nav_bar, this, true);
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView =
+                findViewById(R.id.bottom_navigation);
 
         /* Need to save which item was selected when new activity is launched.*/
         SharedPreferences sharedPref =

@@ -160,7 +160,8 @@ public class BackendServiceClass {
                 return "";
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CustomException("Error occurred when parsing " +
+                    "response", e);
         }
     }
 
@@ -174,7 +175,7 @@ public class BackendServiceClass {
         try {
             return this.client.newCall(request).execute();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CustomException("error", e);
         }
     }
 
@@ -230,7 +231,7 @@ public class BackendServiceClass {
 
             return builder.build();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new CustomException("error", e);
         }
     }
 }

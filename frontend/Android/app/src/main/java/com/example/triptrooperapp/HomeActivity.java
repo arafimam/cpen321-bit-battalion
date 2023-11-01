@@ -14,8 +14,6 @@ import com.google.android.gms.tasks.Task;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private GreenButtonView signOutButton;
-
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -23,7 +21,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        signOutButton = findViewById(R.id.sign_out_google);
+        GreenButtonView signOutButton = findViewById(R.id.sign_out_google);
         signOutButton.setButtonText("Sign Out");
 
         GoogleSignInOptions gso =

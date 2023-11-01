@@ -24,7 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -46,12 +45,9 @@ import okhttp3.Response;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private GreenButtonView signInButton; /* Sign in Button component.*/
-    private SignInClient oneTapClient;
     private final String TAG = "MAIN_ACTIVITY";
     private GoogleSignInClient mGoogleSignInClient;
     private ActivityResultLauncher<Intent> signInActivityIntent;
-    private ActivityResultLauncher<String> requestPermissionLauncher;
     private ProgressBar progressbar;
 
     private String deviceRegistrationToken;
@@ -62,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        signInButton = findViewById(R.id.sign_in_google);
+        /* Sign in Button component.*/
+        GreenButtonView signInButton = findViewById(R.id.sign_in_google);
         progressbar = findViewById(R.id.spinner);
         progressbar.setVisibility(View.GONE);
 
@@ -97,7 +94,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //TODO:clean up request permission code
-        requestPermissionLauncher =
+        // FCM SDK (and your app) can post notifications.
+        // TODO: Inform user that that your app will not show
+        //  notifications.
+        ActivityResultLauncher<String> requestPermissionLauncher =
                 registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                     if (isGranted) {
                         // FCM SDK (and your app) can post notifications.
@@ -139,12 +139,12 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }).setPositiveButton("OK",
                     new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
-                }
-            }).create().show();
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
+                        }
+                    }).create().show();
         } else {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this
