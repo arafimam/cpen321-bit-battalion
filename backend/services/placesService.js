@@ -49,7 +49,7 @@ async function getPlacesNearby(latitude, longitude, category) {
   } catch (error) {
     return {
       status: 500,
-      errorMessage: `Something went wrong while finding places by destination.`
+      errorMessage: error.message
     };
   }
 }
@@ -84,7 +84,7 @@ async function getPlacesByText(textQuery, category) {
   } catch (error) {
     return {
       status: 500,
-      errorMessage: `Something went wrong while finding places by destination.`
+      errorMessage: error.message
     };
   }
 }
