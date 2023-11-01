@@ -40,6 +40,17 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.get('/lists', middleware.verifyToken, middleware.getUser, async (req, res) => {
+  const userId = res.locals.user.userId;
+
+  try {
+    const lists = await userService.getListsforUser(userId);
+    res.send({ lists: lists });
+  } catch (error) {
+    res.status(500).send({ errorMessage: 'Failed to get lists for user' });
+  }
+});
+
 // Adding list for user
 router.put('/add/list', middleware.verifyToken, middleware.getUser, async (req, res) => {
   const userId = res.locals.user.userId;

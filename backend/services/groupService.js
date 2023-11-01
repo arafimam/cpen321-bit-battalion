@@ -1,6 +1,8 @@
 const groupModel = require('../models/groupModel');
 const listService = require('./listService');
 
+//TODO: check group exists function
+
 async function getAllGroups(userId) {
   try {
     const groups = await groupModel.getAllGroups(userId);

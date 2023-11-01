@@ -50,7 +50,7 @@ async function deleteGroup(groupId) {
 
 async function getAllGroups(userId) {
   try {
-    const groups = await Group.find({ 'members.userId': userId }).select('groupName');
+    const groups = await Group.find({ 'members.userId': userId }).select({ groupName: 1, groupCode: 1 });
     return groups;
   } catch (error) {
     throw new Error('Error in DB while getting all groups for a user' + error.message);
