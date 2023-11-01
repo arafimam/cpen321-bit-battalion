@@ -16,7 +16,7 @@ router.post('/login', async (req, res) => {
   const deviceRegistrationToken = req.body.deviceRegistrationToken;
 
   try {
-    var userId = await userService.verify(idToken);
+    var googleId = await userService.verify(idToken);
   } catch (error) {
     console.log(error);
     res.status(500).send('Error while verifying user');
@@ -25,7 +25,7 @@ router.post('/login', async (req, res) => {
 
   try {
     let userData = {
-      userId,
+      googleId,
       username,
       deviceRegistrationToken
     };

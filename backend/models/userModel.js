@@ -49,8 +49,8 @@ async function getUserById(userId) {
   }
 }
 
-async function updateDeviceRegistrationToken(userId, deviceRegistrationToken) {
-  const filter = { _id: userId };
+async function updateDeviceRegistrationToken(googleId, deviceRegistrationToken) {
+  const filter = { googleId: googleId };
   const update = { deviceRegistrationToken: deviceRegistrationToken };
 
   try {
