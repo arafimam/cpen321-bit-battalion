@@ -20,19 +20,20 @@ public class PlacesBoxComponentView extends LinearLayout {
     private TextView sideTitle2;
 
 
-
     public PlacesBoxComponentView(Context context) {
         super(context);
         initializeCardViewComponent(context);
     }
 
-    public PlacesBoxComponentView(Context context, @Nullable AttributeSet attrs) {
+    public PlacesBoxComponentView(Context context,
+                                  @Nullable AttributeSet attrs) {
         super(context, attrs);
         initializeCardViewComponent(context);
     }
 
-    private void initializeCardViewComponent(Context context){
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    private void initializeCardViewComponent(Context context) {
+        LayoutInflater inflater =
+                (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.place_box, this, true);
 
         cardView = findViewById(R.id.card_view);
@@ -44,17 +45,19 @@ public class PlacesBoxComponentView extends LinearLayout {
 
     /**
      * Setter function for main title text.
+     *
      * @param mainTitleTextToSet
      */
-    public void setMainTitleText(String mainTitleTextToSet){
+    public void setMainTitleText(String mainTitleTextToSet) {
         mainTitle.setText(mainTitleTextToSet);
     }
 
     /**
      * Setter function for side title text.
+     *
      * @param sideTitleTextToSet
      */
-    public void setSideTitleText(String sideTitleTextToSet){
+    public void setSideTitleText(String sideTitleTextToSet) {
         sideTitle.setText(sideTitleTextToSet);
     }
 
@@ -64,37 +67,39 @@ public class PlacesBoxComponentView extends LinearLayout {
      */
 
     /**
-    public void setSubTitleText(String subTitleTextToSet){
-        subTitle.setText(subTitleTextToSet);
-    }
+     * public void setSubTitleText(String subTitleTextToSet){
+     * subTitle.setText(subTitleTextToSet);
+     * }
      **/
 
-    public void setSideTitle2Text(String sideTitleTextToSet){
+    public void setSideTitle2Text(String sideTitleTextToSet) {
         sideTitle2.setText(sideTitleTextToSet);
     }
 
-    public void setMainTitle2Text(String sideTitleTextToSet){
+    public void setMainTitle2Text(String sideTitleTextToSet) {
         mainTitle2.setText(sideTitleTextToSet);
     }
+
     /**
      * Sets the visibility of TextView.
      * Do not set visibility to GONE
+     *
      * @param visibilityOfMainTitle VISIBLE OR INVISIBLE
      * @param visibilityOfSideTitle VISIBLE OR INVISIBLE
-     * @param visibilityOfSubTitle VISIBLE OR INVISIBLE
+     * @param visibilityOfSubTitle  VISIBLE OR INVISIBLE
      */
     public void setVisibilityOfTextViews(int visibilityOfMainTitle,
                                          int visibilityOfSideTitle,
-                                         int visibilityOfSubTitle){
+                                         int visibilityOfSubTitle) {
         mainTitle.setVisibility(visibilityOfMainTitle);
         sideTitle.setVisibility(visibilityOfSideTitle);
         mainTitle2.setVisibility(visibilityOfMainTitle);
         sideTitle2.setVisibility(visibilityOfSideTitle);
 
-       // subTitle.setVisibility(visibilityOfSubTitle);
+        // subTitle.setVisibility(visibilityOfSubTitle);
     }
 
-    public void setActionOnCardClick(View.OnClickListener listener){
+    public void setActionOnCardClick(View.OnClickListener listener) {
         cardView.setOnClickListener(listener);
     }
 }

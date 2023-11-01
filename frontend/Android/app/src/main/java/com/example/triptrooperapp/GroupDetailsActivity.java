@@ -1,9 +1,5 @@
 package com.example.triptrooperapp;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,9 +8,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -24,8 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.Request;
 import okhttp3.Response;
@@ -65,8 +62,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
         listBtn.setActionForOnClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentTo = new Intent(GroupDetailsActivity.this, GroupListActivity.class);
-                intentTo.putExtra("groupId",groupId);
+                Intent intentTo = new Intent(GroupDetailsActivity.this,
+                        GroupListActivity.class);
+                intentTo.putExtra("groupId", groupId);
                 startActivity(intentTo);
             }
         });
@@ -86,23 +84,28 @@ public class GroupDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void leaveGroupViaBackend(){
+    private void leaveGroupViaBackend() {
         Intent intent = getIntent();
         String groupId = intent.getStringExtra("id");
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
 
-        BackendServiceClass backendServiceClass = new BackendServiceClass("groups/"+groupId+"/leave","authorization", account.getIdToken());
+        BackendServiceClass backendServiceClass = new BackendServiceClass(
+                "groups/" + groupId + "/leave", "authorization",
+                account.getIdToken());
         Request request = backendServiceClass.doPutRequestWithHeaderOnly();
         new Thread(() -> {
-            Response response = backendServiceClass.getResponseFromRequest(request);
-            if (response.isSuccessful()){
+            Response response =
+                    backendServiceClass.getResponseFromRequest(request);
+            if (response.isSuccessful()) {
                 runOnUiThread(() -> {
-                    Toast.makeText(GroupDetailsActivity.this, "Left group", Toast.LENGTH_SHORT).show();
-                    Intent intentTo = new Intent(GroupDetailsActivity.this, GroupsActivity.class);
+                    Toast.makeText(GroupDetailsActivity.this, "Left group",
+                            Toast.LENGTH_SHORT).show();
+                    Intent intentTo = new Intent(GroupDetailsActivity.this,
+                            GroupsActivity.class);
                     startActivity(intentTo);
                 });
-            }
-            else {
+            } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -114,23 +117,27 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
 
-    private void setScreenContentByBackend(){
+    private void setScreenContentByBackend() {
         Intent intent = getIntent();
         String groupId = intent.getStringExtra("id");
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass("groups/"+groupId, "authorization", account.getIdToken());
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
+        BackendServiceClass backendService = new BackendServiceClass("groups" +
+                "/" + groupId, "authorization", account.getIdToken());
 
         Request request = backendService.getGetRequestWithHeaderOnly();
         new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
                     JSONObject jsonResponse = new JSONObject(responseBody);
-                    JSONObject groupObject = jsonResponse.getJSONObject("group");
+                    JSONObject groupObject = jsonResponse.getJSONObject(
+                            "group");
                     JSONArray members = groupObject.getJSONArray("members");
 
-                    //JSONArray memberArray = jsonResponse.getJSONArray("members");
+                    //JSONArray memberArray = jsonResponse.getJSONArray
+                    // ("members");
 
                     runOnUiThread(() -> {
                         setMemberInformation(members);
@@ -141,25 +148,29 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            else {
+            } else {
                 Log.d("TAG", "Sdsda");
             }
         }).start();
     }
 
-    private void setMemberInformation(JSONArray memberArray){
-        memberBtn.setMainTitleText(String.format("Members (%d)", memberArray.length()));
+    private void setMemberInformation(JSONArray memberArray) {
+        memberBtn.setMainTitleText(String.format("Members (%d)",
+                memberArray.length()));
         memberBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
-                View dialogView = LayoutInflater.from(GroupDetailsActivity.this).inflate(R.layout.member_list_view,null);
-                final LinearLayout memberList = dialogView.findViewById(R.id.member_list_container);
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(GroupDetailsActivity.this);
+                View dialogView =
+                        LayoutInflater.from(GroupDetailsActivity.this).inflate(R.layout.member_list_view, null);
+                final LinearLayout memberList =
+                        dialogView.findViewById(R.id.member_list_container);
 
 
-                for (int i=0 ; i<memberArray.length(); i++){
-                    DefaultCardButtonView cardButtonView = new DefaultCardButtonView(GroupDetailsActivity.this);
+                for (int i = 0; i < memberArray.length(); i++) {
+                    DefaultCardButtonView cardButtonView =
+                            new DefaultCardButtonView(GroupDetailsActivity.this);
                     try {
                         JSONObject member = memberArray.getJSONObject(i);
                         String username = member.getString("username");
@@ -171,12 +182,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 }
 
                 builder.setView(dialogView);
-                builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
+                builder.setNegativeButton("Close",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
                 final AlertDialog dialog = builder.create();
 
                 dialog.show();
@@ -190,11 +203,12 @@ public class GroupDetailsActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             Intent intent = new Intent(this, GroupsActivity.class);
             startActivity(intent);
-            overridePendingTransition(0,0);
+            overridePendingTransition(0, 0);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
             deleteGroupViaBackend();
-            //Toast.makeText(this, "Delete List Clicked", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Delete List Clicked", Toast.LENGTH_SHORT)
+            // .show();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -207,30 +221,36 @@ public class GroupDetailsActivity extends AppCompatActivity {
         return true;
     }
 
-    private void deleteGroupViaBackend(){
+    private void deleteGroupViaBackend() {
         Intent intent = getIntent();
         String groupId = intent.getStringExtra("id");
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass("groups/" + groupId + "/delete", "authorization", account.getIdToken());
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
+        BackendServiceClass backendService = new BackendServiceClass("groups" +
+                "/" + groupId + "/delete", "authorization",
+                account.getIdToken());
         Request request = backendService.doDeleteRequestWithHeaderOnly();
 
         new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
-            if (response.isSuccessful()){
-                runOnUiThread(()-> {
-                    Toast.makeText(GroupDetailsActivity.this, "Deleted group", Toast.LENGTH_SHORT).show();
-                    Intent intentToShift = new Intent(GroupDetailsActivity.this, GroupsActivity.class);
+            if (response.isSuccessful()) {
+                runOnUiThread(() -> {
+                    Toast.makeText(GroupDetailsActivity.this, "Deleted group"
+                            , Toast.LENGTH_SHORT).show();
+                    Intent intentToShift =
+                            new Intent(GroupDetailsActivity.this,
+                                    GroupsActivity.class);
                     startActivity(intentToShift);
                 });
-            }
-            else {
+            } else {
                 runOnUiThread(() -> {
                     try {
                         Log.d("TAG", response.body().string());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    Toast.makeText(GroupDetailsActivity.this, "Unable to delete group", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupDetailsActivity.this, "Unable to " +
+                            "delete group", Toast.LENGTH_SHORT).show();
                 });
             }
         }).start();

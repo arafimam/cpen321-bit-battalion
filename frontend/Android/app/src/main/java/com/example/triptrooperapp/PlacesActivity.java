@@ -1,12 +1,5 @@
 package com.example.triptrooperapp;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,13 +11,16 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +40,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
 
     private TextView textHeader;
     private Toolbar toolbar;
-    private int checkLocationUpdateTime = 1000;
+    private final int checkLocationUpdateTime = 1000;
     private LocationManager locationManager;
 
     private String longitude;
@@ -55,7 +51,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_places);
-        Intent intentFrom= getIntent();
+        Intent intentFrom = getIntent();
         String context = intentFrom.getStringExtra("context");
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -70,17 +66,21 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
 
         textHeader.setText(R.string.place_list_header);
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        locationManager =
+                (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                || ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
 
             // Request location updates
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, checkLocationUpdateTime, 0, this);
 
             // Get last known location immediately
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location lastKnownLocation =
+                    locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (lastKnownLocation != null) {
                 longitude = String.valueOf(lastKnownLocation.getLongitude());
                 latitude = String.valueOf(lastKnownLocation.getLatitude());
@@ -91,13 +91,11 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
             }
         }
 
-        if(context.equals("nearby")){
+        if (context.equals("nearby")) {
             retrievePlaces();
-        }
-        else {
+        } else {
             retrievePlacesByDestination();
         }
-
 
 
         Log.d("PLACES", "Starting up places activity");
@@ -105,65 +103,83 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
 
     private void retrievePlaces() {
         Log.d("TAG", "Retrieving places...");
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(PlacesActivity.this);
-        String url = "places/currLocation?latitude=" + latitude + "&longitude=" + longitude;
-        BackendServiceClass backendService = new BackendServiceClass(url, "authorization", account.getIdToken());
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(PlacesActivity.this);
+        String url = "places/currLocation?latitude=" + latitude + "&longitude" +
+                "=" + longitude;
+        BackendServiceClass backendService = new BackendServiceClass(url,
+                "authorization", account.getIdToken());
         Request request = backendService.getGetRequestWithHeaderOnly();
 
         new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
-                    Log.d("TAG",responseBody);
+                    Log.d("TAG", responseBody);
                     // displayName, shortFormattedAddress, rating
                     JSONObject jsonResponse = new JSONObject(responseBody);
                     JSONArray places = jsonResponse.getJSONArray("places");
-                    for (int i=0; i<places.length(); i++){
+                    for (int i = 0; i < places.length(); i++) {
                         JSONObject place = places.getJSONObject(i);
-                        runOnUiThread(()-> {
-                            ListBoxComponentView listBox = new ListBoxComponentView(PlacesActivity.this);
+                        runOnUiThread(() -> {
+                            ListBoxComponentView listBox =
+                                    new ListBoxComponentView(PlacesActivity.this);
                             try {
-                                String placeName = place.getString("displayName");
-                                String address = place.getString("shortFormattedAddress");
+                                String placeName = place.getString(
+                                        "displayName");
+                                String address = place.getString(
+                                        "shortFormattedAddress");
                                 String rating = place.optString("rating", "--");
                                 listBox.setMainTitleText(placeName);
                                 listBox.setSubTitleText(address);
-                                listBox.setSideTitleText("     Rating: "+ rating+ "/5");
+                                listBox.setSideTitleText("     Rating: " + rating + "/5");
 
                                 Intent intentFrom = getIntent();
-                                if (intentFrom.getStringExtra("list").equals("list")){
+                                if (intentFrom.getStringExtra("list").equals(
+                                        "list")) {
                                     listBox.setActionOnCardClick(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            String listId = intentFrom.getStringExtra("listId");
-                                            String url = "lists/"+listId+"/add/place";
+                                            String listId =
+                                                    intentFrom.getStringExtra("listId");
+                                            String url = "lists/" + listId +
+                                                    "/add/place";
                                             Log.d("TAG", place.toString());
 
-                                            JSONObject jsonResponseForList = new JSONObject();
+                                            JSONObject jsonResponseForList =
+                                                    new JSONObject();
                                             try {
-                                                jsonResponseForList.put("place", place);
+                                                jsonResponseForList.put(
+                                                        "place", place);
                                             } catch (JSONException e) {
                                                 throw new RuntimeException(e);
                                             }
-                                            BackendServiceClass backendServiceClass = new BackendServiceClass(url,jsonResponseForList,"authorization", account.getIdToken());
-                                            Request request1 = backendServiceClass.doPutRequestWithJsonAndHeader();
-                                            new Thread(()-> {
-                                                Response response1 = backendServiceClass.getResponseFromRequest(request1);
-                                                if (response1.isSuccessful()){
+                                            BackendServiceClass backendServiceClass = new BackendServiceClass(
+                                                    url, jsonResponseForList,
+                                                    "authorization",
+                                                    account.getIdToken());
+                                            Request request1 =
+                                                    backendServiceClass.doPutRequestWithJsonAndHeader();
+                                            new Thread(() -> {
+                                                Response response1 =
+                                                        backendServiceClass.getResponseFromRequest(request1);
+                                                if (response1.isSuccessful()) {
                                                     try {
 
-                                                        Log.d("TAG", response1.body().string());
+                                                        Log.d("TAG",
+                                                                response1.body().string());
                                                     } catch (IOException e) {
                                                         throw new RuntimeException(e);
                                                     }
-                                                    runOnUiThread(()-> {
-                                                        Toast.makeText(PlacesActivity.this, "Added " + placeName+" in List", Toast.LENGTH_SHORT).show();
+                                                    runOnUiThread(() -> {
+                                                        Toast.makeText(PlacesActivity.this,
+                                                                "Added " + placeName + " in List", Toast.LENGTH_SHORT).show();
                                                     });
-                                                }
-                                                else{
+                                                } else {
                                                     try {
-                                                        Log.d("TAG", response1.body().string());
+                                                        Log.d("TAG",
+                                                                response1.body().string());
                                                     } catch (IOException e) {
                                                         throw new RuntimeException(e);
                                                     }
@@ -188,8 +204,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                     throw new RuntimeException(e);
                 }
 
-            }
-            else {
+            } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -199,68 +214,86 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
         }).start();
     }
 
-    private void retrievePlacesByDestination(){
+    private void retrievePlacesByDestination() {
         Intent intentFrom = getIntent();
         String destination = intentFrom.getStringExtra("destination");
 
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(PlacesActivity.this);
-        String url = "places/destination?textQuery=" +destination + "&category=";
-        BackendServiceClass backendService = new BackendServiceClass(url, "authorization", account.getIdToken());
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(PlacesActivity.this);
+        String url = "places/destination?textQuery=" + destination +
+                "&category=";
+        BackendServiceClass backendService = new BackendServiceClass(url,
+                "authorization", account.getIdToken());
         Request request = backendService.getGetRequestWithHeaderOnly();
 
         new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
-                    Log.d("TAG",responseBody);
+                    Log.d("TAG", responseBody);
                     // displayName, shortFormattedAddress, rating
                     JSONObject jsonResponse = new JSONObject(responseBody);
                     JSONArray places = jsonResponse.getJSONArray("places");
-                    for (int i=0; i<places.length(); i++){
+                    for (int i = 0; i < places.length(); i++) {
                         JSONObject place = places.getJSONObject(i);
-                        runOnUiThread(()-> {
-                            ListBoxComponentView listBox = new ListBoxComponentView(PlacesActivity.this);
+                        runOnUiThread(() -> {
+                            ListBoxComponentView listBox =
+                                    new ListBoxComponentView(PlacesActivity.this);
                             try {
-                                String placeName = place.getString("displayName");
-                                String address = place.getString("shortFormattedAddress");
+                                String placeName = place.getString(
+                                        "displayName");
+                                String address = place.getString(
+                                        "shortFormattedAddress");
                                 String rating = place.optString("rating", "--");
                                 listBox.setMainTitleText(placeName);
                                 listBox.setSubTitleText(address);
-                                listBox.setSideTitleText("     Rating: "+ rating+ "/5");
+                                listBox.setSideTitleText("     Rating: " + rating + "/5");
 
-                                if (intentFrom.getStringExtra("list").equals("list")){
+                                if (intentFrom.getStringExtra("list").equals(
+                                        "list")) {
                                     listBox.setActionOnCardClick(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            String listId = intentFrom.getStringExtra("listId");
-                                            String url = "lists/"+listId+"/add/place";
+                                            String listId =
+                                                    intentFrom.getStringExtra("listId");
+                                            String url = "lists/" + listId +
+                                                    "/add/place";
                                             Log.d("TAG", place.toString());
 
-                                            JSONObject jsonResponseForList = new JSONObject();
+                                            JSONObject jsonResponseForList =
+                                                    new JSONObject();
                                             try {
-                                                jsonResponseForList.put("place", place);
+                                                jsonResponseForList.put(
+                                                        "place", place);
                                             } catch (JSONException e) {
                                                 throw new RuntimeException(e);
                                             }
-                                            BackendServiceClass backendServiceClass = new BackendServiceClass(url,jsonResponseForList,"authorization", account.getIdToken());
-                                            Request request1 = backendServiceClass.doPutRequestWithJsonAndHeader();
-                                            new Thread(()-> {
-                                                Response response1 = backendServiceClass.getResponseFromRequest(request1);
-                                                if (response1.isSuccessful()){
+                                            BackendServiceClass backendServiceClass = new BackendServiceClass(
+                                                    url, jsonResponseForList,
+                                                    "authorization",
+                                                    account.getIdToken());
+                                            Request request1 =
+                                                    backendServiceClass.doPutRequestWithJsonAndHeader();
+                                            new Thread(() -> {
+                                                Response response1 =
+                                                        backendServiceClass.getResponseFromRequest(request1);
+                                                if (response1.isSuccessful()) {
                                                     try {
 
-                                                        Log.d("TAG", response1.body().string());
+                                                        Log.d("TAG",
+                                                                response1.body().string());
                                                     } catch (IOException e) {
                                                         throw new RuntimeException(e);
                                                     }
-                                                    runOnUiThread(()-> {
-                                                        Toast.makeText(PlacesActivity.this, "Added " + placeName+" in List", Toast.LENGTH_SHORT).show();
+                                                    runOnUiThread(() -> {
+                                                        Toast.makeText(
+                                                                PlacesActivity.this, "Added " + placeName + " in List", Toast.LENGTH_SHORT).show();
                                                     });
-                                                }
-                                                else{
+                                                } else {
                                                     try {
-                                                        Log.d("TAG", response1.body().string());
+                                                        Log.d("TAG",
+                                                                response1.body().string());
                                                     } catch (IOException e) {
                                                         throw new RuntimeException(e);
                                                     }
@@ -283,8 +316,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                     throw new RuntimeException(e);
                 }
 
-            }
-            else {
+            } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -299,11 +331,10 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             Intent intentFrom = getIntent();
-            if (intentFrom.getStringExtra("list").equals("list")){
+            if (intentFrom.getStringExtra("list").equals("list")) {
                 Intent intent = new Intent(this, ListActivity.class);
                 startActivity(intent);
-            }
-            else{
+            } else {
                 Intent intent = new Intent(this, ActivitiesActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0);

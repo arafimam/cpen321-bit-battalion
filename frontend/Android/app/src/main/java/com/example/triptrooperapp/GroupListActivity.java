@@ -1,10 +1,5 @@
 package com.example.triptrooperapp;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +11,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -39,6 +38,7 @@ public class GroupListActivity extends AppCompatActivity {
 
     /**
      * Requires groupName and groupId in intent.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -57,10 +57,15 @@ public class GroupListActivity extends AppCompatActivity {
         addList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(GroupListActivity.this);
-                View dialogView = LayoutInflater.from(GroupListActivity.this).inflate(R.layout.create_list_dialog_view,null);
-                final EditText listNameText = dialogView.findViewById(R.id.list_name_textField);
-                GreenButtonView createListButton = dialogView.findViewById(R.id.create_list_button);
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(GroupListActivity.this);
+                View dialogView =
+                        LayoutInflater.from(GroupListActivity.this).
+                                inflate(R.layout.create_list_dialog_view, null);
+                final EditText listNameText =
+                        dialogView.findViewById(R.id.list_name_textField);
+                GreenButtonView createListButton =
+                        dialogView.findViewById(R.id.create_list_button);
                 createListButton.setButtonText("Create List");
                 builder.setView(dialogView);
 
@@ -68,11 +73,11 @@ public class GroupListActivity extends AppCompatActivity {
                 createListButton.setButtonActionOnClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (listNameText.getText().toString().equals("")){
-                            Toast.makeText(GroupListActivity.this, "List Name Empty", Toast.LENGTH_SHORT).show();
+                        if (listNameText.getText().toString().equals("")) {
+                            Toast.makeText(GroupListActivity.this, "List Name" +
+                                    " Empty", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
-                        }
-                        else {
+                        } else {
                             createGroupList(listNameText.getText().toString());
                             dialog.dismiss();
                         }
@@ -89,36 +94,45 @@ public class GroupListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void retrieveGroupList(){
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(GroupListActivity.this);
+    private void retrieveGroupList() {
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(GroupListActivity.this);
         Intent intent = getIntent();
         final String groupId = intent.getStringExtra("groupId");
 
-        BackendServiceClass backendService = new BackendServiceClass("groups/"+groupId+"/lists","authorization",account.getIdToken());
+        BackendServiceClass backendService = new BackendServiceClass("groups" +
+                "/" + groupId + "/lists", "authorization",
+                account.getIdToken());
         Request request = backendService.getGetRequestWithHeaderOnly();
         new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 try {
-                    JSONObject jsonResponse = new JSONObject(response.body().string());
+                    JSONObject jsonResponse =
+                            new JSONObject(response.body().string());
                     JSONArray listArray = jsonResponse.getJSONArray("lists");
                     runOnUiThread(() -> {
-                        for (int i=0;i<listArray.length();i++){
+                        for (int i = 0; i < listArray.length(); i++) {
                             try {
                                 JSONObject list = listArray.getJSONObject(i);
-                                final String listName = list.getString("listName");
+                                final String listName = list.getString(
+                                        "listName");
                                 final String listId = list.getString("_id");
-                                ListBoxComponentView listBox = new ListBoxComponentView(GroupListActivity.this);
+                                ListBoxComponentView listBox =
+                                        new ListBoxComponentView(GroupListActivity.this);
                                 listBox.setMainTitleText(listName);
-                                listBox.setVisibilityOfTextViews(View.VISIBLE, View.INVISIBLE, View.INVISIBLE);
+                                listBox.setVisibilityOfTextViews(View.VISIBLE
+                                        , View.INVISIBLE, View.INVISIBLE);
                                 listBox.setActionOnCardClick(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        Intent intent = new Intent(GroupListActivity.this, ListDetailsActivity.class);
+                                        Intent intent =
+                                                new Intent(GroupListActivity.this,
+                                                        ListDetailsActivity.class);
                                         intent.putExtra("listName", listName);
-                                        intent.putExtra("id",listId);
-                                        intent.putExtra("context","groupList");
-                                        intent.putExtra("groupId",groupId);
+                                        intent.putExtra("id", listId);
+                                        intent.putExtra("context", "groupList");
+                                        intent.putExtra("groupId", groupId);
                                         startActivity(intent);
                                     }
                                 });
@@ -134,8 +148,7 @@ public class GroupListActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            else{
+            } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -145,8 +158,9 @@ public class GroupListActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void createGroupList(String listName){
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(GroupListActivity.this);
+    private void createGroupList(String listName) {
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(GroupListActivity.this);
         Intent intent = getIntent();
         final String groupId = intent.getStringExtra("groupId");
 
@@ -156,17 +170,21 @@ public class GroupListActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        BackendServiceClass backendServiceClass = new BackendServiceClass("groups/"+groupId+"/add/list",json, "authorization",account.getIdToken());
+        BackendServiceClass backendServiceClass = new BackendServiceClass(
+                "groups/" + groupId + "/add/list", json, "authorization",
+                account.getIdToken());
         Request request = backendServiceClass.doPutRequestWithJsonAndHeader();
         new Thread(() -> {
-            Response response = backendServiceClass.getResponseFromRequest(request);
-            if (response.isSuccessful()){
-                runOnUiThread(()-> {
-                   Toast.makeText(GroupListActivity.this, "List "+listName+ " Created.", Toast.LENGTH_SHORT).show();
-                   recreate();
+            Response response =
+                    backendServiceClass.getResponseFromRequest(request);
+            if (response.isSuccessful()) {
+                runOnUiThread(() -> {
+                    Toast.makeText(GroupListActivity.this,
+                            "List " + listName + " Created.",
+                            Toast.LENGTH_SHORT).show();
+                    recreate();
                 });
-            }
-            else {
+            } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -184,9 +202,9 @@ public class GroupListActivity extends AppCompatActivity {
             Intent intentGet = getIntent();
             String groupId = intentGet.getStringExtra("groupId");
             Intent intent = new Intent(this, GroupDetailsActivity.class);
-            intent.putExtra("id",groupId);
+            intent.putExtra("id", groupId);
             startActivity(intent);
-            overridePendingTransition(0,0);
+            overridePendingTransition(0, 0);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
             // TODO: pass the id to backend to delete the list.

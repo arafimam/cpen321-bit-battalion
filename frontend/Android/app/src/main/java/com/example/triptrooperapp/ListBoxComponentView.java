@@ -1,7 +1,6 @@
 package com.example.triptrooperapp;
 
 import android.content.Context;
-import android.opengl.Visibility;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,8 +27,9 @@ public class ListBoxComponentView extends LinearLayout {
         initializeCardViewComponent(context);
     }
 
-    private void initializeCardViewComponent(Context context){
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    private void initializeCardViewComponent(Context context) {
+        LayoutInflater inflater =
+                (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.list_box, this, true);
 
         cardView = findViewById(R.id.card_view);
@@ -40,44 +40,48 @@ public class ListBoxComponentView extends LinearLayout {
 
     /**
      * Setter function for main title text.
+     *
      * @param mainTitleTextToSet
      */
-    public void setMainTitleText(String mainTitleTextToSet){
+    public void setMainTitleText(String mainTitleTextToSet) {
         mainTitle.setText(mainTitleTextToSet);
     }
 
     /**
      * Setter function for side title text.
+     *
      * @param sideTitleTextToSet
      */
-    public void setSideTitleText(String sideTitleTextToSet){
+    public void setSideTitleText(String sideTitleTextToSet) {
         sideTitle.setText(sideTitleTextToSet);
     }
 
     /**
      * Setter function for sub title text.
+     *
      * @param subTitleTextToSet
      */
-    public void setSubTitleText(String subTitleTextToSet){
+    public void setSubTitleText(String subTitleTextToSet) {
         subTitle.setText(subTitleTextToSet);
     }
 
     /**
      * Sets the visibility of TextView.
      * Do not set visibility to GONE
+     *
      * @param visibilityOfMainTitle VISIBLE OR INVISIBLE
      * @param visibilityOfSideTitle VISIBLE OR INVISIBLE
-     * @param visibilityOfSubTitle VISIBLE OR INVISIBLE
+     * @param visibilityOfSubTitle  VISIBLE OR INVISIBLE
      */
     public void setVisibilityOfTextViews(int visibilityOfMainTitle,
                                          int visibilityOfSideTitle,
-                                         int visibilityOfSubTitle){
+                                         int visibilityOfSubTitle) {
         mainTitle.setVisibility(visibilityOfMainTitle);
         sideTitle.setVisibility(visibilityOfSideTitle);
         subTitle.setVisibility(visibilityOfSubTitle);
     }
 
-    public void setActionOnCardClick(View.OnClickListener listener){
+    public void setActionOnCardClick(View.OnClickListener listener) {
         cardView.setOnClickListener(listener);
     }
 }

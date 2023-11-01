@@ -1,11 +1,6 @@
 package com.example.triptrooperapp;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.annotation.SuppressLint;
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,11 +8,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -75,17 +73,23 @@ public class ListDetailsActivity extends AppCompatActivity {
         addActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ListDetailsActivity.this);
-                View dialogView = LayoutInflater.from(ListDetailsActivity.this).inflate(R.layout.member_list_view,null);
-                final LinearLayout activityOptions = dialogView.findViewById(R.id.member_list_container);
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(ListDetailsActivity.this);
+                View dialogView =
+                        LayoutInflater.from(ListDetailsActivity.this).
+                                inflate(R.layout.member_list_view, null);
+                final LinearLayout activityOptions =
+                        dialogView.findViewById(R.id.member_list_container);
 
-                DefaultCardButtonView nearby = new DefaultCardButtonView(ListDetailsActivity.this);
+                DefaultCardButtonView nearby =
+                        new DefaultCardButtonView(ListDetailsActivity.this);
                 nearby.setMainTitleText("Add Activity by nearby location");
 
                 nearby.setActionForOnClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(ListDetailsActivity.this, PlacesActivity.class);
+                        Intent intent = new Intent(ListDetailsActivity.this,
+                                PlacesActivity.class);
                         intent.putExtra("context", "nearby");
                         intent.putExtra("list", "list");
                         Intent intentFrom = getIntent();
@@ -95,7 +99,8 @@ public class ListDetailsActivity extends AppCompatActivity {
                     }
                 });
 
-                DefaultCardButtonView destination = new DefaultCardButtonView(ListDetailsActivity.this);
+                DefaultCardButtonView destination =
+                        new DefaultCardButtonView(ListDetailsActivity.this);
                 destination.setMainTitleText("Add Activity by destination");
 
 
@@ -105,11 +110,16 @@ public class ListDetailsActivity extends AppCompatActivity {
                 destination.setActionForOnClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ListDetailsActivity.this);
-                        View dialogView = LayoutInflater.from(ListDetailsActivity.this).inflate(R.layout.create_list_dialog_view,null);
-                        final EditText destinationText = dialogView.findViewById(R.id.list_name_textField);
+                        AlertDialog.Builder builder =
+                                new AlertDialog.Builder(ListDetailsActivity.this);
+                        View dialogView =
+                                LayoutInflater.from(ListDetailsActivity.this).
+                                        inflate(R.layout.create_list_dialog_view, null);
+                        final EditText destinationText =
+                                dialogView.findViewById(R.id.list_name_textField);
                         destinationText.setHint("Destination Name");
-                        GreenButtonView createListButton = dialogView.findViewById(R.id.create_list_button);
+                        GreenButtonView createListButton =
+                                dialogView.findViewById(R.id.create_list_button);
                         createListButton.setButtonText("Enter destination");
                         builder.setView(dialogView);
 
@@ -117,14 +127,18 @@ public class ListDetailsActivity extends AppCompatActivity {
                         createListButton.setButtonActionOnClick(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if (destinationText.getText().toString().equals("")){
-                                    Toast.makeText(ListDetailsActivity.this, "No destination entered.", Toast.LENGTH_SHORT).show();
+                                if (destinationText.getText().toString().equals("")) {
+                                    Toast.makeText(ListDetailsActivity.this,
+                                            "No destination entered.",
+                                            Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
-                                }
-                                else {
-                                    Intent intentTo = new Intent(ListDetailsActivity.this, PlacesActivity.class);
-                                    intentTo.putExtra("destination", destinationText.getText().toString());
-                                    intentTo.putExtra("context", "byDestination");
+                                } else {
+                                    Intent intentTo =
+                                            new Intent(ListDetailsActivity.this, PlacesActivity.class);
+                                    intentTo.putExtra("destination",
+                                            destinationText.getText().toString());
+                                    intentTo.putExtra("context",
+                                            "byDestination");
                                     intentTo.putExtra("list", "list");
                                     intentTo.putExtra("listId", listId);
                                     startActivity(intentTo);
@@ -155,11 +169,12 @@ public class ListDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void doComplexAlgorithm(){
-        for (int i=0;i<placesIds.size();i++){
+    private void doComplexAlgorithm() {
+        for (int i = 0; i < placesIds.size(); i++) {
             Log.d("TAG", placesIds.get(i));
         }
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
         Log.d("TAG", account.getIdToken());
         JSONArray placeArray = new JSONArray(placesIds);
         JSONObject jsonBody = new JSONObject();
@@ -172,33 +187,43 @@ public class ListDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
-        String url = "lists/" + listId +"/add/schedule";
-        BackendServiceClass backendServiceClass = new BackendServiceClass(url, jsonBody, "authorization", account.getIdToken());
+        String url = "lists/" + listId + "/add/schedule";
+        BackendServiceClass backendServiceClass = new BackendServiceClass(url
+                , jsonBody, "authorization", account.getIdToken());
         Request request = backendServiceClass.doPutRequestWithJsonAndHeader();
 
         new Thread(() -> {
-            Response response = backendServiceClass.getResponseFromRequest(request);
-            if (response.isSuccessful()){
+            Response response =
+                    backendServiceClass.getResponseFromRequest(request);
+            if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
                     JSONObject jsonResponse = new JSONObject(responseBody);
                     JSONArray schedules = jsonResponse.getJSONArray("schedule");
 
                     runOnUiThread(() -> {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ListDetailsActivity.this);
-                        View dialogView = LayoutInflater.from(ListDetailsActivity.this).inflate(R.layout.member_list_view,null);
-                        final LinearLayout scheduleContainer = dialogView.findViewById(R.id.member_list_container);
+                        AlertDialog.Builder builder =
+                                new AlertDialog.Builder(ListDetailsActivity.this);
+                        View dialogView =
+                                LayoutInflater.from(ListDetailsActivity.this).inflate(R.layout.member_list_view, null);
+                        final LinearLayout scheduleContainer =
+                                dialogView.findViewById(R.id.member_list_container);
 
-                        for (int i=0;i<schedules.length();i++){
+                        for (int i = 0; i < schedules.length(); i++) {
                             try {
-                                JSONObject schedule = schedules.getJSONObject(i);
-                                ListBoxComponentView listBox = new ListBoxComponentView(ListDetailsActivity.this);
-                                String placeName = schedule.getString("displayName");
-                                String address = schedule.getString("shortFormattedAddress");
-                                String rating = schedule.optString("rating", "--");
+                                JSONObject schedule =
+                                        schedules.getJSONObject(i);
+                                ListBoxComponentView listBox =
+                                        new ListBoxComponentView(ListDetailsActivity.this);
+                                String placeName = schedule.getString(
+                                        "displayName");
+                                String address = schedule.getString(
+                                        "shortFormattedAddress");
+                                String rating = schedule.optString("rating",
+                                        "--");
                                 listBox.setMainTitleText(placeName);
                                 listBox.setSubTitleText(address);
-                                listBox.setSideTitleText("     Rating: "+ rating+ "/5");
+                                listBox.setSideTitleText("     Rating: " + rating + "/5");
 
                                 scheduleContainer.addView(listBox);
                             } catch (JSONException e) {
@@ -216,14 +241,12 @@ public class ListDetailsActivity extends AppCompatActivity {
                     });
 
 
-
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            else{
+            } else {
                 try {
                     Log.d("TAG", "Failured");
                     Log.d("TAG", response.body().string());
@@ -237,32 +260,37 @@ public class ListDetailsActivity extends AppCompatActivity {
     private void retrievePlacesForList() {
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
-        String url = "lists/"+ listId+"/places";
+        String url = "lists/" + listId + "/places";
 
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass(url, "authorization",account.getIdToken());
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
+        BackendServiceClass backendService = new BackendServiceClass(url,
+                "authorization", account.getIdToken());
         Request request = backendService.getGetRequestWithHeaderOnly();
-        new Thread(()-> {
+        new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
 
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
                     JSONObject jsonResponse = new JSONObject(responseBody);
                     JSONArray places = jsonResponse.getJSONArray("places");
                     Log.d("TAG", places.toString());
-                    for (int i=0;i<places.length();i++){
+                    for (int i = 0; i < places.length(); i++) {
                         JSONObject place = places.getJSONObject(i);
-                        runOnUiThread(()-> {
-                            ListBoxComponentView listBox = new ListBoxComponentView(ListDetailsActivity.this);
+                        runOnUiThread(() -> {
+                            ListBoxComponentView listBox =
+                                    new ListBoxComponentView(ListDetailsActivity.this);
 
                             try {
-                                String placeName = place.getString("displayName");
-                                String address = place.getString("shortFormattedAddress");
+                                String placeName = place.getString(
+                                        "displayName");
+                                String address = place.getString(
+                                        "shortFormattedAddress");
                                 String rating = place.optString("rating", "--");
                                 listBox.setMainTitleText(placeName);
                                 listBox.setSubTitleText(address);
-                                listBox.setSideTitleText("     Rating: "+ rating+ "/5");
+                                listBox.setSideTitleText("     Rating: " + rating + "/5");
                                 String placeId = place.getString("placeId");
                                 placesIds.add(placeId);
                                 activityLayout.addView(listBox);
@@ -279,8 +307,7 @@ public class ListDetailsActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
 
-            }
-            else{
+            } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -290,22 +317,26 @@ public class ListDetailsActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void deleteUserList(){
+    private void deleteUserList() {
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass("users/"+listId+"/remove/list", "authorization",account.getIdToken());
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
+        BackendServiceClass backendService =
+                new BackendServiceClass("users/" + listId + "/remove/list",
+                        "authorization", account.getIdToken());
         Request request = backendService.doPutRequestWithHeaderOnly();
         new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ListDetailsActivity.this, "List Deleted", Toast.LENGTH_SHORT).show();
-                    Intent intentTo = new Intent(ListDetailsActivity.this, ListActivity.class);
+                    Toast.makeText(ListDetailsActivity.this, "List Deleted",
+                            Toast.LENGTH_SHORT).show();
+                    Intent intentTo = new Intent(ListDetailsActivity.this,
+                            ListActivity.class);
                     startActivity(intentTo);
                 });
-            }
-            else{
+            } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -316,11 +347,12 @@ public class ListDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void deleteGroupList(){
+    private void deleteGroupList() {
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
         String groupId = intent.getStringExtra("groupId");
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
         JSONObject json = new JSONObject();
         try {
             json.put("listId", listId);
@@ -328,19 +360,22 @@ public class ListDetailsActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-        BackendServiceClass backendService = new BackendServiceClass("groups/"+groupId+"/remove/list", json,"authorization",account.getIdToken());
+        BackendServiceClass backendService = new BackendServiceClass("groups" +
+                "/" + groupId + "/remove/list", json, "authorization",
+                account.getIdToken());
         Request request = backendService.doPutRequestWithJsonAndHeader();
         new Thread(() -> {
             Response response = backendService.getResponseFromRequest(request);
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ListDetailsActivity.this, "List Deleted", Toast.LENGTH_SHORT).show();
-                    Intent intentTo = new Intent(ListDetailsActivity.this, GroupListActivity.class);
+                    Toast.makeText(ListDetailsActivity.this, "List Deleted",
+                            Toast.LENGTH_SHORT).show();
+                    Intent intentTo = new Intent(ListDetailsActivity.this,
+                            GroupListActivity.class);
                     intentTo.putExtra("groupId", groupId);
                     startActivity(intentTo);
                 });
-            }
-            else{
+            } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -349,21 +384,22 @@ public class ListDetailsActivity extends AppCompatActivity {
             }
         }).start();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             Intent intentFrom = getIntent();
             String context = intentFrom.getStringExtra("context");
-            if (context.equals("userList")){
+            if (context.equals("userList")) {
                 Intent intent = new Intent(this, ListActivity.class);
                 startActivity(intent);
-                overridePendingTransition(0,0);
-            }
-            else {
+                overridePendingTransition(0, 0);
+            } else {
                 Intent intent = new Intent(this, GroupListActivity.class);
-                intent.putExtra("groupId", intentFrom.getStringExtra("groupId"));
+                intent.putExtra("groupId", intentFrom.getStringExtra("groupId"
+                ));
                 startActivity(intent);
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
             }
 
             return true;
@@ -371,10 +407,9 @@ public class ListDetailsActivity extends AppCompatActivity {
             // TODO: pass the id to backend to delete the list.
             Intent intentFrom = getIntent();
             String context = intentFrom.getStringExtra("context");
-            if (context.equals("userList")){
+            if (context.equals("userList")) {
                 deleteUserList();
-            }
-            else {
+            } else {
                 deleteGroupList();
             }
 
