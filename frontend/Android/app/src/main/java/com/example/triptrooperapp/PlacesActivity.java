@@ -13,7 +13,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import okhttp3.Request;
 
 /**
  * Activities screen.
@@ -61,6 +65,15 @@ public class PlacesActivity extends AppCompatActivity {
 
         }
 
+
+    }
+
+    private void retrievePlaces(){
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(PlacesActivity.this);
+
+        BackendServiceClass backendService = new BackendServiceClass("groups/all","authorization", account.getIdToken());
+        Request request = backendService.getGetRequestWithHeaderOnly();
 
     }
 }
