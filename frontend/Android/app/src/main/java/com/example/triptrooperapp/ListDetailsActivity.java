@@ -34,14 +34,8 @@ import okhttp3.Response;
 
 public class ListDetailsActivity extends AppCompatActivity {
 
-    private TextView listName;
     private LinearLayout activityLayout;
-    private Toolbar toolbar;
     private List<String> placesIds;
-
-    private FloatingActionButton addActivity;
-
-    private FloatingActionButton optimizeButton;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -49,16 +43,17 @@ public class ListDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_details);
 
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         placesIds = new ArrayList<>();
-        addActivity = findViewById(R.id.create_list);
-        optimizeButton = findViewById(R.id.optimize_button);
+        FloatingActionButton addActivity = findViewById(R.id.create_list);
+        FloatingActionButton optimizeButton =
+                findViewById(R.id.optimize_button);
 
         Intent intent = getIntent();
         String listNamePassed = intent.getStringExtra("listName");
         String listId = intent.getStringExtra("id");
 
-        listName = findViewById(R.id.list_name_topic);
+        TextView listName = findViewById(R.id.list_name_topic);
         listName.setText(listNamePassed);
 
         activityLayout = findViewById(R.id.list_activity_container);
@@ -182,7 +177,7 @@ public class ListDetailsActivity extends AppCompatActivity {
             jsonBody.put("placeIds", placeArray);
 
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            throw new CustomException("error", e);
         }
 
         Intent intent = getIntent();
@@ -227,7 +222,7 @@ public class ListDetailsActivity extends AppCompatActivity {
 
                                 scheduleContainer.addView(listBox);
                             } catch (JSONException e) {
-                                throw new RuntimeException(e);
+                                throw new CustomException("error", e);
                             }
 
 
@@ -242,16 +237,16 @@ public class ListDetailsActivity extends AppCompatActivity {
 
 
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             } else {
                 try {
                     Log.d("TAG", "Failured");
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             }
         }).start();
@@ -295,23 +290,23 @@ public class ListDetailsActivity extends AppCompatActivity {
                                 placesIds.add(placeId);
                                 activityLayout.addView(listBox);
                             } catch (JSONException e) {
-                                throw new RuntimeException(e);
+                                throw new CustomException("error", e);
                             }
                         });
                     }
 
 
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
 
             } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             }
         }).start();
@@ -340,7 +335,7 @@ public class ListDetailsActivity extends AppCompatActivity {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             }
         }).start();
@@ -357,7 +352,7 @@ public class ListDetailsActivity extends AppCompatActivity {
         try {
             json.put("listId", listId);
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            throw new CustomException("error", e);
         }
 
         BackendServiceClass backendService = new BackendServiceClass("groups" +
@@ -379,7 +374,7 @@ public class ListDetailsActivity extends AppCompatActivity {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             }
         }).start();

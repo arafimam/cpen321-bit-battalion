@@ -37,12 +37,6 @@ import okhttp3.Response;
 public class PlacesActivity extends AppCompatActivity implements LocationListener {
 
     private LinearLayout placesBoxContainer;
-
-    private TextView textHeader;
-    private Toolbar toolbar;
-    private final int checkLocationUpdateTime = 1000;
-    private LocationManager locationManager;
-
     private String longitude;
     private String latitude;
 
@@ -53,7 +47,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
         setContentView(R.layout.activity_places);
         Intent intentFrom = getIntent();
         String context = intentFrom.getStringExtra("context");
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -62,11 +56,11 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
 
         placesBoxContainer = findViewById(R.id.list_layout_container);
 
-        textHeader = findViewById(R.id.group_header);
+        TextView textHeader = findViewById(R.id.group_header);
 
         textHeader.setText(R.string.place_list_header);
 
-        locationManager =
+        LocationManager locationManager =
                 (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -76,6 +70,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                 == PackageManager.PERMISSION_GRANTED) {
 
             // Request location updates
+            int checkLocationUpdateTime = 1000;
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, checkLocationUpdateTime, 0, this);
 
             // Get last known location immediately
@@ -153,7 +148,8 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                 jsonResponseForList.put(
                                                         "place", place);
                                             } catch (JSONException e) {
-                                                throw new RuntimeException(e);
+                                                throw new CustomException(
+                                                        "error", e);
                                             }
                                             BackendServiceClass backendServiceClass = new BackendServiceClass(
                                                     url, jsonResponseForList,
@@ -170,7 +166,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                         Log.d("TAG",
                                                                 response1.body().string());
                                                     } catch (IOException e) {
-                                                        throw new RuntimeException(e);
+                                                        throw new CustomException("error", e);
                                                     }
                                                     runOnUiThread(() -> {
                                                         Toast.makeText(PlacesActivity.this,
@@ -181,7 +177,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                         Log.d("TAG",
                                                                 response1.body().string());
                                                     } catch (IOException e) {
-                                                        throw new RuntimeException(e);
+                                                        throw new CustomException("error", e);
                                                     }
                                                 }
                                             }).start();
@@ -194,21 +190,21 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
 
 
                             } catch (JSONException e) {
-                                throw new RuntimeException(e);
+                                throw new CustomException("error", e);
                             }
                         });
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
 
             } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             }
         }).start();
@@ -267,7 +263,8 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                 jsonResponseForList.put(
                                                         "place", place);
                                             } catch (JSONException e) {
-                                                throw new RuntimeException(e);
+                                                throw new CustomException(
+                                                        "error", e);
                                             }
                                             BackendServiceClass backendServiceClass = new BackendServiceClass(
                                                     url, jsonResponseForList,
@@ -284,7 +281,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                         Log.d("TAG",
                                                                 response1.body().string());
                                                     } catch (IOException e) {
-                                                        throw new RuntimeException(e);
+                                                        throw new CustomException("error", e);
                                                     }
                                                     runOnUiThread(() -> {
                                                         Toast.makeText(
@@ -295,7 +292,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                         Log.d("TAG",
                                                                 response1.body().string());
                                                     } catch (IOException e) {
-                                                        throw new RuntimeException(e);
+                                                        throw new CustomException("error", e);
                                                     }
                                                 }
                                             }).start();
@@ -306,21 +303,21 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                 placesBoxContainer.addView(listBox);
 
                             } catch (JSONException e) {
-                                throw new RuntimeException(e);
+                                throw new CustomException("error", e);
                             }
                         });
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
 
             } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             }
         }).start();

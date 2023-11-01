@@ -24,12 +24,8 @@ import okhttp3.Response;
 
 public class CreateGroupActivity extends AppCompatActivity {
 
-    private GreenButtonView createGroupButton;
-    private GreenButtonView joinGroupButton;
-
     private EditText groupNameField;
     private EditText groupCodeField;
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,20 +48,19 @@ public class CreateGroupActivity extends AppCompatActivity {
      * Initializes screen buttons, toolbar and text fields.
      */
     private void initializeButtonTextFieldAndToolbar() {
-        createGroupButton = findViewById(R.id.create_group);
+        GreenButtonView createGroupButton = findViewById(R.id.create_group);
         createGroupButton.setButtonText("Create Group");
-        joinGroupButton = findViewById(R.id.join_group_btn);
+        GreenButtonView joinGroupButton = findViewById(R.id.join_group_btn);
         joinGroupButton.setButtonText("Join Group");
         groupNameField = findViewById(R.id.group_name_text_field);
         groupCodeField = findViewById(R.id.join_group_text_field);
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
         createGroupButton.setButtonActionOnClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setButtonClickValidation(groupNameField.getText().toString(),
-                        groupNameField.getText().toString(), "Group name not " +
-                                "entered", true);
+                        groupNameField.getText().toString(), true);
             }
         });
 
@@ -73,8 +68,7 @@ public class CreateGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setButtonClickValidation(groupCodeField.getText().toString(),
-                        groupCodeField.getText().toString(), "Group code not " +
-                                "entered", false);
+                        groupCodeField.getText().toString(), false);
             }
         });
 
@@ -90,11 +84,9 @@ public class CreateGroupActivity extends AppCompatActivity {
      * if text to validate is empty shows a toast message with failureMessage
      *
      * @param textToValidate
-     * @param successMessage
      * @param failureMessage
      */
     private void setButtonClickValidation(String textToValidate,
-                                          String successMessage,
                                           String failureMessage,
                                           boolean isCreatingNewGroup) {
         if (textToValidate.equals("")) {
@@ -106,7 +98,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                 try {
                     json.put("groupName", textToValidate);
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
                 GoogleSignInAccount account =
                         GoogleSignIn.getLastSignedInAccount(this);
@@ -134,14 +126,14 @@ public class CreateGroupActivity extends AppCompatActivity {
                             });
 
                         } catch (JSONException e) {
-                            throw new RuntimeException(e);
+                            throw new CustomException("error", e);
                         }
                     } else {
                         runOnUiThread(() -> {
                             try {
                                 Log.d("TAG", response.body().string());
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                throw new CustomException("error", e);
                             }
                             Toast.makeText(CreateGroupActivity.this, "Unable " +
                                     "to create group.", Toast.LENGTH_SHORT).show();
@@ -176,12 +168,12 @@ public class CreateGroupActivity extends AppCompatActivity {
                             try {
                                 Log.d("TAG", response.body().string());
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                throw new CustomException("error", e);
                             }
                         }
                     }).start();
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
 
             }

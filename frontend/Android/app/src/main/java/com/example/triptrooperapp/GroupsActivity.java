@@ -29,7 +29,6 @@ import okhttp3.Response;
 public class GroupsActivity extends AppCompatActivity {
 
     private LinearLayout listBoxContainer;
-    private FloatingActionButton createGroupButton;
     private ProgressBar loader;
 
     @Override
@@ -44,7 +43,8 @@ public class GroupsActivity extends AppCompatActivity {
         retrieveUserGroups();
 
 
-        createGroupButton = findViewById(R.id.create_group);
+        FloatingActionButton createGroupButton =
+                findViewById(R.id.create_group);
         createGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,9 +100,9 @@ public class GroupsActivity extends AppCompatActivity {
                         }
 
                     } catch (JSONException e) {
-                        throw new RuntimeException(e);
+                        throw new CustomException("error", e);
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new CustomException("error", e);
                     }
 
                     loader.setVisibility(View.INVISIBLE);
@@ -112,7 +112,7 @@ public class GroupsActivity extends AppCompatActivity {
                     try {
                         Log.d("TAG", response.body().string());
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new CustomException("error", e);
                     }
                     loader.setVisibility(View.INVISIBLE);
                     Toast.makeText(GroupsActivity.this, "Something wrong",

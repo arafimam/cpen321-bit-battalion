@@ -31,9 +31,6 @@ import okhttp3.Response;
 
 public class GroupListActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private TextView groupListHeader;
-    private FloatingActionButton addList;
     private LinearLayout listContainer;
 
     /**
@@ -48,12 +45,11 @@ public class GroupListActivity extends AppCompatActivity {
 
         listContainer = findViewById(R.id.list_layout_container);
         retrieveGroupList();
-        toolbar = findViewById(R.id.toolbar);
-        Intent intent = getIntent();
-        groupListHeader = findViewById(R.id.list_header);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        TextView groupListHeader = findViewById(R.id.list_header);
         groupListHeader.setText("Group Lists");
 
-        addList = findViewById(R.id.create_list);
+        FloatingActionButton addList = findViewById(R.id.create_list);
         addList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,21 +134,21 @@ public class GroupListActivity extends AppCompatActivity {
                                 });
                                 listContainer.addView(listBox);
                             } catch (JSONException e) {
-                                throw new RuntimeException(e);
+                                throw new CustomException("error", e);
                             }
                         }
                     });
 
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             } else {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
             }
         }).start();
@@ -168,7 +164,7 @@ public class GroupListActivity extends AppCompatActivity {
         try {
             json.put("listName", listName);
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            throw new CustomException("error", e);
         }
         BackendServiceClass backendServiceClass = new BackendServiceClass(
                 "groups/" + groupId + "/add/list", json, "authorization",
@@ -188,7 +184,7 @@ public class GroupListActivity extends AppCompatActivity {
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
 
             }
