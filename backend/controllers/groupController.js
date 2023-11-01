@@ -1,11 +1,3 @@
-// Group:
-// 1. POST /api/groups/create_group items: {group_name}
-// 2. GET /api/groups/all_groups
-// 3. POST /api/groups/add_to_group items: {userId, group_code}
-// 4. GET /api/groups/group?group_id={group_id}
-// 5. DELETE /api/groups/delete_group items: {group_id}
-// 6. DELETE /api/groups/leave_group items: {group_id, userId}
-
 const express = require('express');
 
 const groupService = require('../services/groupService.js');
@@ -84,6 +76,7 @@ router.delete('/:id/delete', middleware.verifyToken, async (req, res) => {
   }
 });
 
+// Help from chatGPT
 // Add user to group
 router.put('/join', middleware.verifyToken, middleware.getUser, async (req, res) => {
   // Group code as part of request body

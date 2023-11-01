@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { List } = require('./listModel.js');
 
+// Help from chatGPT
 const userSchema = new mongoose.Schema({
   username: {
     type: String,

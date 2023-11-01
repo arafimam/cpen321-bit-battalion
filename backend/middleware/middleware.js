@@ -4,6 +4,7 @@ const userService = require('../services/userService.js');
 
 const client = new OAuth2Client();
 
+// Help from chatGPT
 async function verifyToken(req, res, next) {
   const idToken = req.headers.authorization;
 

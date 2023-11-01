@@ -1,6 +1,3 @@
-// User:
-// 1. GET /api/users/username
-
 require('dotenv').config();
 const express = require('express');
 
