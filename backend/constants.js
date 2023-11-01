@@ -6,5 +6,6 @@ const TRIP_TROOPER = 'TripTrooper';
 module.exports = {
   MONGO_CONNECTION_STRING,
   PORT,
-  EARTH_RADIUS
+  EARTH_RADIUS,
+  TRIP_TROOPER
 };
