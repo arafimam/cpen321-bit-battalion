@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const randomstring = require('randomstring');
 
+const { DBError } = require('../utils/errors');
+
+const GROUP_DB = 'groups';
+
 const groupSchema = new mongoose.Schema({
   groupName: {
     type: String,
@@ -37,7 +41,7 @@ async function createGroup(group) {
     const createdGroup = await Group.create(group);
     return createdGroup;
   } catch (error) {
-    throw new Error('Error while creating group: ' + error.message);
+    throw new DBError(GROUP_DB, error.message, 'Error while creating group');
   }
 }
 
