@@ -51,7 +51,7 @@ async function getUserByGoogleId(googleId) {
     throw new Error('Could not find user with the given google id');
   }
 
-  retval = {
+  const retval = {
     userId: user._id,
     username: user.username,
     deviceRegistrationToken: user.deviceRegistrationToken
