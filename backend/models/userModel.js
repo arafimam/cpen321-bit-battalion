@@ -50,7 +50,7 @@ async function getUserById(userId) {
 }
 
 async function updateDeviceRegistrationToken(googleId, deviceRegistrationToken) {
-  const filter = { googleId: googleId };
+  const filter = { googleId };
   const update = { deviceRegistrationToken };
 
   try {

@@ -72,8 +72,8 @@ async function createScheduleForList(listId, placeIds) {
       if (place.placeId === placeId) {
         return true;
       }
-      return false;
     }
+    return false;
   });
   console.log('places: ' + places);
 

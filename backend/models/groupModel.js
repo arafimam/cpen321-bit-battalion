@@ -91,7 +91,7 @@ async function generateUniqueGroupCode() {
 
 async function addUserToGroup(groupCode, member) {
   //TODO: check if user already in group
-  const filter = { groupCode: groupCode };
+  const filter = { groupCode };
   const update = { $push: { members: member } };
 
   try {
