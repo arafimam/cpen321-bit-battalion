@@ -45,7 +45,7 @@ async function joinGroup(userData, group) {
         username: userData.username,
         groupName: group.groupName
       },
-      token: token
+      token
     };
 
     admin

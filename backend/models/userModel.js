@@ -33,7 +33,7 @@ async function checkUserExists(googleId) {
 
 async function getUserByGoogleId(googleId) {
   try {
-    const user = await User.find({ googleId });
+    const user = await User.findOne({ googleId });
     return user;
   } catch (error) {
     throw new Error('Error while getting user by google id: ' + error.message);

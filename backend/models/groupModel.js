@@ -34,7 +34,8 @@ const Group = mongoose.model('Group', groupSchema);
 // Help from chatGPT
 async function createGroup(group) {
   try {
-    return await Group.create(group);
+    const createdGroup = await Group.create(group);
+    return createdGroup;
   } catch (error) {
     throw new Error('Error while creating group: ' + error.message);
   }
