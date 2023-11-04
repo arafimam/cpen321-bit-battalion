@@ -19,3 +19,5 @@ class ServiceError extends BaseError {
     super(name, message, errorContext);
   }
 }
+
+module.exports = { DBError, ServiceError };
