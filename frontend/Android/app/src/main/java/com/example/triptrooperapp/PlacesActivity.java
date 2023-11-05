@@ -159,7 +159,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                     );
                                             new Thread(() -> {
                                                 Response response1 =
-                                                        BackendServiceClass.getResponseFromRequest(request);
+                                                        BackendServiceClass.getResponseFromRequest(request1);
                                                 if (response1.isSuccessful()) {
                                                     try {
 

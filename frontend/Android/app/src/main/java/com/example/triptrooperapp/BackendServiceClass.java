@@ -382,6 +382,11 @@ public class BackendServiceClass {
         return request;
     }
 
+    /**
+     * Method: PUT
+     * Endpoint: lists/:listId/add/place
+     * Functionality: add destination place to list
+     */
     public static Request addDestinationPlacesToList(
             String authToken,
             JSONObject json,
