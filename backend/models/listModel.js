@@ -89,7 +89,7 @@ async function getPlaces(listId) {
 }
 
 async function getPlace(listId, placeId) {
-  const filter = { _id: listId, places: { placeId: placeId } };
+  const filter = { _id: listId, places: { placeId } };
 
   try {
     const list = await List.findOne(filter, '-_id');
@@ -113,7 +113,7 @@ async function addPlaceToList(listId, place) {
 
 async function removePlaceFromList(listId, placeId) {
   const filter = { _id: listId };
-  const update = { $pull: { places: { placeId: placeId } } };
+  const update = { $pull: { places: { placeId } } };
 
   try {
     return await List.updateOne(filter, update, { new: true });

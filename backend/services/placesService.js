@@ -14,13 +14,13 @@ async function getPlacesNearby(latitude, longitude, category) {
   const includedTypes = category ? [category] : [];
 
   const reqBody = {
-    includedTypes: includedTypes,
+    includedTypes,
     maxResultCount: MAX_RESULTS,
     locationRestriction: {
       circle: {
         center: {
-          latitude: latitude,
-          longitude: longitude
+          latitude,
+          longitude
         },
         radius: 5000.0
       }
@@ -34,10 +34,10 @@ async function getPlacesNearby(latitude, longitude, category) {
   };
 
   try {
-    googleResponse = await fetch('https://places.googleapis.com/v1/places:searchNearby', requestOptions);
+    const googleResponse = await fetch('https://places.googleapis.com/v1/places:searchNearby', requestOptions);
 
     if (googleResponse.ok) {
-      jsonResp = await googleResponse.json();
+      let jsonResp = await googleResponse.json();
       jsonResp = processPlacesResponse(jsonResp);
       return { status: 200, response: jsonResp };
     } else {
@@ -55,7 +55,7 @@ async function getPlacesNearby(latitude, longitude, category) {
 }
 
 async function getPlacesByText(textQuery, category) {
-  improvedQuery = category ? `${category} near ${textQuery}` : `places near ${textQuery}`;
+  const improvedQuery = category ? `${category} near ${textQuery}` : `places near ${textQuery}`;
 
   const reqBody = {
     textQuery: `${improvedQuery}`,
@@ -69,12 +69,12 @@ async function getPlacesByText(textQuery, category) {
   };
 
   try {
-    googleResponse = await fetch('https://places.googleapis.com/v1/places:searchText', requestOptions);
+    const googleResponse = await fetch('https://places.googleapis.com/v1/places:searchText', requestOptions);
 
     if (googleResponse.ok) {
-      jsonResp = await googleResponse.json();
-      jsonResp = processPlacesResponse(jsonResp);
-      return { status: 200, response: jsonResp };
+      let jsonResp = await googleResponse.json();
+      let processedJsonResp = processPlacesResponse(jsonResp);
+      return { status: 200, response: processedJsonResp };
     } else {
       return {
         status: 400,
@@ -90,7 +90,7 @@ async function getPlacesByText(textQuery, category) {
 }
 
 function processPlacesResponse(googleResponse) {
-  for (place of googleResponse.places) {
+  for (let place of googleResponse.places) {
     place['placeId'] = place.name;
     delete place.name;
     place['displayName'] = place.displayName?.text;

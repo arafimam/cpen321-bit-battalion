@@ -73,6 +73,7 @@ async function createScheduleForList(listId, placeIds) {
         return true;
       }
     }
+    return false;
   });
   console.log('places: ' + places);
 

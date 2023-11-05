@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const randomstring = require('randomstring');
-const { List } = require('./listModel');
+
+const { DBError } = require('../utils/errors');
+
+const GROUP_DB = 'groups';
 
 const groupSchema = new mongoose.Schema({
   groupName: {
@@ -35,9 +38,10 @@ const Group = mongoose.model('Group', groupSchema);
 // Help from chatGPT
 async function createGroup(group) {
   try {
-    return await Group.create(group);
+    const createdGroup = await Group.create(group);
+    return createdGroup;
   } catch (error) {
-    throw new Error('Error while creating group: ' + error.message);
+    throw new DBError(GROUP_DB, error.message, 'Error while creating group');
   }
 }
 
@@ -83,7 +87,7 @@ async function generateUniqueGroupCode() {
   let isNotUnique = true;
   while (true) {
     const groupCode = randomstring.generate(6).toUpperCase(); // Generate a 6-character alphanumeric code
-    const existingGroup = await Group.findOne({ groupCode: groupCode });
+    const existingGroup = await Group.findOne({ groupCode });
     isNotUnique = !!existingGroup; // Check if the code already exists
 
     if (!isNotUnique) return groupCode;
@@ -92,7 +96,7 @@ async function generateUniqueGroupCode() {
 
 async function addUserToGroup(groupCode, member) {
   //TODO: check if user already in group
-  const filter = { groupCode: groupCode };
+  const filter = { groupCode };
   const update = { $push: { members: member } };
 
   try {
@@ -107,7 +111,7 @@ async function removeUserFromGroup(groupId, userId) {
   //TODO: check if user already in group
   //TODO: if group members becomes empty after removing user, then delete group
   const filter = { _id: groupId };
-  const update = { $pull: { members: { userId: userId } } };
+  const update = { $pull: { members: { userId } } };
 
   try {
     return await Group.findOneAndUpdate(filter, update, { new: true });

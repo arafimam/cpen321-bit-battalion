@@ -9,7 +9,7 @@ async function createList(userData, listName) {
       body: 'List Created Successfully'
     },
     data: {
-      listName: listName
+      listName
     },
     token: userData.deviceRegistrationToken
   };

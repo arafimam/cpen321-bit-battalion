@@ -6,10 +6,9 @@ const listService = require('./listService');
 async function getAllGroups(userId) {
   try {
     const groups = await groupModel.getAllGroups(userId);
-    console.log(groups);
     return groups;
   } catch (error) {
-    throw new Error('Error in service while getting group by id', error.message);
+    throw new Error('Error in service while getting group by id: ' + error.message);
   }
 }
 
@@ -20,7 +19,7 @@ async function getGroupById(groupId) {
 async function createGroup(groupData) {
   const groupCode = await groupModel.generateUniqueGroupCode();
   const group = {
-    groupCode: groupCode,
+    groupCode,
     ownerId: groupData.ownerId,
     ownerName: groupData.ownerName,
     groupName: groupData.groupName,

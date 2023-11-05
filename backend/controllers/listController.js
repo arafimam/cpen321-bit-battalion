@@ -13,7 +13,7 @@ router.get('/:id', middleware.verifyToken, async (req, res) => {
     if (list === null || list === undefined) {
       res.status(400).send({ errorMessage: `Failed to find list with ID: ${listId}` });
     } else {
-      res.send({ list: list });
+      res.send({ list });
     }
   } catch (error) {
     res.status(500).send({
@@ -27,7 +27,7 @@ router.post('/create', middleware.verifyToken, async (req, res) => {
 
   try {
     const listId = await listService.createList(listName);
-    res.send({ listId: listId });
+    res.send({ listId });
   } catch (error) {
     res.status(500).send({ errorMessage: 'Failed to create a list.' });
   }
@@ -77,7 +77,7 @@ router.put('/:id/add/schedule', middleware.verifyToken, async (req, res) => {
 
   try {
     const resp = await listService.createScheduleForList(listId, placeIds);
-    // console.log(resp);
+    console.log(resp);
     res.send({ schedule: resp });
   } catch (error) {
     res.status(500).send({ errorMessage: 'Failed to create schedule for given list and places' });

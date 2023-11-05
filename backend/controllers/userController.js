@@ -26,8 +26,8 @@ router.post('/login', async (req, res) => {
       username,
       deviceRegistrationToken
     };
-    response = await userService.createUser(userData);
-    res.send({ response: response });
+    const response = await userService.createUser(userData);
+    res.send({ response });
   } catch (error) {
     console.log(error);
     res.status(500).send('Error while creating user');
@@ -51,7 +51,7 @@ router.get('/lists', middleware.verifyToken, middleware.getUser, async (req, res
 
   try {
     const lists = await userService.getListsforUser(userId);
-    res.send({ lists: lists });
+    res.send({ lists });
   } catch (error) {
     res.status(500).send({ errorMessage: 'Failed to get lists for user' });
   }

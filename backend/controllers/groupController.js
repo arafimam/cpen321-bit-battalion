@@ -12,7 +12,7 @@ router.get('/all', middleware.verifyToken, middleware.getUser, async (req, res) 
 
   try {
     const groups = await groupService.getAllGroups(user.userId);
-    res.send({ groups: groups });
+    res.send({ groups });
   } catch (error) {
     console.log(error.message);
     return res.status(401).json({ message: 'Failed to find groups for the user' });
@@ -27,7 +27,7 @@ router.get('/:id', middleware.verifyToken, async (req, res) => {
     if (group === null || group === undefined) {
       res.status(400).send({ errorMessage: `Failed to find group with ID: ${groupId}` });
     } else {
-      res.send({ group: group });
+      res.send({ group });
     }
   } catch (error) {
     console.log(error.message);
@@ -49,7 +49,7 @@ router.post('/create', middleware.verifyToken, middleware.getUser, async (req, r
 
   try {
     const groupCode = await groupService.createGroup(groupData);
-    res.send({ groupCode: groupCode });
+    res.send({ groupCode });
 
     try {
       await groupNotifications.createGroup(res.locals.user, groupName, groupCode);
@@ -108,7 +108,7 @@ router.put('/:id/leave', middleware.verifyToken, middleware.getUser, async (req,
   const user = res.locals.user;
 
   try {
-    let resp = await groupService.removeUserFromGroup(groupId, user.userId);
+    await groupService.removeUserFromGroup(groupId, user.userId);
     res.send({ message: 'User successfully removed from group' });
   } catch (error) {
     console.log(error.message);
@@ -121,7 +121,7 @@ router.get('/:id/lists', middleware.verifyToken, async (req, res) => {
 
   try {
     const lists = await groupService.getListsforGroup(groupId);
-    res.send({ lists: lists });
+    res.send({ lists });
   } catch (error) {
     console.log(error.message);
     res.status(500).send({ errorMessage: 'Failed to get lists for group' });

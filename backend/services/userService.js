@@ -51,11 +51,13 @@ async function getUserByGoogleId(googleId) {
     throw new Error('Could not find user with the given google id');
   }
 
-  return {
-    userId: user[0]._id,
-    username: user[0].username,
-    deviceRegistrationToken: user[0].deviceRegistrationToken
+  const retval = {
+    userId: user._id,
+    username: user.username,
+    deviceRegistrationToken: user.deviceRegistrationToken
   };
+
+  return retval;
 }
 
 async function getUserById(userId) {
@@ -64,11 +66,13 @@ async function getUserById(userId) {
     throw new Error('Could not find user with the given user id');
   }
 
-  return {
+  const userObj = {
     userId: user._id,
     username: user.username,
     deviceRegistrationToken: user.deviceRegistrationToken
   };
+
+  return userObj;
 }
 
 async function updateDeviceRegistrationToken(googleId, deviceRegistrationToken) {
