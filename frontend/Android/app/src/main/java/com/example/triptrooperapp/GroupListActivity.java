@@ -96,12 +96,12 @@ public class GroupListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String groupId = intent.getStringExtra("groupId");
 
-        BackendServiceClass backendService = new BackendServiceClass("groups" +
-                "/" + groupId + "/lists", "authorization",
-                account.getIdToken());
-        Request request = backendService.getGetRequestWithHeaderOnly();
+        Request request =
+                BackendServiceClass.getGroupListsGetRequest(account.getIdToken(),
+                groupId);
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 try {
                     JSONObject jsonResponse =
@@ -166,13 +166,11 @@ public class GroupListActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new CustomException("error", e);
         }
-        BackendServiceClass backendServiceClass = new BackendServiceClass(
-                "groups/" + groupId + "/add/list", json, "authorization",
-                account.getIdToken());
-        Request request = backendServiceClass.doPutRequestWithJsonAndHeader();
+        Request request = BackendServiceClass.createGroupListPutRequest(json,
+                account.getIdToken(), groupId);
         new Thread(() -> {
             Response response =
-                    backendServiceClass.getResponseFromRequest(request);
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 runOnUiThread(() -> {
                     Toast.makeText(GroupListActivity.this,

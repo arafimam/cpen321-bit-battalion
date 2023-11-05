@@ -182,14 +182,13 @@ public class ListDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
-        String url = "lists/" + listId + "/add/schedule";
-        BackendServiceClass backendServiceClass = new BackendServiceClass(url
-                , jsonBody, "authorization", account.getIdToken());
-        Request request = backendServiceClass.doPutRequestWithJsonAndHeader();
+        Request request =
+                BackendServiceClass.getOptimizedSchedulePutRequest(jsonBody,
+                account.getIdToken(), listId);
 
         new Thread(() -> {
             Response response =
-                    backendServiceClass.getResponseFromRequest(request);
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
@@ -255,15 +254,16 @@ public class ListDetailsActivity extends AppCompatActivity {
     private void retrievePlacesForList() {
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
-        String url = "lists/" + listId + "/places";
 
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass(url,
-                "authorization", account.getIdToken());
-        Request request = backendService.getGetRequestWithHeaderOnly();
+
+        Request request =
+                BackendServiceClass.getPlacesForListGetRequest(account.getIdToken(),
+                listId);
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
 
             if (response.isSuccessful()) {
                 try {
@@ -317,12 +317,12 @@ public class ListDetailsActivity extends AppCompatActivity {
         String listId = intent.getStringExtra("id");
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
-        BackendServiceClass backendService =
-                new BackendServiceClass("users/" + listId + "/remove/list",
-                        "authorization", account.getIdToken());
-        Request request = backendService.doPutRequestWithHeaderOnly();
+        Request request =
+                BackendServiceClass.deleteUserListDeleteRequest(account.getIdToken(),
+                listId);
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 runOnUiThread(() -> {
                     Toast.makeText(ListDetailsActivity.this, "List Deleted",
@@ -355,12 +355,12 @@ public class ListDetailsActivity extends AppCompatActivity {
             throw new CustomException("error", e);
         }
 
-        BackendServiceClass backendService = new BackendServiceClass("groups" +
-                "/" + groupId + "/remove/list", json, "authorization",
-                account.getIdToken());
-        Request request = backendService.doPutRequestWithJsonAndHeader();
+        Request request =
+                BackendServiceClass.deleteGroupListDeleteRequest(account.getIdToken(),
+                json, groupId);
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 runOnUiThread(() -> {
                     Toast.makeText(ListDetailsActivity.this, "List Deleted",

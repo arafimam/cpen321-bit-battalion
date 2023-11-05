@@ -59,12 +59,13 @@ public class GroupsActivity extends AppCompatActivity {
         loader.setVisibility(View.VISIBLE);
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(GroupsActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass("groups" +
-                "/all", "authorization", account.getIdToken());
-        Request request = backendService.getGetRequestWithHeaderOnly();
+
+        Request request =
+                BackendServiceClass.getGroupsOfUserGetRequest(account.getIdToken());
 
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 runOnUiThread(() -> {
 

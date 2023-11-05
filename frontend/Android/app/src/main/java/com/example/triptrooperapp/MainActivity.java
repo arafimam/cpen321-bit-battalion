@@ -264,13 +264,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        BackendServiceClass backendService = new BackendServiceClass("users" +
-                "/login", json);
-        Request request = backendService.getPostRequestWithJsonParameter();
+
+        Request request = BackendServiceClass.loginUserPostRequest(json);
         new Thread(() -> {
 
             Response loginResponse =
-                    backendService.getResponseFromRequest(request);
+                    BackendServiceClass.getResponseFromRequest(request);
             if (loginResponse.isSuccessful()) {
                 runOnUiThread(() -> {
                     progressbar.setVisibility(View.GONE);

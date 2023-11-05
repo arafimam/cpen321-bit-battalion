@@ -100,14 +100,14 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
         Log.d("TAG", "Retrieving places...");
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(PlacesActivity.this);
-        String url = "places/currLocation?latitude=" + latitude + "&longitude" +
-                "=" + longitude;
-        BackendServiceClass backendService = new BackendServiceClass(url,
-                "authorization", account.getIdToken());
-        Request request = backendService.getGetRequestWithHeaderOnly();
+
+        Request request =
+                BackendServiceClass.getPlacesNearbyGetRequest(account.getIdToken(),
+                        longitude, latitude);
 
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
@@ -138,8 +138,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                         public void onClick(View view) {
                                             String listId =
                                                     intentFrom.getStringExtra("listId");
-                                            String url = "lists/" + listId +
-                                                    "/add/place";
+
                                             Log.d("TAG", place.toString());
 
                                             JSONObject jsonResponseForList =
@@ -151,15 +150,16 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                 throw new CustomException(
                                                         "error", e);
                                             }
-                                            BackendServiceClass backendServiceClass = new BackendServiceClass(
-                                                    url, jsonResponseForList,
-                                                    "authorization",
-                                                    account.getIdToken());
+
                                             Request request1 =
-                                                    backendServiceClass.doPutRequestWithJsonAndHeader();
+                                                    BackendServiceClass.addNearbyPlaceToListPutRequest(
+                                                            account.getIdToken(),
+                                                            jsonResponseForList,
+                                                            listId
+                                                    );
                                             new Thread(() -> {
                                                 Response response1 =
-                                                        backendServiceClass.getResponseFromRequest(request1);
+                                                        BackendServiceClass.getResponseFromRequest(request1);
                                                 if (response1.isSuccessful()) {
                                                     try {
 
@@ -216,14 +216,14 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
 
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(PlacesActivity.this);
-        String url = "places/destination?textQuery=" + destination +
-                "&category=";
-        BackendServiceClass backendService = new BackendServiceClass(url,
-                "authorization", account.getIdToken());
-        Request request = backendService.getGetRequestWithHeaderOnly();
 
+        Request request = BackendServiceClass.getPlacesByDestination(
+                account.getIdToken(),
+                destination, ""
+        );
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
@@ -253,8 +253,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                         public void onClick(View view) {
                                             String listId =
                                                     intentFrom.getStringExtra("listId");
-                                            String url = "lists/" + listId +
-                                                    "/add/place";
+
                                             Log.d("TAG", place.toString());
 
                                             JSONObject jsonResponseForList =
@@ -266,15 +265,16 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                 throw new CustomException(
                                                         "error", e);
                                             }
-                                            BackendServiceClass backendServiceClass = new BackendServiceClass(
-                                                    url, jsonResponseForList,
-                                                    "authorization",
-                                                    account.getIdToken());
+
                                             Request request1 =
-                                                    backendServiceClass.doPutRequestWithJsonAndHeader();
+                                                    BackendServiceClass.addDestinationPlacesToList(
+                                                            account.getIdToken(),
+                                                            jsonResponseForList,
+                                                            listId
+                                                    );
                                             new Thread(() -> {
                                                 Response response1 =
-                                                        backendServiceClass.getResponseFromRequest(request1);
+                                                        BackendServiceClass.getResponseFromRequest(request1);
                                                 if (response1.isSuccessful()) {
                                                     try {
 
