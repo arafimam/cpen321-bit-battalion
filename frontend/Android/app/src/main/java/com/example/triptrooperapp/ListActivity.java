@@ -83,12 +83,13 @@ public class ListActivity extends AppCompatActivity {
     private void retrieveListForUser() {
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(ListActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass("users" +
-                "/lists", "authorization", account.getIdToken());
-        Request request = backendService.getGetRequestWithHeaderOnly();
+
+        Request request =
+                BackendServiceClass.getListsOfUserGetRequest(account.getIdToken());
 
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
@@ -150,12 +151,12 @@ public class ListActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new CustomException("error", e);
         }
-        BackendServiceClass backendService = new BackendServiceClass("users" +
-                "/add/list", json,
-                "authorization", account.getIdToken());
-        Request request = backendService.doPutRequestWithJsonAndHeader();
+
+        Request request = BackendServiceClass.createListForUser(json,
+                account.getIdToken());
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 runOnUiThread(() -> {
                     Toast.makeText(ListActivity.this,

@@ -85,13 +85,12 @@ public class GroupDetailsActivity extends AppCompatActivity {
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
 
-        BackendServiceClass backendServiceClass = new BackendServiceClass(
-                "groups/" + groupId + "/leave", "authorization",
-                account.getIdToken());
-        Request request = backendServiceClass.doPutRequestWithHeaderOnly();
+        Request request =
+                BackendServiceClass.leaveGroupPutRequest(account.getIdToken(),
+                groupId);
         new Thread(() -> {
             Response response =
-                    backendServiceClass.getResponseFromRequest(request);
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 runOnUiThread(() -> {
                     Toast.makeText(GroupDetailsActivity.this, "Left group",
@@ -117,12 +116,13 @@ public class GroupDetailsActivity extends AppCompatActivity {
         String groupId = intent.getStringExtra("id");
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass("groups" +
-                "/" + groupId, "authorization", account.getIdToken());
 
-        Request request = backendService.getGetRequestWithHeaderOnly();
+        Request request =
+                BackendServiceClass.getGroupsForUserGetRequest(account.getIdToken(),
+                groupId);
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
@@ -221,13 +221,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
         String groupId = intent.getStringExtra("id");
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(GroupDetailsActivity.this);
-        BackendServiceClass backendService = new BackendServiceClass("groups" +
-                "/" + groupId + "/delete", "authorization",
-                account.getIdToken());
-        Request request = backendService.doDeleteRequestWithHeaderOnly();
+
+        Request request =
+                BackendServiceClass.deleteGroupDeleteRequest(account.getIdToken(),
+                groupId);
 
         new Thread(() -> {
-            Response response = backendService.getResponseFromRequest(request);
+            Response response =
+                    BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 runOnUiThread(() -> {
                     Toast.makeText(GroupDetailsActivity.this, "Deleted group"

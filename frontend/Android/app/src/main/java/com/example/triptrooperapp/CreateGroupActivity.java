@@ -102,18 +102,17 @@ public class CreateGroupActivity extends AppCompatActivity {
                 }
                 GoogleSignInAccount account =
                         GoogleSignIn.getLastSignedInAccount(this);
-                BackendServiceClass backendServiceClass =
-                        new BackendServiceClass("groups/create", json,
-                                "authorization", account.getIdToken());
+
                 Request request =
-                        backendServiceClass.getPostRequestWithHeaderAndJsonParameter();
+                        BackendServiceClass.createGroupPostRequest(json,
+                                account.getIdToken());
 
                 new Thread(() -> {
                     Response response =
-                            backendServiceClass.getResponseFromRequest(request);
+                            BackendServiceClass.getResponseFromRequest(request);
                     if (response.isSuccessful()) {
                         String responseBody =
-                                backendServiceClass.getResponseBody(response);
+                                BackendServiceClass.getResponseBody(response);
                         try {
                             JSONObject jsonResponse =
                                     new JSONObject(responseBody);
@@ -149,15 +148,14 @@ public class CreateGroupActivity extends AppCompatActivity {
                     json.put("groupCode", textToValidate);
                     GoogleSignInAccount account =
                             GoogleSignIn.getLastSignedInAccount(this);
-                    BackendServiceClass backendService =
-                            new BackendServiceClass("groups/join", json,
-                                    "authorization", account.getIdToken());
+
                     Request request =
-                            backendService.doPutRequestWithJsonAndHeader();
+                            BackendServiceClass.joinGroupPostRequest(json,
+                                    account.getIdToken());
 
                     new Thread(() -> {
                         Response response =
-                                backendService.getResponseFromRequest(request);
+                                BackendServiceClass.getResponseFromRequest(request);
                         if (response.isSuccessful()) {
                             runOnUiThread(() -> {
                                 Toast.makeText(CreateGroupActivity.this,
