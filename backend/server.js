@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
@@ -16,8 +17,8 @@ const app = express();
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 
 const httpsOptions = {
-  key: fs.readFileSync('./certs/key.pem'),
-  cert: fs.readFileSync('./certs/cert.pem')
+  key: fs.readFileSync(process.env.CERTS_KEY),
+  cert: fs.readFileSync(process.env.CERTS_CERT)
 };
 
 // Help from chatGPT for routing to different services

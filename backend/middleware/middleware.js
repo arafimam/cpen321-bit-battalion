@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { OAuth2Client } = require('google-auth-library');
 
 const userService = require('../services/userService.js');

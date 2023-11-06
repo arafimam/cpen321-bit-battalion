@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { OAuth2Client } = require('google-auth-library');
 
 const userModel = require('../models/userModel.js');
@@ -93,6 +94,7 @@ async function addListForUser(userId, listName) {
     throw new Error('Error in service while adding list for user: ' + error.message);
   }
 }
+
 async function removeListForUser(userId, listId) {
   await listService.deleteListById(listId);
   try {
