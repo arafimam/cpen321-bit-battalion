@@ -15,12 +15,11 @@ jest.mock('../../middleware/middleware.js', () => ({
 }));
 
 jest.mock('../../services/groupService.js', () => ({
-  getAllGroups: jest.fn()
+  getAllGroups: jest.fn(),
+  getGroupById: jest.fn()
 }));
 
 describe('/all get all groups test', () => {
-  let listId = 'mock-list-id';
-
   it('should return all groups', async () => {
     groupService.getAllGroups.mockResolvedValue([{ groupName: 'testGroup1' }]);
 
@@ -33,5 +32,23 @@ describe('/all get all groups test', () => {
 
     const res = await request.get(`/groups/all`);
     expect(res.status).toBe(500);
+  });
+});
+
+describe('GET /:id get group by id test', () => {
+  const mockGroupId = 'mock-group-id';
+  const invalidId = 'mock-invalid-id';
+  it('should return groups with valid id', async () => {
+    groupService.getGroupById.mockResolvedValue([{ groupName: 'testGroup1' }]);
+
+    const res = await request.get(`/groups/${mockGroupId}`);
+    expect(res.status).toBe(200);
+  });
+
+  it('should return a 400 status code with invalid id', async () => {
+    groupService.getGroupById.mockResolvedValue(null);
+
+    const res = await request.get(`/groups/${invalidId}`);
+    expect(res.status).toBe(400);
   });
 });
