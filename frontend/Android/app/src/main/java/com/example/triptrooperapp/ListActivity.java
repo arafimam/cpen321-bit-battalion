@@ -33,31 +33,36 @@ import okhttp3.Response;
 public class ListActivity extends AppCompatActivity {
 
     private LinearLayout listBoxContainer;
+    private FloatingActionButton createListButton;
+    private NetworkChecker networkChecker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        NetworkChecker networkChecker = new NetworkChecker(ListActivity.this);
+        networkChecker = new NetworkChecker(ListActivity.this);
+        createListButton = findViewById(R.id.create_list);
+        listBoxContainer = findViewById(R.id.list_layout_container);
+        setActionForAddListButton();
         if (!networkChecker.haveNetworkConnection()) {
-            handleNoConnection();
+            handleNoConnection(
+                    "Unable to retrieve your lists."
+            );
             checkEmptyListView();
         } else {
-            listBoxContainer = findViewById(R.id.list_layout_container);
             retrieveListForUser();
-            setActionForAddListButton();
         }
     }
 
     /**
      * Handle no internet connection.
      */
-    private void handleNoConnection() {
+    private void handleNoConnection(String message) {
         AlertDialog.Builder builder =
                 new AlertDialog.Builder(ListActivity.this);
         builder.setMessage(
-                        "Unable to retrieve your lists. Try again later.")
+                        message)
                 .setTitle(
                         "No internet.");
         builder.create().show();
@@ -70,11 +75,14 @@ public class ListActivity extends AppCompatActivity {
      * "List name" text field and create list button.
      */
     private void setActionForAddListButton() {
-        FloatingActionButton createListButton = findViewById(R.id.create_list);
         createListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // create the alert dialog for create list.
+                if (!networkChecker.haveNetworkConnection()) {
+                    handleNoConnection("Cannot create list at this moment.");
+                    return;
+                }
                 AlertDialog.Builder builder =
                         new AlertDialog.Builder(ListActivity.this);
                 View dialogView =
@@ -92,10 +100,15 @@ public class ListActivity extends AppCompatActivity {
                 createListButton.setButtonActionOnClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        handleErrorForCreateList(
-                                listNameText.getText().toString(),
-                                dialog
-                        );
+                        if (!networkChecker.haveNetworkConnection()) {
+                            handleNoConnection("List not created. Try again " +
+                                    "later.");
+                        } else {
+                            handleErrorForCreateList(
+                                    listNameText.getText().toString(),
+                                    dialog
+                            );
+                        }
                     }
                 });
                 dialog.show();

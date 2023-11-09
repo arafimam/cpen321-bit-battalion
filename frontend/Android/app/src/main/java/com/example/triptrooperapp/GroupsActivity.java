@@ -31,46 +31,56 @@ public class GroupsActivity extends AppCompatActivity {
 
     private LinearLayout listBoxContainer;
     private ProgressBar loader;
+    private NetworkChecker networkChecker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
 
-
-        NetworkChecker networkChecker = new NetworkChecker(GroupsActivity.this);
+        networkChecker = new NetworkChecker(GroupsActivity.this);
+        listBoxContainer = findViewById(R.id.list_layout_container);
+        initializeCreateGroupButton();
         if (!networkChecker.haveNetworkConnection()) {
-            handleNoConnection();
+            handleNoConnection("Unable to retrieve your groups now.");
             checkEmptyGroupsView();
         } else {
-            listBoxContainer = findViewById(R.id.list_layout_container);
             loader = findViewById(R.id.loader);
             loader.setVisibility(View.INVISIBLE);
-
             retrieveUserGroups();
             checkEmptyGroupsView();
-            FloatingActionButton createGroupButton =
-                    findViewById(R.id.create_group);
-            createGroupButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(GroupsActivity.this,
-                            CreateGroupActivity.class);
-                    startActivity(intent);
-                }
-            });
         }
+    }
 
+    /**
+     * Initializes the create group button.
+     */
+    private void initializeCreateGroupButton() {
+        FloatingActionButton createGroupButton =
+                findViewById(R.id.create_group);
+        createGroupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!networkChecker.haveNetworkConnection()) {
+                    handleNoConnection("Cannot create group now." +
+                            "Try again later.");
+                    return;
+                }
+                Intent intent = new Intent(GroupsActivity.this,
+                        CreateGroupActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
      * Handle no connection.
      */
-    private void handleNoConnection() {
+    private void handleNoConnection(String message) {
         AlertDialog.Builder builder =
                 new AlertDialog.Builder(GroupsActivity.this);
         builder.setMessage(
-                        "Unable to retrieve your groups. Try again later.")
+                        message)
                 .setTitle(
                         "No internet.");
         builder.create().show();
