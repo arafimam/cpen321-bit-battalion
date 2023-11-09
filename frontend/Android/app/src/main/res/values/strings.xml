@@ -10,8 +10,8 @@
 
     <!-- Content-->
     <string name="TripTrooperHeader">Trip Trooper</string>
-    <string name="list_header">Your Lists</string>
-    <string name="group_list_header">Your Groups</string>
+    <string name="list_header">My Lists</string>
+    <string name="group_list_header">My Groups</string>
     <string name="new_group_header">New Group</string>
     <string name="new_group_sub_header">Please enter your group details</string>
     <string name="group_name_place_holder">Group Name</string>
@@ -26,6 +26,8 @@
 
     <string name="no_list">Embark on an adventure by creating your personalized travel list with us—add, organize,
         and realize your dream destinations all in one place!</string>
+    <string name="no_group">Set sail on a journey of collaboration by creating your custom travel group with us—invite friends, plan together,
+        and share the excitement of turning your collective travel dreams into reality, all in one convenient location!</string>
 
     <!-- User Auth -->
 
