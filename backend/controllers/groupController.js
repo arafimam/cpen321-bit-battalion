@@ -15,7 +15,7 @@ router.get('/all', middleware.verifyToken, middleware.getUser, async (req, res) 
     res.send({ groups });
   } catch (error) {
     console.log(error.message);
-    return res.status(401).json({ message: 'Failed to find groups for the user' });
+    return res.status(500).json({ message: 'Failed to find groups for the user' });
   }
 });
 
