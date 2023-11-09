@@ -1,6 +1,7 @@
 package com.example.triptrooperapp;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +37,9 @@ public class ListDetailsActivity extends AppCompatActivity {
 
     private LinearLayout activityLayout;
     private List<String> placesIds;
+    private FloatingActionButton addActivity;
+    private FloatingActionButton optimizeButton;
+    private NetworkChecker networkChecker;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -43,31 +47,65 @@ public class ListDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_details);
 
+        networkChecker = new NetworkChecker(ListDetailsActivity.this);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         placesIds = new ArrayList<>();
-        FloatingActionButton addActivity = findViewById(R.id.create_list);
-        FloatingActionButton optimizeButton =
-                findViewById(R.id.optimize_button);
+        addActivity = findViewById(R.id.create_list);
+        optimizeButton = findViewById(R.id.optimize_button);
 
         Intent intent = getIntent();
         String listNamePassed = intent.getStringExtra("listName");
-        String listId = intent.getStringExtra("id");
 
         TextView listName = findViewById(R.id.list_name_topic);
         listName.setText(listNamePassed);
 
         activityLayout = findViewById(R.id.list_activity_container);
-
+        setAddPlacesButton();
+        setOptimizeButton();
         retrievePlacesForList();
+        checkForEmptyPlacesInList();
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
 
+    private void handleNoConnection(String message) {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(ListDetailsActivity.this);
+        builder.setMessage(
+                        message)
+                .setTitle(
+                        "No internet.");
+        builder.create().show();
+    }
+
+    /**
+     * checks for no places in list.
+     */
+    private void checkForEmptyPlacesInList() {
+        TextView noPlace = findViewById(R.id.textView_noPlace);
+        if (activityLayout.getChildCount() == 0) {
+            noPlace.setVisibility(View.VISIBLE);
+        } else {
+            noPlace.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Sets everything needed for the add places button.
+     */
+    private void setAddPlacesButton() {
         addActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!networkChecker.haveNetworkConnection()) {
+                    handleNoConnection("Cannot add places now. Try again " +
+                            "later");
+                    return;
+                }
                 AlertDialog.Builder builder =
                         new AlertDialog.Builder(ListDetailsActivity.this);
                 View dialogView =
@@ -76,74 +114,9 @@ public class ListDetailsActivity extends AppCompatActivity {
                 final LinearLayout activityOptions =
                         dialogView.findViewById(R.id.member_list_container);
 
-                DefaultCardButtonView nearby =
-                        new DefaultCardButtonView(ListDetailsActivity.this);
-                nearby.setMainTitleText("Add Activity by nearby location");
-
-                nearby.setActionForOnClick(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(ListDetailsActivity.this,
-                                PlacesActivity.class);
-                        intent.putExtra("context", "nearby");
-                        intent.putExtra("list", "list");
-                        Intent intentFrom = getIntent();
-                        String listId = intentFrom.getStringExtra("id");
-                        intent.putExtra("listId", listId);
-                        startActivity(intent);
-                    }
-                });
-
+                DefaultCardButtonView nearby = setNearbyPlacesButton();
                 DefaultCardButtonView destination =
-                        new DefaultCardButtonView(ListDetailsActivity.this);
-                destination.setMainTitleText("Add Activity by destination");
-
-
-                /**
-                 * Destination button
-                 */
-                destination.setActionForOnClick(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        AlertDialog.Builder builder =
-                                new AlertDialog.Builder(ListDetailsActivity.this);
-                        View dialogView =
-                                LayoutInflater.from(ListDetailsActivity.this).
-                                        inflate(R.layout.create_list_dialog_view, null);
-                        final EditText destinationText =
-                                dialogView.findViewById(R.id.list_name_textField);
-                        destinationText.setHint("Destination Name");
-                        GreenButtonView createListButton =
-                                dialogView.findViewById(R.id.create_list_button);
-                        createListButton.setButtonText("Enter destination");
-                        builder.setView(dialogView);
-
-                        final AlertDialog dialog = builder.create();
-                        createListButton.setButtonActionOnClick(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (destinationText.getText().toString().equals("")) {
-                                    Toast.makeText(ListDetailsActivity.this,
-                                            "No destination entered.",
-                                            Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
-                                } else {
-                                    Intent intentTo =
-                                            new Intent(ListDetailsActivity.this, PlacesActivity.class);
-                                    intentTo.putExtra("destination",
-                                            destinationText.getText().toString());
-                                    intentTo.putExtra("context",
-                                            "byDestination");
-                                    intentTo.putExtra("list", "list");
-                                    intentTo.putExtra("listId", listId);
-                                    startActivity(intentTo);
-                                    dialog.dismiss();
-                                }
-                            }
-                        });
-                        dialog.show();
-                    }
-                });
+                        setDestinationPlacesButton();
 
                 activityOptions.addView(nearby);
                 activityOptions.addView(destination);
@@ -151,20 +124,137 @@ public class ListDetailsActivity extends AppCompatActivity {
 
                 final AlertDialog dialog = builder.create();
                 dialog.show();
+            }
+        });
+    }
 
+    /**
+     * Sets action for nearby places.
+     * Only valid when dialog for add place opened.
+     */
+    private DefaultCardButtonView setNearbyPlacesButton() {
+        DefaultCardButtonView nearby =
+                new DefaultCardButtonView(ListDetailsActivity.this);
+        nearby.setMainTitleText("Add Local gems near you");
+
+        nearby.setActionForOnClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ListDetailsActivity.this,
+                        PlacesActivity.class);
+                intent.putExtra("context", "nearby");
+                intent.putExtra("list", "list");
+                Intent intentFrom = getIntent();
+                String listId = intentFrom.getStringExtra("id");
+                intent.putExtra("listId", listId);
+                startActivity(intent);
+            }
+        });
+        return nearby;
+    }
+
+    /**
+     * Sets action for destination button.
+     * Only valid when add places dialog opened.
+     */
+    private DefaultCardButtonView setDestinationPlacesButton() {
+        Intent intent = getIntent();
+        String listId = intent.getStringExtra("id");
+        DefaultCardButtonView destination =
+                new DefaultCardButtonView(ListDetailsActivity.this);
+        destination.setMainTitleText("Explore places by destination");
+
+        destination.setActionForOnClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(ListDetailsActivity.this);
+                View dialogView =
+                        LayoutInflater.from(ListDetailsActivity.this).
+                                inflate(R.layout.create_list_dialog_view, null);
+                final EditText destinationText =
+                        dialogView.findViewById(R.id.list_name_textField);
+                destinationText.setHint("Destination Name");
+                GreenButtonView destNameBtn =
+                        dialogView.findViewById(R.id.create_list_button);
+                destNameBtn.setButtonText("Enter destination");
+                builder.setView(dialogView);
+
+                final AlertDialog dialog = builder.create();
+                destNameBtn.setButtonActionOnClick(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (destinationText.getText().toString().equals("")) {
+                            Toast.makeText(ListDetailsActivity.this,
+                                    "No destination entered.",
+                                    Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        } else {
+                            Intent intentTo =
+                                    new Intent(ListDetailsActivity.this,
+                                            PlacesActivity.class);
+                            intentTo.putExtra("destination",
+                                    destinationText.getText().toString());
+                            intentTo.putExtra("context",
+                                    "byDestination");
+                            intentTo.putExtra("list", "list");
+                            intentTo.putExtra("listId", listId);
+                            startActivity(intentTo);
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                dialog.show();
             }
         });
 
+        return destination;
+    }
+
+    /**
+     * Sets everything of the optimize button.
+     */
+    private void setOptimizeButton() {
         optimizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (activityLayout.getChildCount() == 0) {
+                    AlertDialog.Builder builder =
+                            new AlertDialog.Builder(ListDetailsActivity.this);
+                    builder.setMessage(
+                                    "Your list is empty, and without any " +
+                                            "added places, " +
+                                            "we're unable to generate an " +
+                                            "optimized schedule for you. " +
+                                            "Begin your journey by adding " +
+                                            "some destinations to visit!")
+                            .setTitle(
+                                    "Schedule Creation Unavailable");
+                    builder.setNegativeButton("Close",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface,
+                                                    int i) {
+                                    builder.create().dismiss();
+                                }
+                            });
+                    builder.create().show();
+                    return;
+                }
                 doComplexAlgorithm();
             }
         });
-
     }
 
+    /**
+     * Creates the optimized schedule.
+     */
     private void doComplexAlgorithm() {
+        if (!networkChecker.haveNetworkConnection()) {
+            handleNoConnection("Cannot optimize your schedule. Try again " +
+                    "later");
+            return;
+        }
         for (int i = 0; i < placesIds.size(); i++) {
             Log.d("TAG", placesIds.get(i));
         }
@@ -184,7 +274,7 @@ public class ListDetailsActivity extends AppCompatActivity {
         String listId = intent.getStringExtra("id");
         Request request =
                 BackendServiceClass.getOptimizedSchedulePutRequest(jsonBody,
-                account.getIdToken(), listId);
+                        account.getIdToken(), listId);
 
         new Thread(() -> {
             Response response =
@@ -251,7 +341,15 @@ public class ListDetailsActivity extends AppCompatActivity {
         }).start();
     }
 
+    /**
+     * Retrieves places associated to the list.
+     */
     private void retrievePlacesForList() {
+        if (!networkChecker.haveNetworkConnection()) {
+            handleNoConnection("Cannot retrieve places for this list.");
+            return;
+        }
+
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
 
@@ -260,7 +358,7 @@ public class ListDetailsActivity extends AppCompatActivity {
 
         Request request =
                 BackendServiceClass.getPlacesForListGetRequest(account.getIdToken(),
-                listId);
+                        listId);
         new Thread(() -> {
             Response response =
                     BackendServiceClass.getResponseFromRequest(request);
@@ -312,14 +410,21 @@ public class ListDetailsActivity extends AppCompatActivity {
         }).start();
     }
 
+    /**
+     * deletes list if it is a user list.
+     */
     private void deleteUserList() {
+        if (!networkChecker.haveNetworkConnection()) {
+            handleNoConnection("Unable to delete now. Try again later.");
+            return;
+        }
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
         Request request =
                 BackendServiceClass.deleteUserListDeleteRequest(account.getIdToken(),
-                listId);
+                        listId);
         new Thread(() -> {
             Response response =
                     BackendServiceClass.getResponseFromRequest(request);
@@ -342,7 +447,14 @@ public class ListDetailsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Deletes the list if it is a group list.
+     */
     private void deleteGroupList() {
+        if (!networkChecker.haveNetworkConnection()) {
+            handleNoConnection("Unable to delete now. Try again later");
+            return;
+        }
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
         String groupId = intent.getStringExtra("groupId");
@@ -357,7 +469,7 @@ public class ListDetailsActivity extends AppCompatActivity {
 
         Request request =
                 BackendServiceClass.deleteGroupListDeleteRequest(account.getIdToken(),
-                json, groupId);
+                        json, groupId);
         new Thread(() -> {
             Response response =
                     BackendServiceClass.getResponseFromRequest(request);
@@ -399,19 +511,51 @@ public class ListDetailsActivity extends AppCompatActivity {
 
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
-            // TODO: pass the id to backend to delete the list.
-            Intent intentFrom = getIntent();
-            String context = intentFrom.getStringExtra("context");
-            if (context.equals("userList")) {
-                deleteUserList();
-            } else {
-                deleteGroupList();
-            }
-
+            onDeleteSelected();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * Sets action for on delete selected.
+     */
+    private void onDeleteSelected() {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(ListDetailsActivity.this);
+        builder.setMessage(
+                        "Are you certain you want to remove this list? " +
+                                "It contains all your carefully selected " +
+                                "destinations " +
+                                "and future memories. Once deleted, this " +
+                                "action cannot be undone")
+                .setTitle(
+                        "Delete List");
+        builder.setPositiveButton("Confirm",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface,
+                                        int i) {
+                        Intent intentFrom = getIntent();
+                        String context = intentFrom.getStringExtra("context");
+                        if (context.equals("userList")) {
+                            deleteUserList();
+                        } else {
+                            deleteGroupList();
+                        }
+                    }
+                });
+
+        builder.setNegativeButton("Close",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface,
+                                        int i) {
+                        builder.create().dismiss();
+                    }
+                });
+        builder.create().show();
     }
 
     @Override
