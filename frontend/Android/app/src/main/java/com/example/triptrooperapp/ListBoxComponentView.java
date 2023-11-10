@@ -1,6 +1,7 @@
 package com.example.triptrooperapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ public class ListBoxComponentView extends LinearLayout {
     private TextView mainTitle;
     private TextView sideTitle;
     private TextView subTitle;
+
+    private TextView buttonAddToList;
 
     public ListBoxComponentView(Context context) {
         super(context);
@@ -36,6 +39,8 @@ public class ListBoxComponentView extends LinearLayout {
         mainTitle = findViewById(R.id.main_title);
         sideTitle = findViewById(R.id.side_title);
         subTitle = findViewById(R.id.sub_title);
+        buttonAddToList = findViewById(R.id.button_add_to_list);
+        buttonAddToList.setVisibility(GONE);
     }
 
     /**
@@ -82,6 +87,20 @@ public class ListBoxComponentView extends LinearLayout {
     }
 
     public void setActionOnCardClick(View.OnClickListener listener) {
+        buttonAddToList.setOnClickListener(listener);
         cardView.setOnClickListener(listener);
+    }
+
+    public void showAddToListButton() {
+        buttonAddToList.setVisibility(VISIBLE);
+    }
+
+    public void setButtonColorToRed() {
+        buttonAddToList.setBackgroundColor(Color.parseColor("#FF0000"));
+        buttonAddToList.setText("Remove Place");
+    }
+
+    public void setButtonAction(View.OnClickListener listener) {
+        buttonAddToList.setOnClickListener(listener);
     }
 }

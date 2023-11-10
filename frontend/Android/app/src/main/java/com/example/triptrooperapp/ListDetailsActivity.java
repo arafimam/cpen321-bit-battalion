@@ -66,7 +66,6 @@ public class ListDetailsActivity extends AppCompatActivity {
         setAddPlacesButton();
         setOptimizeButton();
         retrievePlacesForList();
-        checkForEmptyPlacesInList();
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -412,6 +411,39 @@ public class ListDetailsActivity extends AppCompatActivity {
         }).start();
     }
 
+    private void deletePlaceFromList() {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(ListDetailsActivity.this);
+        builder.setMessage(
+                        "Are you sure you want to remove the place from the " +
+                                "list?")
+                .setTitle(
+                        "Remove List")
+                .setNegativeButton("Close",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                builder.create().dismiss();
+                            }
+                        })
+                .setPositiveButton("Remove",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                //TODO: make backend api call to remove
+                                // places from
+                                // list. For now just showing a toast
+                                Toast.makeText(ListDetailsActivity.this,
+                                        "Remove " +
+                                                "place not implemented.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+        builder.create().show();
+    }
+
     /**
      * Retrieves places associated to the list.
      */
@@ -457,21 +489,33 @@ public class ListDetailsActivity extends AppCompatActivity {
                                 listBox.setSideTitleText("     Rating: " + rating + "/5");
                                 String placeId = place.getString("placeId");
                                 placesIds.add(placeId);
+                                listBox.showAddToListButton();
+                                listBox.setButtonColorToRed();
+                                listBox.setButtonAction(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        deletePlaceFromList();
+                                    }
+                                });
                                 activityLayout.addView(listBox);
                             } catch (JSONException e) {
                                 throw new CustomException("error", e);
                             }
                         });
                     }
-
-
+                    runOnUiThread(() -> {
+                        checkForEmptyPlacesInList();
+                    });
                 } catch (IOException e) {
                     throw new CustomException("error", e);
                 } catch (JSONException e) {
                     throw new CustomException("error", e);
                 }
-
             } else {
+                runOnUiThread(() -> {
+                    checkForEmptyPlacesInList();
+                });
+
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
