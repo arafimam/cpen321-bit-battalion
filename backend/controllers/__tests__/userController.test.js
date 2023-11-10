@@ -140,7 +140,6 @@ describe('PUT add/list add list for a user', () => {
 });
 
 describe('PUT /:id/remove/list remove list for a user', () => {
-  const mockListName = 'mock-list-name';
   const mockListId = 'mock-list-id';
 
   it('should return a 200 status code on successful removal', async () => {
