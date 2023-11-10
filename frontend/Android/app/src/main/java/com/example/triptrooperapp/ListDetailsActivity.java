@@ -1,8 +1,10 @@
 package com.example.triptrooperapp;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -140,6 +142,73 @@ public class ListDetailsActivity extends AppCompatActivity {
         nearby.setActionForOnClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // need to check for location first.
+                checkLocationPermissionAndNavigate();
+            }
+        });
+        return nearby;
+    }
+
+    private void checkLocationPermissionAndNavigate() {
+        if (LocationService.areLocationPermissionsAlreadyGranted(this)) {
+            Intent intent = new Intent(ListDetailsActivity.this,
+                    PlacesActivity.class);
+            intent.putExtra("context", "nearby");
+            intent.putExtra("list", "list");
+            Intent intentFrom = getIntent();
+            String listId = intentFrom.getStringExtra("id");
+            intent.putExtra("listId", listId);
+            startActivity(intent);
+            return;
+        } else {
+            if (LocationService.areLocationPermissionsPreviouslyDenied(this)) {
+                final Activity currentActivity = this;
+                new AlertDialog.Builder(this)
+                        .setTitle("Location Permission")
+                        .setMessage("We need location permission for viewing " +
+                                "activities.")
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(
+                                            DialogInterface dialogInterface,
+                                            int i
+                                    ) {
+                                        Toast.makeText(ListDetailsActivity.this,
+                                                        "Permission for " +
+                                                                "location " +
+                                                                "denied",
+                                                        Toast.LENGTH_LONG)
+                                                .show();
+                                        dialogInterface.dismiss();
+                                    }
+                                })
+
+                        .setPositiveButton("Confirm",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface,
+                                                        int i) {
+                                        LocationService.requestLocationPermission(currentActivity);
+                                    }
+                                }).show();
+            } else {
+                LocationService.requestLocationPermission(this);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions,
+                grantResults);
+
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED) {
+
                 Intent intent = new Intent(ListDetailsActivity.this,
                         PlacesActivity.class);
                 intent.putExtra("context", "nearby");
@@ -148,9 +217,11 @@ public class ListDetailsActivity extends AppCompatActivity {
                 String listId = intentFrom.getStringExtra("id");
                 intent.putExtra("listId", listId);
                 startActivity(intent);
+            } else {
+                Toast.makeText(this, "Location permission is required!",
+                        Toast.LENGTH_LONG).show();
             }
-        });
-        return nearby;
+        }
     }
 
     /**

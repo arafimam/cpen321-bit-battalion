@@ -48,7 +48,6 @@ public class GroupsActivity extends AppCompatActivity {
             loader = findViewById(R.id.loader);
             loader.setVisibility(View.INVISIBLE);
             retrieveUserGroups();
-            checkEmptyGroupsView();
         }
     }
 
@@ -132,6 +131,7 @@ public class GroupsActivity extends AppCompatActivity {
                                 }
                             });
                         }
+                        checkEmptyGroupsView();
 
                     } catch (JSONException | IOException e) {
                         throw new CustomException("error", e);
@@ -147,6 +147,7 @@ public class GroupsActivity extends AppCompatActivity {
                     }
                     loader.setVisibility(View.INVISIBLE);
                     handleErrorWithRetrievingGroups();
+                    checkEmptyGroupsView();
                 });
             }
         }).start();
@@ -163,11 +164,6 @@ public class GroupsActivity extends AppCompatActivity {
                             "Unable to retrieve your Groups. Try again later.")
                     .setTitle(
                             "Something went wrong.");
-            builder.setOnDismissListener(dialogInterface -> {
-                Intent intent = new Intent(GroupsActivity.this,
-                        MainActivity.class);
-                startActivity(intent);
-            });
             builder.create().show();
         });
     }

@@ -132,6 +132,7 @@ public class ListActivity extends AppCompatActivity {
             createListByUser(enteredListName);
             dialog.dismiss();
         }
+        checkEmptyListView();
     }
 
     /**
@@ -234,11 +235,6 @@ public class ListActivity extends AppCompatActivity {
                             "Unable to retrieve your lists. Try again later.")
                     .setTitle(
                             "Something went wrong.");
-            builder.setOnDismissListener(dialogInterface -> {
-                Intent intent = new Intent(ListActivity.this,
-                        MainActivity.class);
-                startActivity(intent);
-            });
             builder.create().show();
         });
     }
