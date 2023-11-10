@@ -21,9 +21,11 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // initialize sign out button.
         GreenButtonView signOutButton = findViewById(R.id.sign_out_google);
         signOutButton.setButtonText("Sign Out");
 
+        // initialize google sign in client.
         GoogleSignInOptions gso =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(getString(R.string.web_client_id))
@@ -32,6 +34,7 @@ public class HomeActivity extends AppCompatActivity {
                         .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
+        // sign out button action.
         signOutButton.setButtonActionOnClick(view ->
                 {
                     signOut();
@@ -39,6 +42,10 @@ public class HomeActivity extends AppCompatActivity {
         );
     }
 
+    /**
+     * Signs out the user and navigates the user back to Main activity
+     * which is the sign in screen.
+     */
     private void signOut() {
         mGoogleSignInClient.signOut().addOnCompleteListener(HomeActivity.this
                 , new OnCompleteListener<Void>() {
@@ -50,4 +57,5 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
     }
+
 }

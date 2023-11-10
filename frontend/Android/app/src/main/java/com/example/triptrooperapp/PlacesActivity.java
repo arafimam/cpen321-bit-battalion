@@ -1,6 +1,7 @@
 package com.example.triptrooperapp;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -47,18 +49,17 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
         setContentView(R.layout.activity_places);
         Intent intentFrom = getIntent();
         String context = intentFrom.getStringExtra("context");
+
+        // setting toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-
         placesBoxContainer = findViewById(R.id.list_layout_container);
 
         TextView textHeader = findViewById(R.id.group_header);
-
-        textHeader.setText(R.string.place_list_header);
 
         LocationManager locationManager =
                 (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -79,23 +80,43 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
             if (lastKnownLocation != null) {
                 longitude = String.valueOf(lastKnownLocation.getLongitude());
                 latitude = String.valueOf(lastKnownLocation.getLatitude());
-                Log.d("HELL", "Latitude: " + lastKnownLocation.getLatitude());
-                Log.d("HELL", "Longitude: " + lastKnownLocation.getLongitude());
+                Log.d("TAG", "Latitude: " + lastKnownLocation.getLatitude());
+                Log.d("TAG", "Longitude: " + lastKnownLocation.getLongitude());
             } else {
-                Log.d("HELL", "Last known location is null");
+                Log.d("TAG", "Last known location is null");
             }
         }
 
         if (context.equals("nearby")) {
+            textHeader.setText("Local Gems near you");
             retrievePlaces();
         } else {
+            textHeader.setText("Your Places");
             retrievePlacesByDestination();
         }
-
-
-        Log.d("PLACES", "Starting up places activity");
     }
 
+    private void handleErrorsWithMessage(String message) {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(PlacesActivity.this);
+        builder.setMessage(
+                        message)
+                .setTitle(
+                        "Something went wrong")
+                .setNegativeButton("Close",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                builder.create().dismiss();
+                            }
+                        });
+        builder.create().show();
+    }
+
+    /**
+     * Retrieve nearby places.
+     */
     private void retrievePlaces() {
         Log.d("TAG", "Retrieving places...");
         GoogleSignInAccount account =
@@ -112,7 +133,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                 try {
                     String responseBody = response.body().string();
                     Log.d("TAG", responseBody);
-                    // displayName, shortFormattedAddress, rating
+
                     JSONObject jsonResponse = new JSONObject(responseBody);
                     JSONArray places = jsonResponse.getJSONArray("places");
                     for (int i = 0; i < places.length(); i++) {
@@ -133,54 +154,12 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                 Intent intentFrom = getIntent();
                                 if (intentFrom.getStringExtra("list").equals(
                                         "list")) {
+                                    listBox.showAddToListButton();
                                     listBox.setActionOnCardClick(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            String listId =
-                                                    intentFrom.getStringExtra("listId");
-
-                                            Log.d("TAG", place.toString());
-
-                                            JSONObject jsonResponseForList =
-                                                    new JSONObject();
-                                            try {
-                                                jsonResponseForList.put(
-                                                        "place", place);
-                                            } catch (JSONException e) {
-                                                throw new CustomException(
-                                                        "error", e);
-                                            }
-
-                                            Request request1 =
-                                                    BackendServiceClass.addNearbyPlaceToListPutRequest(
-                                                            account.getIdToken(),
-                                                            jsonResponseForList,
-                                                            listId
-                                                    );
-                                            new Thread(() -> {
-                                                Response response1 =
-                                                        BackendServiceClass.getResponseFromRequest(request1);
-                                                if (response1.isSuccessful()) {
-                                                    try {
-
-                                                        Log.d("TAG",
-                                                                response1.body().string());
-                                                    } catch (IOException e) {
-                                                        throw new CustomException("error", e);
-                                                    }
-                                                    runOnUiThread(() -> {
-                                                        Toast.makeText(PlacesActivity.this,
-                                                                "Added " + placeName + " in List", Toast.LENGTH_SHORT).show();
-                                                    });
-                                                } else {
-                                                    try {
-                                                        Log.d("TAG",
-                                                                response1.body().string());
-                                                    } catch (IOException e) {
-                                                        throw new CustomException("error", e);
-                                                    }
-                                                }
-                                            }).start();
+                                            handleAddPlaceToList(listBox,
+                                                    place, account, placeName);
                                         }
                                     });
 
@@ -201,6 +180,11 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                 }
 
             } else {
+                runOnUiThread(() -> {
+                    handleErrorsWithMessage("Unable to retrieve places near " +
+                            "you. " +
+                            "Try again Later.");
+                });
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -210,6 +194,98 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
         }).start();
     }
 
+    /**
+     * Handles add to list click.
+     *
+     * @param listBox
+     * @param place
+     * @param account
+     * @param placeName
+     */
+    private void handleAddPlaceToList(ListBoxComponentView listBox,
+                                      JSONObject place,
+                                      GoogleSignInAccount account,
+                                      String placeName) {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(PlacesActivity.this);
+        builder.setMessage(
+                        "Are you sure you want to add place " + placeName +
+                                " to " +
+                                "list?")
+                .setTitle(
+                        "Add Place")
+                .setPositiveButton("Add",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                Intent intentFrom = getIntent();
+                                String listId =
+                                        intentFrom.getStringExtra("listId");
+
+                                JSONObject jsonResponseForList =
+                                        new JSONObject();
+                                try {
+                                    jsonResponseForList.put(
+                                            "place", place);
+                                } catch (JSONException e) {
+                                    throw new CustomException(
+                                            "error", e);
+                                }
+
+                                Request request1 =
+                                        BackendServiceClass.addNearbyPlaceToListPutRequest(
+                                                account.getIdToken(),
+                                                jsonResponseForList,
+                                                listId
+                                        );
+                                new Thread(() -> {
+                                    Response response1 =
+                                            BackendServiceClass.getResponseFromRequest(request1);
+                                    if (response1.isSuccessful()) {
+                                        try {
+
+                                            Log.d("TAG",
+                                                    response1.body().string());
+                                        } catch (IOException e) {
+                                            throw new CustomException("error"
+                                                    , e);
+                                        }
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(PlacesActivity.this,
+                                                    "Added " + placeName + " " +
+                                                            "in List"
+                                                    , Toast.LENGTH_SHORT).show();
+                                            placesBoxContainer.removeView(listBox);
+                                            builder.create().dismiss();
+                                        });
+                                    } else {
+                                        try {
+                                            Log.d("TAG",
+                                                    response1.body().string());
+                                        } catch (IOException e) {
+                                            throw new CustomException("error"
+                                                    , e);
+                                        }
+                                    }
+                                }).start();
+
+                            }
+                        }).
+                setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                builder.create().dismiss();
+                            }
+                        });
+        builder.create().show();
+    }
+
+    /**
+     * Retrieve places by destination.
+     */
     private void retrievePlacesByDestination() {
         Intent intentFrom = getIntent();
         String destination = intentFrom.getStringExtra("destination");
@@ -248,54 +324,13 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
 
                                 if (intentFrom.getStringExtra("list").equals(
                                         "list")) {
+                                    listBox.showAddToListButton();
                                     listBox.setActionOnCardClick(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            String listId =
-                                                    intentFrom.getStringExtra("listId");
+                                            handleAddDestinationPlaceToList(listBox,
+                                                    place, account, placeName);
 
-                                            Log.d("TAG", place.toString());
-
-                                            JSONObject jsonResponseForList =
-                                                    new JSONObject();
-                                            try {
-                                                jsonResponseForList.put(
-                                                        "place", place);
-                                            } catch (JSONException e) {
-                                                throw new CustomException(
-                                                        "error", e);
-                                            }
-
-                                            Request request1 =
-                                                    BackendServiceClass.addDestinationPlacesToList(
-                                                            account.getIdToken(),
-                                                            jsonResponseForList,
-                                                            listId
-                                                    );
-                                            new Thread(() -> {
-                                                Response response1 =
-                                                        BackendServiceClass.getResponseFromRequest(request1);
-                                                if (response1.isSuccessful()) {
-                                                    try {
-
-                                                        Log.d("TAG",
-                                                                response1.body().string());
-                                                    } catch (IOException e) {
-                                                        throw new CustomException("error", e);
-                                                    }
-                                                    runOnUiThread(() -> {
-                                                        Toast.makeText(
-                                                                PlacesActivity.this, "Added " + placeName + " in List", Toast.LENGTH_SHORT).show();
-                                                    });
-                                                } else {
-                                                    try {
-                                                        Log.d("TAG",
-                                                                response1.body().string());
-                                                    } catch (IOException e) {
-                                                        throw new CustomException("error", e);
-                                                    }
-                                                }
-                                            }).start();
                                         }
                                     });
                                 }
@@ -314,6 +349,12 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                 }
 
             } else {
+                runOnUiThread(() -> {
+                    handleErrorsWithMessage("Unable to retrieve places for " +
+                            "your " +
+                            "destination. " +
+                            "Try again Later.");
+                });
                 try {
                     Log.d("TAG", response.body().string());
                 } catch (IOException e) {
@@ -321,6 +362,88 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                 }
             }
         }).start();
+    }
+
+    private void handleAddDestinationPlaceToList(ListBoxComponentView listBox,
+                                                 JSONObject place,
+                                                 GoogleSignInAccount account,
+                                                 String placeName) {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(PlacesActivity.this);
+        builder.setMessage(
+                        "Are you sure you want to add place " + placeName +
+                                " to " +
+                                "list?")
+                .setTitle(
+                        "Add Place")
+                .setPositiveButton("Add",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                Intent intentFrom = getIntent();
+                                String listId =
+                                        intentFrom.getStringExtra("listId");
+
+                                Log.d("TAG", place.toString());
+
+                                JSONObject jsonResponseForList =
+                                        new JSONObject();
+                                try {
+                                    jsonResponseForList.put(
+                                            "place", place);
+                                } catch (JSONException e) {
+                                    throw new CustomException(
+                                            "error", e);
+                                }
+
+                                Request request1 =
+                                        BackendServiceClass.addDestinationPlacesToList(
+                                                account.getIdToken(),
+                                                jsonResponseForList,
+                                                listId
+                                        );
+                                new Thread(() -> {
+                                    Response response1 =
+                                            BackendServiceClass.getResponseFromRequest(request1);
+                                    if (response1.isSuccessful()) {
+                                        try {
+
+                                            Log.d("TAG",
+                                                    response1.body().string());
+                                        } catch (IOException e) {
+                                            throw new CustomException("error"
+                                                    , e);
+                                        }
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(
+                                                    PlacesActivity.this,
+                                                    "Added " + placeName + " " +
+                                                            "in List",
+                                                    Toast.LENGTH_SHORT).show();
+                                        });
+                                    } else {
+                                        try {
+                                            Log.d("TAG",
+                                                    response1.body().string());
+                                        } catch (IOException e) {
+                                            throw new CustomException("error"
+                                                    , e);
+                                        }
+                                    }
+                                }).start();
+
+                            }
+                        }).
+                setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                builder.create().dismiss();
+                            }
+                        });
+        builder.create().show();
     }
 
 
@@ -345,8 +468,8 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Log.d("HELL", String.valueOf(location.getLatitude()));
-        Log.d("HELL", String.valueOf(location.getLongitude()));
+        Log.d("TAG", String.valueOf(location.getLatitude()));
+        Log.d("TAG", String.valueOf(location.getLongitude()));
     }
 
 }

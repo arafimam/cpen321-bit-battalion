@@ -1,6 +1,5 @@
 package com.example.triptrooperapp;
 
-
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -401,7 +400,6 @@ public class BackendServiceClass {
                 .build();
         return request;
     }
-
 
     /**
      * Taken from CHAT GPT.

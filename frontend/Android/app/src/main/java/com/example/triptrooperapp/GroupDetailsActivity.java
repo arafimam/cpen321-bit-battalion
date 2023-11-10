@@ -87,7 +87,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         Request request =
                 BackendServiceClass.leaveGroupPutRequest(account.getIdToken(),
-                groupId);
+                        groupId);
         new Thread(() -> {
             Response response =
                     BackendServiceClass.getResponseFromRequest(request);
@@ -119,7 +119,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         Request request =
                 BackendServiceClass.getGroupsForUserGetRequest(account.getIdToken(),
-                groupId);
+                        groupId);
         new Thread(() -> {
             Response response =
                     BackendServiceClass.getResponseFromRequest(request);
@@ -202,8 +202,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
             deleteGroupViaBackend();
-            //Toast.makeText(this, "Delete List Clicked", Toast.LENGTH_SHORT)
-            // .show();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -224,7 +222,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         Request request =
                 BackendServiceClass.deleteGroupDeleteRequest(account.getIdToken(),
-                groupId);
+                        groupId);
 
         new Thread(() -> {
             Response response =

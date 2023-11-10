@@ -1,5 +1,6 @@
 package com.example.triptrooperapp;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,8 +12,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 /**
  * Activities screen.
@@ -21,29 +20,54 @@ public class ActivitiesActivity extends AppCompatActivity {
 
     private GreenButtonView viewActivityByDestinationButton;
     private GreenButtonView viewActivityByCurrentLocationButton;
+    private NetworkChecker networkChecker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activities);
-
+        networkChecker = new NetworkChecker(this);
         initializeActivityScreenButton();
+        setActivityByLocationButton();
+        setActivityByCurrentLocationButton();
+    }
 
+    private void handleNoConnection(String message) {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(ActivitiesActivity.this);
+        builder.setMessage(
+                        message)
+                .setTitle(
+                        "No internet.");
+        builder.create().show();
+    }
+
+    /**
+     * Sets activity by current location button.
+     */
+    private void setActivityByCurrentLocationButton() {
         viewActivityByCurrentLocationButton.
                 setButtonActionOnClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (!networkChecker.haveNetworkConnection()) {
+                            handleNoConnection("Unable to view Places near " +
+                                    "you. Try again later");
+                            return;
+                        }
                         checkLocationPermissionAndNavigate();
-
                     }
                 });
+    }
 
+    /**
+     * Sets activity by location button.
+     */
+    private void setActivityByLocationButton() {
         viewActivityByDestinationButton.
                 setButtonActionOnClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(ActivitiesActivity.this, "Hello",
-                                Toast.LENGTH_SHORT).show();
                         AlertDialog.Builder builder =
                                 new AlertDialog.Builder(ActivitiesActivity.this);
                         View dialogView =
@@ -62,6 +86,12 @@ public class ActivitiesActivity extends AppCompatActivity {
                         createListButton.setButtonActionOnClick(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                if (!networkChecker.haveNetworkConnection()) {
+                                    handleNoConnection("Unable to view places" +
+                                            " by " +
+                                            "destination. Try again later");
+                                    return;
+                                }
                                 if (destinationText.getText().toString().equals("")) {
                                     Toast.makeText(ActivitiesActivity.this,
                                             "No " +
@@ -109,7 +139,7 @@ public class ActivitiesActivity extends AppCompatActivity {
      * navigates to phone details screen.
      */
     private void checkLocationPermissionAndNavigate() {
-        if (areLocationPermissionsAlreadyGranted()) {
+        if (LocationService.areLocationPermissionsAlreadyGranted(this)) {
             Intent intent = new Intent(ActivitiesActivity.this,
                     PlacesActivity.class);
             intent.putExtra("context", "nearby");
@@ -117,7 +147,8 @@ public class ActivitiesActivity extends AppCompatActivity {
             startActivity(intent);
             return;
         } else {
-            if (areLocationPermissionsPreviouslyDenied()) {
+            if (LocationService.areLocationPermissionsPreviouslyDenied(this)) {
+                final Activity currentActivity = this;
                 new AlertDialog.Builder(this)
                         .setTitle("Location Permission")
                         .setMessage("We need location permission for viewing " +
@@ -138,56 +169,19 @@ public class ActivitiesActivity extends AppCompatActivity {
                                         dialogInterface.dismiss();
                                     }
                                 })
+
                         .setPositiveButton("Confirm",
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface,
                                                         int i) {
-                                        requestLocationPermission();
+                                        LocationService.requestLocationPermission(currentActivity);
                                     }
                                 }).show();
             } else {
-                requestLocationPermission();
+                LocationService.requestLocationPermission(this);
             }
         }
-    }
-
-    /**
-     * Checks if permissions are granted.
-     *
-     * @return boolean
-     */
-    private boolean areLocationPermissionsAlreadyGranted() {
-        return ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED;
-    }
-
-    /**
-     * check whether we should show a rationale for a permission request. It
-     * returns true
-     * if the app has previously requested the permission and the user denied
-     * it (and possibly selected the "Don't ask again" option)
-     *
-     * @return boolean
-     */
-    private boolean areLocationPermissionsPreviouslyDenied() {
-        return ActivityCompat.shouldShowRequestPermissionRationale(this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                || ActivityCompat.shouldShowRequestPermissionRationale(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION);
-    }
-
-    /**
-     * Requests the user for location permission.
-     */
-    private void requestLocationPermission() {
-        ActivityCompat.requestPermissions(this,
-                new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
     }
 
     @Override
