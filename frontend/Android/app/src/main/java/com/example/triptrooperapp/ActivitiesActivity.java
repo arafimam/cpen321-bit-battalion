@@ -20,15 +20,26 @@ public class ActivitiesActivity extends AppCompatActivity {
 
     private GreenButtonView viewActivityByDestinationButton;
     private GreenButtonView viewActivityByCurrentLocationButton;
+    private NetworkChecker networkChecker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activities);
-
+        networkChecker = new NetworkChecker(this);
         initializeActivityScreenButton();
         setActivityByLocationButton();
         setActivityByCurrentLocationButton();
+    }
+
+    private void handleNoConnection(String message) {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(ActivitiesActivity.this);
+        builder.setMessage(
+                        message)
+                .setTitle(
+                        "No internet.");
+        builder.create().show();
     }
 
     /**
@@ -39,6 +50,11 @@ public class ActivitiesActivity extends AppCompatActivity {
                 setButtonActionOnClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (!networkChecker.haveNetworkConnection()) {
+                            handleNoConnection("Unable to view Places near " +
+                                    "you. Try again later");
+                            return;
+                        }
                         checkLocationPermissionAndNavigate();
                     }
                 });
@@ -52,8 +68,6 @@ public class ActivitiesActivity extends AppCompatActivity {
                 setButtonActionOnClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(ActivitiesActivity.this, "Hello",
-                                Toast.LENGTH_SHORT).show();
                         AlertDialog.Builder builder =
                                 new AlertDialog.Builder(ActivitiesActivity.this);
                         View dialogView =
@@ -72,6 +86,12 @@ public class ActivitiesActivity extends AppCompatActivity {
                         createListButton.setButtonActionOnClick(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                if (!networkChecker.haveNetworkConnection()) {
+                                    handleNoConnection("Unable to view places" +
+                                            " by " +
+                                            "destination. Try again later");
+                                    return;
+                                }
                                 if (destinationText.getText().toString().equals("")) {
                                     Toast.makeText(ActivitiesActivity.this,
                                             "No " +
