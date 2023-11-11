@@ -56,7 +56,7 @@ describe('deleteGroup', () => {
 
   it('throws error when deleteGroup is unsuccessful', async () => {
     const mockGroupId = 'mock-group-id';
-    mockFindByIdAndDelete.mockRejectedValue(new Error('Group creation failed'));
+    mockFindByIdAndDelete.mockRejectedValue(new Error('Group deletion failed'));
 
     await expect(groupModel.deleteGroup(mockGroupId)).rejects.toThrowError();
     expect(mockFindByIdAndDelete).toHaveBeenCalledWith(mockGroupId);
