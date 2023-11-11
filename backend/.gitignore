@@ -8,6 +8,9 @@ yarn-error.log
 service-account.json
 certs/
 
+#jest
+coverage/
+
 # Miscellaneous
 .DS_Store
 Thumbs.db

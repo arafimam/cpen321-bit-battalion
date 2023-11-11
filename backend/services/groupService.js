@@ -48,6 +48,7 @@ async function addUserToGroup(groupCode, userData) {
   return await groupModel.addUserToGroup(groupCode, member);
 }
 
+// TODO: this is wrong - change the signature and usage
 async function removeUserFromGroup(userId, groupCode) {
   return await groupModel.removeUserFromGroup(userId, groupCode);
 }
