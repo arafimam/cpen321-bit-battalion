@@ -61,3 +61,7 @@ async function joinGroup(userData, group) {
 }
 
 module.exports = { createGroup, joinGroup };
+
+if (process.env['NODE_DEV'] == 'TEST') {
+  module.exports.admin = admin;
+}
