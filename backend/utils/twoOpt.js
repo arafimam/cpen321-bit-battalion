@@ -44,7 +44,7 @@ function twoOpt(places) {
 
 module.exports = { twoOpt };
 
-if (process.env['NODE_DEV'] == 'TEST') {
+if (process.env['NODE_ENV'] == 'TEST') {
   module.exports.haversineDistance = haversineDistance;
   module.exports.degToRad = degToRad;
   module.exports.calculateTotalDistance = calculateTotalDistance;

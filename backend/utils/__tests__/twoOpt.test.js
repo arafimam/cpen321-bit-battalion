@@ -1,4 +1,4 @@
-process.env['NODE_DEV'] = 'TEST';
+process.env['NODE_ENV'] = 'TEST';
 const twoOpt = require('../twoOpt.js');
 
 // afterEach(() => {
