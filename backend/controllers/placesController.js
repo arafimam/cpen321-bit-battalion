@@ -8,8 +8,8 @@ const router = express.Router();
 // Nearby Search
 // {location: {latitude, longitude}, category}
 router.get('/currLocation', middleware.verifyToken, async (req, res) => {
-  const latitude = req.query.latitude;
-  const longitude = req.query.longitude;
+  const latitude = req.query.latitude ? parseFloat(req.query.latitude) : req.query.latitude;
+  const longitude = req.query.longitude ? parseFloat(req.query.longitude) : req.query.longitude;
   const category = req.query.category;
 
   //categories: restaurant, tourist_attraction, museum, shopping_mall, night_club
