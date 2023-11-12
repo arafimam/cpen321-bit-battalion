@@ -9,7 +9,6 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -20,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TripTrooperApp"
         tools:targetApi="31">
+        <activity
+            android:name=".placeDetails"
+            android:exported="false" />
         <activity
             android:name=".GroupListActivity"
             android:exported="false" />

@@ -487,6 +487,7 @@ public class ListDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
+        String listName = intent.getStringExtra("listName");
 
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
@@ -522,6 +523,13 @@ public class ListDetailsActivity extends AppCompatActivity {
                                 listBox.setSubTitleText(address);
                                 listBox.setSideTitleText("     Rating: " + rating + "/5");
                                 String placeId = place.getString("placeId");
+                                JSONObject locationObj = place.getJSONObject(
+                                        "location");
+                                double latitude = locationObj.getDouble(
+                                        "latitude");
+                                double longitude = locationObj.getDouble(
+                                        "longitude");
+
                                 placesIds.add(placeId);
                                 listBox.showAddToListButton();
                                 listBox.setButtonColorToRed();
@@ -536,7 +544,16 @@ public class ListDetailsActivity extends AppCompatActivity {
                                 listBox.setViewPlaceButtonAction(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        Toast.makeText(ListDetailsActivity.this, "Not impl", Toast.LENGTH_LONG).show();
+                                        Intent intentTo =
+                                                new Intent(ListDetailsActivity.this, placeDetails.class);
+                                        intentTo.putExtra("placeName",
+                                                placeName);
+                                        intentTo.putExtra("address", address);
+                                        intentTo.putExtra("rating", rating);
+                                        intentTo.putExtra("longitude",
+                                                longitude);
+                                        intentTo.putExtra("latitude", latitude);
+                                        startActivity(intentTo);
                                     }
                                 });
                                 activityLayout.addView(listBox);
