@@ -3,7 +3,6 @@ const userModel = require('../userModel.js');
 const mockExists = jest.spyOn(userModel.User, 'exists');
 const mockFindById = jest.spyOn(userModel.User, 'findById');
 const mockFindOne = jest.spyOn(userModel.User, 'findOne');
-const mockUpdateOne = jest.spyOn(userModel.User, 'updateOne');
 const mockFindOneAndUpdate = jest.spyOn(userModel.User, 'findOneAndUpdate');
 
 describe('checkUserExists', () => {
