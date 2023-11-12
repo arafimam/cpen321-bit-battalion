@@ -20,6 +20,8 @@ public class ListBoxComponentView extends LinearLayout {
 
     private TextView buttonAddToList;
 
+    private TextView buttonViewPlace;
+
     public ListBoxComponentView(Context context) {
         super(context);
         initializeCardViewComponent(context);
@@ -41,6 +43,9 @@ public class ListBoxComponentView extends LinearLayout {
         subTitle = findViewById(R.id.sub_title);
         buttonAddToList = findViewById(R.id.button_add_to_list);
         buttonAddToList.setVisibility(GONE);
+
+        buttonViewPlace = findViewById(R.id.button_view_place);
+        buttonViewPlace.setVisibility(GONE);
     }
 
     /**
@@ -87,7 +92,6 @@ public class ListBoxComponentView extends LinearLayout {
     }
 
     public void setActionOnCardClick(View.OnClickListener listener) {
-        buttonAddToList.setOnClickListener(listener);
         cardView.setOnClickListener(listener);
     }
 
@@ -100,7 +104,20 @@ public class ListBoxComponentView extends LinearLayout {
         buttonAddToList.setText("Remove Place");
     }
 
-    public void setButtonAction(View.OnClickListener listener) {
+    public void setAddButtonAction(View.OnClickListener listener) {
         buttonAddToList.setOnClickListener(listener);
+    }
+
+    public void showViewPlaceButton() {
+        buttonViewPlace.setVisibility(VISIBLE);
+    }
+
+    public void setViewPlaceButtonAction(View.OnClickListener listener) {
+        buttonViewPlace.setOnClickListener(listener);
+    }
+
+    public void setSameActionForAddButtonAndCard(View.OnClickListener listener) {
+        buttonAddToList.setOnClickListener(listener);
+        cardView.setOnClickListener(listener);
     }
 }

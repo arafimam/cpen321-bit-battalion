@@ -411,7 +411,10 @@ public class ListDetailsActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void deletePlaceFromList() {
+    private void deletePlaceFromList(String placeId,
+                                     ListBoxComponentView listBox) {
+        Intent intent = getIntent();
+        String listId = intent.getStringExtra("id");
         AlertDialog.Builder builder =
                 new AlertDialog.Builder(ListDetailsActivity.this);
         builder.setMessage(
@@ -435,10 +438,39 @@ public class ListDetailsActivity extends AppCompatActivity {
                                 //TODO: make backend api call to remove
                                 // places from
                                 // list. For now just showing a toast
-                                Toast.makeText(ListDetailsActivity.this,
-                                        "Remove " +
-                                                "place not implemented.",
-                                        Toast.LENGTH_SHORT).show();
+                                GoogleSignInAccount account =
+                                        GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
+                                JSONObject json = new JSONObject();
+                                try {
+                                    json.put("placeId", placeId);
+                                } catch (JSONException e) {
+                                    throw new CustomException("error", e);
+                                }
+                                Request request =
+                                        BackendServiceClass.removePlaceFromList(
+                                                account.getIdToken(), json,
+                                                listId
+
+                                        );
+                                new Thread(() -> {
+                                    Response response =
+                                            BackendServiceClass.getResponseFromRequest(request);
+                                    if (response.isSuccessful()) {
+                                        runOnUiThread(() -> {
+                                            activityLayout.removeView(listBox);
+                                            checkForEmptyPlacesInList();
+                                        });
+                                    } else {
+                                        try {
+                                            Log.d("TAG",
+                                                    response.body().string());
+                                        } catch (IOException e) {
+                                            throw new CustomException("error"
+                                                    , e);
+                                        }
+                                    }
+                                }).start();
+
                             }
                         });
         builder.create().show();
@@ -474,9 +506,11 @@ public class ListDetailsActivity extends AppCompatActivity {
                     Log.d("TAG", places.toString());
                     for (int i = 0; i < places.length(); i++) {
                         JSONObject place = places.getJSONObject(i);
+                        int finalI = i;
                         runOnUiThread(() -> {
                             ListBoxComponentView listBox =
                                     new ListBoxComponentView(ListDetailsActivity.this);
+                            listBox.setTag("place" + finalI);
 
                             try {
                                 String placeName = place.getString(
@@ -491,10 +525,18 @@ public class ListDetailsActivity extends AppCompatActivity {
                                 placesIds.add(placeId);
                                 listBox.showAddToListButton();
                                 listBox.setButtonColorToRed();
-                                listBox.setButtonAction(new View.OnClickListener() {
+                                listBox.showViewPlaceButton();
+                                listBox.setAddButtonAction(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        deletePlaceFromList();
+                                        deletePlaceFromList(placeId, listBox);
+                                    }
+                                });
+
+                                listBox.setViewPlaceButtonAction(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Toast.makeText(ListDetailsActivity.this, "Not impl", Toast.LENGTH_LONG).show();
                                     }
                                 });
                                 activityLayout.addView(listBox);

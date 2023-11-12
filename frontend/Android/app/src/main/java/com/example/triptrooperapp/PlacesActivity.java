@@ -138,9 +138,11 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                     JSONArray places = jsonResponse.getJSONArray("places");
                     for (int i = 0; i < places.length(); i++) {
                         JSONObject place = places.getJSONObject(i);
+                        int finalI = i;
                         runOnUiThread(() -> {
                             ListBoxComponentView listBox =
                                     new ListBoxComponentView(PlacesActivity.this);
+                            listBox.setTag("place" + finalI);
                             try {
                                 String placeName = place.getString(
                                         "displayName");
@@ -155,7 +157,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                 if (intentFrom.getStringExtra("list").equals(
                                         "list")) {
                                     listBox.showAddToListButton();
-                                    listBox.setActionOnCardClick(new View.OnClickListener() {
+                                    listBox.setSameActionForAddButtonAndCard(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             handleAddPlaceToList(listBox,
@@ -309,9 +311,11 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                     JSONArray places = jsonResponse.getJSONArray("places");
                     for (int i = 0; i < places.length(); i++) {
                         JSONObject place = places.getJSONObject(i);
+                        int finalI = i;
                         runOnUiThread(() -> {
                             ListBoxComponentView listBox =
                                     new ListBoxComponentView(PlacesActivity.this);
+                            listBox.setTag("place" + finalI);
                             try {
                                 String placeName = place.getString(
                                         "displayName");
@@ -325,7 +329,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                 if (intentFrom.getStringExtra("list").equals(
                                         "list")) {
                                     listBox.showAddToListButton();
-                                    listBox.setActionOnCardClick(new View.OnClickListener() {
+                                    listBox.setSameActionForAddButtonAndCard(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             handleAddDestinationPlaceToList(listBox,
@@ -421,6 +425,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                     "Added " + placeName + " " +
                                                             "in List",
                                                     Toast.LENGTH_SHORT).show();
+                                            placesBoxContainer.removeView(listBox);
                                         });
                                     } else {
                                         try {

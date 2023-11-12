@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     private String deviceRegistrationToken;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onActivityResult(ActivityResult result) {
                         progressbar.setVisibility(View.VISIBLE);
                         Intent data = result.getData();
+                        Bundle extras = data.getExtras();
+                        if (extras != null) {
+                            for (String key : extras.keySet()) {
+                                Object value = extras.get(key);
+                                Log.d("TAG", key + ": " + value);
+                            }
+                        }
                         Task<GoogleSignInAccount> task =
                                 GoogleSignIn.getSignedInAccountFromIntent(data);
                         handleSignInResult(task);
