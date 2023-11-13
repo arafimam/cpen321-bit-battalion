@@ -157,6 +157,9 @@ public class ListDetailsActivity extends AppCompatActivity {
             Intent intentFrom = getIntent();
             String listId = intentFrom.getStringExtra("id");
             intent.putExtra("listId", listId);
+            if (intentFrom.getStringExtra("groupId") != null) {
+                intent.putExtra("group", "group");
+            }
             startActivity(intent);
             return;
         } else {
@@ -269,6 +272,10 @@ public class ListDetailsActivity extends AppCompatActivity {
                                     "byDestination");
                             intentTo.putExtra("list", "list");
                             intentTo.putExtra("listId", listId);
+                            Intent intentFrom = getIntent();
+                            if (intentFrom.getStringExtra("groupId") != null) {
+                                intentTo.putExtra("group", "group");
+                            }
                             startActivity(intentTo);
                             dialog.dismiss();
                         }
@@ -288,7 +295,7 @@ public class ListDetailsActivity extends AppCompatActivity {
         optimizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (activityLayout.getChildCount() == 0) {
+                if (activityLayout.getChildCount() <= 1) {
                     AlertDialog.Builder builder =
                             new AlertDialog.Builder(ListDetailsActivity.this);
                     builder.setMessage(
@@ -311,7 +318,36 @@ public class ListDetailsActivity extends AppCompatActivity {
                     builder.create().show();
                     return;
                 }
-                doComplexAlgorithm();
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(ListDetailsActivity.this);
+                builder.setMessage(
+                                "Our app has crafted a personalized schedule " +
+                                        "just for you. " +
+                                        "With our optimized routing, you'll " +
+                                        "save time and cover less distance " +
+                                        "while visiting all " +
+                                        "your chosen spots. View it on google" +
+                                        " maps ")
+                        .setTitle(
+                                "Optimized schedule ready");
+                builder.setNegativeButton("Close",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                builder.create().dismiss();
+                            }
+                        });
+                builder.setPositiveButton("View in Maps",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                doComplexAlgorithm();
+                            }
+                        });
+                builder.create().show();
+
             }
         });
     }
@@ -346,52 +382,70 @@ public class ListDetailsActivity extends AppCompatActivity {
                 BackendServiceClass.getOptimizedSchedulePutRequest(jsonBody,
                         account.getIdToken(), listId);
 
+        ArrayList<String> placeNames = new ArrayList<>();
+        ArrayList<String> longitudes = new ArrayList<>();
+        ArrayList<String> latitude = new ArrayList<>();
+        ArrayList<String> addresses = new ArrayList<>();
+        ArrayList<String> ratings = new ArrayList<>();
+
         new Thread(() -> {
             Response response =
                     BackendServiceClass.getResponseFromRequest(request);
             if (response.isSuccessful()) {
                 try {
                     String responseBody = response.body().string();
+                    Log.d("TAG", responseBody);
                     JSONObject jsonResponse = new JSONObject(responseBody);
                     JSONArray schedules = jsonResponse.getJSONArray("schedule");
 
                     runOnUiThread(() -> {
-                        AlertDialog.Builder builder =
-                                new AlertDialog.Builder(ListDetailsActivity.this);
-                        View dialogView =
-                                LayoutInflater.from(ListDetailsActivity.this).inflate(R.layout.member_list_view, null);
-                        final LinearLayout scheduleContainer =
-                                dialogView.findViewById(R.id.member_list_container);
-
                         for (int i = 0; i < schedules.length(); i++) {
                             try {
                                 JSONObject schedule =
                                         schedules.getJSONObject(i);
-                                ListBoxComponentView listBox =
-                                        new ListBoxComponentView(ListDetailsActivity.this);
+
                                 String placeName = schedule.getString(
                                         "displayName");
                                 String address = schedule.getString(
                                         "shortFormattedAddress");
                                 String rating = schedule.optString("rating",
                                         "--");
-                                listBox.setMainTitleText(placeName);
-                                listBox.setSubTitleText(address);
-                                listBox.setSideTitleText("     Rating: " + rating + "/5");
 
-                                scheduleContainer.addView(listBox);
+                                JSONObject locationObj = schedule.getJSONObject(
+                                        "location");
+                                double lat = locationObj.getDouble(
+                                        "latitude");
+                                double longi = locationObj.getDouble(
+                                        "longitude");
+
+                                placeNames.add(placeName);
+                                latitude.add(String.valueOf(lat));
+                                longitudes.add(String.valueOf(longi));
+                                addresses.add(address);
+                                ratings.add(rating);
+
                             } catch (JSONException e) {
                                 throw new CustomException("error", e);
                             }
 
 
                         }
-                        builder.setView(dialogView);
-                        builder.setNegativeButton("Close", null);
-                        builder.setTitle("Optimized Schedule");
-                        final AlertDialog dialog = builder.create();
 
-                        dialog.show();
+                        Intent mapsIntent =
+                                new Intent(ListDetailsActivity.this,
+                                        MapsActivity.class);
+                        mapsIntent.putStringArrayListExtra("placeNames",
+                                placeNames);
+                        mapsIntent.putStringArrayListExtra("longitudes",
+                                longitudes);
+                        mapsIntent.putStringArrayListExtra("latitudes",
+                                latitude);
+                        mapsIntent.putStringArrayListExtra("addresses",
+                                addresses);
+                        mapsIntent.putStringArrayListExtra("ratings", ratings);
+
+                        mapsIntent.putExtra("context", "complex");
+                        startActivity(mapsIntent);
                     });
 
 

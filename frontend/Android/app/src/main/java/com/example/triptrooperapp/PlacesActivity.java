@@ -152,6 +152,12 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                 listBox.setMainTitleText(placeName);
                                 listBox.setSubTitleText(address);
                                 listBox.setSideTitleText("     Rating: " + rating + "/5");
+                                JSONObject locationObj = place.getJSONObject(
+                                        "location");
+                                double lat = locationObj.getDouble(
+                                        "latitude");
+                                double longi = locationObj.getDouble(
+                                        "longitude");
 
                                 Intent intentFrom = getIntent();
                                 if (intentFrom.getStringExtra("list").equals(
@@ -165,6 +171,24 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                         }
                                     });
 
+                                } else if (intentFrom.getStringExtra("list").equals("--")) {
+                                    listBox.showViewPlaceButton();
+                                    listBox.setViewPlaceButtonAction(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent intentTo =
+                                                    new Intent(PlacesActivity.this, placeDetails.class);
+                                            intentTo.putExtra("placeName",
+                                                    placeName);
+                                            intentTo.putExtra("rating", rating);
+                                            intentTo.putExtra("address",
+                                                    address);
+                                            intentTo.putExtra("longitude",
+                                                    longi);
+                                            intentTo.putExtra("latitude", lat);
+                                            startActivity(intentTo);
+                                        }
+                                    });
                                 }
 
                                 placesBoxContainer.addView(listBox);
@@ -326,6 +350,13 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                 listBox.setSubTitleText(address);
                                 listBox.setSideTitleText("     Rating: " + rating + "/5");
 
+                                JSONObject locationObj = place.getJSONObject(
+                                        "location");
+                                double lat = locationObj.getDouble(
+                                        "latitude");
+                                double longi = locationObj.getDouble(
+                                        "longitude");
+
                                 if (intentFrom.getStringExtra("list").equals(
                                         "list")) {
                                     listBox.showAddToListButton();
@@ -335,6 +366,24 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                             handleAddDestinationPlaceToList(listBox,
                                                     place, account, placeName);
 
+                                        }
+                                    });
+                                } else if (intentFrom.getStringExtra("list").equals("--")) {
+                                    listBox.showViewPlaceButton();
+                                    listBox.setViewPlaceButtonAction(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent intentTo =
+                                                    new Intent(PlacesActivity.this, placeDetails.class);
+                                            intentTo.putExtra("placeName",
+                                                    placeName);
+                                            intentTo.putExtra("rating", rating);
+                                            intentTo.putExtra("address",
+                                                    address);
+                                            intentTo.putExtra("longitude",
+                                                    longi);
+                                            intentTo.putExtra("latitude", lat);
+                                            startActivity(intentTo);
                                         }
                                     });
                                 }
@@ -456,7 +505,10 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             Intent intentFrom = getIntent();
-            if (intentFrom.getStringExtra("list").equals("list")) {
+            if (intentFrom.getStringExtra("group") != null) {
+                Intent intent = new Intent(this, GroupsActivity.class);
+                startActivity(intent);
+            } else if (intentFrom.getStringExtra("list").equals("list")) {
                 Intent intent = new Intent(this, ListActivity.class);
                 startActivity(intent);
             } else {

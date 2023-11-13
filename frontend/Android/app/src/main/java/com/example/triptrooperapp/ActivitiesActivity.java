@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -30,6 +31,11 @@ public class ActivitiesActivity extends AppCompatActivity {
         initializeActivityScreenButton();
         setActivityByLocationButton();
         setActivityByCurrentLocationButton();
+
+        TextView activityHeader = findViewById(R.id.activityHeader);
+        activityHeader.setText("Explore destinations and discover nearby " +
+                "places. For personalized collections, visit your group or " +
+                "list screen to curate your favorites");
     }
 
     private void handleNoConnection(String message) {
@@ -127,10 +133,10 @@ public class ActivitiesActivity extends AppCompatActivity {
         viewActivityByCurrentLocationButton =
                 findViewById(R.id.activity_location);
 
-        viewActivityByCurrentLocationButton.setButtonText("View Activities " +
-                "nearby");
-        viewActivityByDestinationButton.setButtonText("View Activities for " +
-                "your destination");
+        viewActivityByCurrentLocationButton.setButtonText("Find local gems " +
+                "near you");
+        viewActivityByDestinationButton.setButtonText("Explore places by " +
+                "destination");
     }
 
 

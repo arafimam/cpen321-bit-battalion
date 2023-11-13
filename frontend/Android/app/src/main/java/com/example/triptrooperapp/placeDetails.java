@@ -2,6 +2,7 @@ package com.example.triptrooperapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,26 @@ public class placeDetails extends AppCompatActivity {
         address.setText(intent.getStringExtra("address"));
         rating.setText(intent.getStringExtra("rating") + "/5");
         gmapBtn.setButtonText("View in Google Maps");
+
+        double longitude = intent.getDoubleExtra("longitude", 0.0);
+        double latitude = intent.getDoubleExtra("latitude", 0.0);
+
+
+        gmapBtn.setButtonActionOnClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mapsIntent = new Intent(placeDetails.this,
+                        MapsActivity.class);
+                mapsIntent.putExtra("placeName", intent.getStringExtra(
+                        "placeName"));
+                mapsIntent.putExtra("latitude", latitude);
+                mapsIntent.putExtra("longitude", longitude);
+                mapsIntent.putExtra("context", "onePlace");
+
+
+                startActivity(mapsIntent);
+            }
+        });
 
     }
 

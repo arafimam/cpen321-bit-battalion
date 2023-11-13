@@ -102,6 +102,7 @@ public class GroupsActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     try {
                         String responseBody = response.body().string();
+                        Log.d("TAG", responseBody);
                         JSONObject jsonObject = new JSONObject(responseBody);
                         JSONArray groupsArray = jsonObject.getJSONArray(
                                 "groups");
@@ -114,7 +115,8 @@ public class GroupsActivity extends AppCompatActivity {
                             listBoxComponentView.setMainTitleText(
                                     groupInfo.getString("groupName"));
                             listBoxComponentView.setSideTitleText(
-                                    groupInfo.getString("groupCode"));
+                                    "Group code: " + groupInfo.getString(
+                                            "groupCode"));
                             listBoxComponentView.setVisibilityOfTextViews(
                                     View.VISIBLE, View.VISIBLE, View.INVISIBLE);
                             listBoxContainer.addView(listBoxComponentView);
