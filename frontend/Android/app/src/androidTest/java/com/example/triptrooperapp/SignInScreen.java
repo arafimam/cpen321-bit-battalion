@@ -4,6 +4,7 @@ package com.example.triptrooperapp;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
@@ -36,7 +37,8 @@ public class SignInScreen {
         // using UI automator to control the google account picker.
         UiDevice device =
                 UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        UiSelector selector = new UiSelector().textContains(googleAccountType);
+        UiSelector selector =
+                new UiSelector().textContains(googleAccountType);
         UiObject object = device.findObject(selector);
 
         try {
@@ -49,6 +51,41 @@ public class SignInScreen {
 
         // wait for 5 seconds.
         onView(isRoot()).perform(TestFramework.waitIdlingResource(5000));
+    }
+
+    public static void signOutAndSignInWithAnotherUser() {
+        ActivityScenario<HomeActivity> scenario1 =
+                ActivityScenario.launch(HomeActivity.class);
+        TestFramework.clickWithId(R.id.sign_out_google);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
+
+        TestFramework.clickWithId(R.id.sign_in_google);
+
+        // using Thread to sleep because we are launching another 3rd party
+        // activity.
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // using UI automator to control the google account picker.
+        UiDevice device =
+                UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
+        // select the second account.
+        UiSelector selector =
+                new UiSelector().textContains(googleAccountType).instance(1);
+        UiObject object = device.findObject(selector);
+
+        try {
+            if (object.exists()) {
+                object.click();
+            }
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

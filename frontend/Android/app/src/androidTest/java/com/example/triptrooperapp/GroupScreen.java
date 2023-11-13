@@ -1,7 +1,11 @@
 package com.example.triptrooperapp;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
+import androidx.test.core.app.ActivityScenario;
 
 public class GroupScreen {
 
@@ -25,6 +29,15 @@ public class GroupScreen {
         TestFramework.setTextToTextFieldWithId(R.id.group_name_text_field,
                 groupName);
         TestFramework.clickWithId(R.id.create_group);
+    }
+
+    public static void joinGroupWithCode(String groupCode) {
+        TestFramework.clickWithId(R.id.create_group);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        onView(withId(R.id.join_group_text_field)).perform(replaceText(groupCode));
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(5000));
+        TestFramework.clickWithId(R.id.join_group_btn);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
     }
 
     /**
@@ -56,6 +69,15 @@ public class GroupScreen {
         double randomDouble = Math.random();
         int randomIntInRange = (int) (Math.random() * ((1000) + 1));
         return "Group " + randomIntInRange;
+    }
+
+    public static void deleteGroup(String groupName) {
+        ActivityScenario<GroupsActivity> scenario =
+                ActivityScenario.launch(GroupsActivity.class);
+        TestFramework.clickViewWithText(groupName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        TestFramework.clickWithId(R.id.action_delete);
+        TestFramework.clickViewWithText("Delete");
     }
 
 }

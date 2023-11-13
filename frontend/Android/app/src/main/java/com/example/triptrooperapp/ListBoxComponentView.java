@@ -15,7 +15,7 @@ public class ListBoxComponentView extends LinearLayout {
 
     private CardView cardView;
     private TextView mainTitle;
-    private TextView sideTitle;
+    public TextView sideTitle;
     private TextView subTitle;
 
     public TextView buttonAddToList;
