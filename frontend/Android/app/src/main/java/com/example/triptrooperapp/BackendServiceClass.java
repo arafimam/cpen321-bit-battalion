@@ -401,6 +401,22 @@ public class BackendServiceClass {
         return request;
     }
 
+    public static Request removePlaceFromList(
+            String authToken,
+            JSONObject json,
+            String listId
+    ) {
+        String url = ipAddress + "lists/" + listId + "/remove/place";
+        RequestBody body = RequestBody.create(json.toString(), JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .header(authHeader, authToken)
+                .put(body)
+                .build();
+        return request;
+
+    }
+
     /**
      * Taken from CHAT GPT.
      *

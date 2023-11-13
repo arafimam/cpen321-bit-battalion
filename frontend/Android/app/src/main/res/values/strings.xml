@@ -35,6 +35,7 @@
 
     <string name="web_client_id">341689223031-547ca9idtu3985lrl0uduo6ifpatgd7f.apps.googleusercontent.com</string>
     <string name="api_ip_address">https://128.189.128.116:8081/</string>
+    <string name="title_activity_maps">MapsActivity</string>
     <!-- The above is when connected to ubsecure. When testing with aws use: https://34.220.237.44:8081/-->
 
 

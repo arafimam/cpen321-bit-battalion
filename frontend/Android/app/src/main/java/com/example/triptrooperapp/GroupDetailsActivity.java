@@ -48,7 +48,31 @@ public class GroupDetailsActivity extends AppCompatActivity {
         leaveGroupBtn.setButtonActionOnClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                leaveGroupViaBackend();
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(GroupDetailsActivity.this);
+                builder.setMessage(
+                                "Are you sure you want to leave the group? " +
+                                        "You can join again using the group " +
+                                        "code.")
+                        .setTitle(
+                                "Leave group");
+                builder.setPositiveButton("Leave",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                leaveGroupViaBackend();
+                            }
+                        });
+
+                builder.setNegativeButton("Close",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i) {
+                                builder.create().dismiss();
+                            }
+                        });
+                builder.create().show();
             }
         });
 
@@ -64,12 +88,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
             }
         });
 
-        DefaultCardButtonView expenseBtn = findViewById(R.id.expense_btn);
-        expenseBtn.setMainTitleText("View Expenses");
-        expenseBtn.setVisibility(View.INVISIBLE);
-
         setScreenContentByBackend();
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
 
@@ -201,7 +220,33 @@ public class GroupDetailsActivity extends AppCompatActivity {
             overridePendingTransition(0, 0);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
-            deleteGroupViaBackend();
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(GroupDetailsActivity.this);
+            builder.setMessage(
+                            "Are you sure you want to delete thr group? " +
+                                    "Deleting the group will remove this " +
+                                    "group for all users and there is no " +
+                                    "turning back.")
+                    .setTitle(
+                            "Confirm Delete");
+            builder.setPositiveButton("Delete",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface,
+                                            int i) {
+                            deleteGroupViaBackend();
+                        }
+                    });
+
+            builder.setNegativeButton("Close",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface,
+                                            int i) {
+                            builder.create().dismiss();
+                        }
+                    });
+            builder.create().show();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
