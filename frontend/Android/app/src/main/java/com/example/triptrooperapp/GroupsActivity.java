@@ -120,6 +120,7 @@ public class GroupsActivity extends AppCompatActivity {
                             listBoxComponentView.setVisibilityOfTextViews(
                                     View.VISIBLE, View.VISIBLE, View.INVISIBLE);
                             listBoxContainer.addView(listBoxComponentView);
+                            listBoxComponentView.sideTitle.setTag("sideTitle" + i);
 
                             final String groupId = groupInfo.getString("_id");
                             listBoxComponentView.setActionOnCardClick(new View.OnClickListener() {

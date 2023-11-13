@@ -87,14 +87,14 @@ public class BackendServiceClass {
      * Endpoint: groups/join
      * Functionality: join a group
      */
-    public static Request joinGroupPostRequest(JSONObject json,
-                                               String authToken) {
+    public static Request joinGroupPutRequest(JSONObject json,
+                                              String authToken) {
         RequestBody body = RequestBody.create(json.toString(), JSON);
         String url = ipAddress + "groups/join";
         Request request = new Request.Builder()
                 .url(url)
                 .header(authHeader, authToken)
-                .post(body)
+                .put(body)
                 .build();
         return request;
     }

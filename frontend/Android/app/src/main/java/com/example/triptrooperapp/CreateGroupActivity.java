@@ -1,5 +1,6 @@
 package com.example.triptrooperapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -60,7 +62,7 @@ public class CreateGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setButtonClickValidation(groupNameField.getText().toString(),
-                        groupNameField.getText().toString(), true);
+                        "Group name is empty.", true);
             }
         });
 
@@ -150,7 +152,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                             GoogleSignIn.getLastSignedInAccount(this);
 
                     Request request =
-                            BackendServiceClass.joinGroupPostRequest(json,
+                            BackendServiceClass.joinGroupPutRequest(json,
                                     account.getIdToken());
 
                     new Thread(() -> {
@@ -168,6 +170,26 @@ public class CreateGroupActivity extends AppCompatActivity {
                             } catch (IOException e) {
                                 throw new CustomException("error", e);
                             }
+                            runOnUiThread(() -> {
+                                AlertDialog.Builder builder =
+                                        new AlertDialog.Builder(CreateGroupActivity.this);
+                                builder.setMessage(
+                                                "Double check the group code." +
+                                                        " The entered group " +
+                                                        "code does not exist. ")
+                                        .setTitle(
+                                                "Incorrect group code");
+
+                                builder.setNegativeButton("Close",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface,
+                                                                int i) {
+                                                builder.create().dismiss();
+                                            }
+                                        });
+                                builder.create().show();
+                            });
                         }
                     }).start();
                 } catch (JSONException e) {

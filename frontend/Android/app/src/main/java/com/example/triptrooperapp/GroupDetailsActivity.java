@@ -185,6 +185,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 for (int i = 0; i < memberArray.length(); i++) {
                     DefaultCardButtonView cardButtonView =
                             new DefaultCardButtonView(GroupDetailsActivity.this);
+                    cardButtonView.setTag("member" + i);
                     try {
                         JSONObject member = memberArray.getJSONObject(i);
                         String username = member.getString("username");
