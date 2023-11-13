@@ -173,6 +173,8 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
 
                                 } else if (intentFrom.getStringExtra("list").equals("--")) {
                                     listBox.showViewPlaceButton();
+                                    listBox.buttonViewPlace.setTag("viewPlace"
+                                            + finalI);
                                     listBox.setViewPlaceButtonAction(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
@@ -370,6 +372,8 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                     });
                                 } else if (intentFrom.getStringExtra("list").equals("--")) {
                                     listBox.showViewPlaceButton();
+                                    listBox.buttonViewPlace.setTag("viewPlace"
+                                            + finalI);
                                     listBox.setViewPlaceButtonAction(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {

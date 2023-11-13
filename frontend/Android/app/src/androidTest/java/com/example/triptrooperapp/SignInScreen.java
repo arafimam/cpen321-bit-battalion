@@ -53,7 +53,7 @@ public class SignInScreen {
         onView(isRoot()).perform(TestFramework.waitIdlingResource(5000));
     }
 
-    public static void signOutAndSignInWithAnotherUser() {
+    public static void signOutAndSignInWithAnotherUser(int accountNumber) {
         ActivityScenario<HomeActivity> scenario1 =
                 ActivityScenario.launch(HomeActivity.class);
         TestFramework.clickWithId(R.id.sign_out_google);
@@ -75,7 +75,7 @@ public class SignInScreen {
 
         // select the second account.
         UiSelector selector =
-                new UiSelector().textContains(googleAccountType).instance(1);
+                new UiSelector().textContains(googleAccountType).instance(accountNumber);
         UiObject object = device.findObject(selector);
 
         try {
