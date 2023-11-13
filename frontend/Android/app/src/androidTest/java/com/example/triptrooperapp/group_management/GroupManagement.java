@@ -156,4 +156,9 @@ public class GroupManagement {
         TestFramework.isViewWithTagDisplayed("member0");
         TestFramework.isViewWithTagDisplayed("member1");
     }
+
+    @Test
+    public void testGroupMembersAfterLeaveGroup() {
+
+    }
 }
