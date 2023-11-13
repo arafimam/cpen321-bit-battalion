@@ -562,6 +562,7 @@ public class ListDetailsActivity extends AppCompatActivity {
                     for (int i = 0; i < places.length(); i++) {
                         JSONObject place = places.getJSONObject(i);
                         int finalI = i;
+                        int finalI1 = i;
                         runOnUiThread(() -> {
                             ListBoxComponentView listBox =
                                     new ListBoxComponentView(ListDetailsActivity.this);
@@ -588,6 +589,7 @@ public class ListDetailsActivity extends AppCompatActivity {
                                 listBox.showAddToListButton();
                                 listBox.setButtonColorToRed();
                                 listBox.showViewPlaceButton();
+                                listBox.buttonAddToList.setTag("remove" + finalI1);
                                 listBox.setAddButtonAction(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {

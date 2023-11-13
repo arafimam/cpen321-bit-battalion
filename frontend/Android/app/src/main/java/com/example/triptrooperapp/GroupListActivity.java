@@ -72,7 +72,6 @@ public class GroupListActivity extends AppCompatActivity {
                         if (listNameText.getText().toString().equals("")) {
                             Toast.makeText(GroupListActivity.this, "List Name" +
                                     " Empty", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
                         } else {
                             createGroupList(listNameText.getText().toString());
                             dialog.dismiss();
@@ -98,7 +97,7 @@ public class GroupListActivity extends AppCompatActivity {
 
         Request request =
                 BackendServiceClass.getGroupListsGetRequest(account.getIdToken(),
-                groupId);
+                        groupId);
         new Thread(() -> {
             Response response =
                     BackendServiceClass.getResponseFromRequest(request);
