@@ -105,6 +105,11 @@ public class TestFramework {
         return true;
     }
 
+    public static boolean isViewWithTagNotDisplayed(String tag) {
+        onView(withTagValue(is(tag))).check(doesNotExist());
+        return true;
+    }
+
     /**
      * Checks if view contains element with passed in id.
      *

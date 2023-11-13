@@ -70,7 +70,7 @@ public class CreateGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setButtonClickValidation(groupCodeField.getText().toString(),
-                        groupCodeField.getText().toString(), false);
+                        "Unable to join group", false);
             }
         });
 
@@ -92,8 +92,22 @@ public class CreateGroupActivity extends AppCompatActivity {
                                           String failureMessage,
                                           boolean isCreatingNewGroup) {
         if (textToValidate.equals("")) {
-            Toast.makeText(CreateGroupActivity.this, failureMessage,
-                    Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(CreateGroupActivity.this);
+            builder.setMessage(
+                            "Empty group name or group code")
+                    .setTitle(
+                            "Try again");
+
+            builder.setNegativeButton("Close",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface,
+                                            int i) {
+                            builder.create().dismiss();
+                        }
+                    });
+            builder.create().show();
         } else {
             if (isCreatingNewGroup) {
                 JSONObject json = new JSONObject();

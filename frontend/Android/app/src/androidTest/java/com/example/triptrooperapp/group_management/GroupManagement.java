@@ -51,7 +51,7 @@ public class GroupManagement {
         GroupScreen.createGroupWithName("");
 
         //verify we are still in the create group screen
-        TestFramework.isViewWithIdDisplayed(R.id.group_name_text_field);
+        TestFramework.isViewWithTextDisplayed("Empty group name or group code");
 
         //cleanup
         GroupScreen.deleteGroup(groupName);
@@ -83,7 +83,7 @@ public class GroupManagement {
         String fullCode = TestFramework.getText(withTagValue(is("sideTitle0")));
         String code = fullCode.replaceAll("Group code: ", "");
 
-        SignInScreen.signOutAndSignInWithAnotherUser();
+        SignInScreen.signOutAndSignInWithAnotherUser(1);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         GroupScreen.navigateToGroupScreen();
         GroupScreen.joinGroupWithCode(code);
@@ -100,6 +100,15 @@ public class GroupManagement {
         GroupScreen.joinGroupWithCode("123456");
         // verify alert message is shown.
         TestFramework.isViewWithTextDisplayed("Incorrect group code");
+
+        // test with empty join code.
+        ActivityScenario<GroupsActivity> scenario3 =
+                ActivityScenario.launch(GroupsActivity.class);
+        GroupScreen.joinGroupWithCode("");
+        TestFramework.isViewWithTextDisplayed("Empty group name or group code");
+
+        // clean up.
+        GroupScreen.deleteGroup(fullCode);
     }
 
     @Test
@@ -127,7 +136,7 @@ public class GroupManagement {
     }
 
     @Test
-    public void testGroupMembers() {
+    public void testGroupMembersOnlyJoin() {
         GroupScreen.navigateToGroupScreen();
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
@@ -139,7 +148,7 @@ public class GroupManagement {
         String fullCode = TestFramework.getText(withTagValue(is("sideTitle0")));
         String code = fullCode.replaceAll("Group code: ", "");
 
-        SignInScreen.signOutAndSignInWithAnotherUser();
+        SignInScreen.signOutAndSignInWithAnotherUser(1);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         GroupScreen.navigateToGroupScreen();
         GroupScreen.joinGroupWithCode(code);
@@ -155,5 +164,64 @@ public class GroupManagement {
         // verify two members
         TestFramework.isViewWithTagDisplayed("member0");
         TestFramework.isViewWithTagDisplayed("member1");
+    }
+
+    @Test
+    public void testGroupMembersWithLeave() {
+        GroupScreen.navigateToGroupScreen();
+        final String groupName = GroupScreen.getRandomGroupName();
+        GroupScreen.createGroupWithName(groupName);
+
+        ActivityScenario<GroupsActivity> scenario1 =
+                ActivityScenario.launch(GroupsActivity.class);
+
+        // get the group code.
+        String fullCode = TestFramework.getText(withTagValue(is("sideTitle0")));
+        String code = fullCode.replaceAll("Group code: ", "");
+
+        // verify member count is 1.
+        TestFramework.clickViewWithText(groupName);
+        TestFramework.clickWithId(R.id.member_btn);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        TestFramework.isViewWithTagDisplayed("member0");
+
+        // Join with another member.
+        SignInScreen.signOutAndSignInWithAnotherUser(1);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        GroupScreen.navigateToGroupScreen();
+        GroupScreen.joinGroupWithCode(code);
+
+
+        ActivityScenario<GroupsActivity> scenario2 =
+                ActivityScenario.launch(GroupsActivity.class);
+        GroupScreen.navigateToGroupScreen();
+        TestFramework.clickViewWithText(fullCode);
+        TestFramework.clickWithId(R.id.member_btn);
+
+        // verify two members.
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        // verify two members
+        TestFramework.isViewWithTagDisplayed("member0");
+        TestFramework.isViewWithTagDisplayed("member1");
+
+        // close the dialog and leave the group.
+        TestFramework.clickViewWithText("Close");
+        TestFramework.clickWithId(R.id.leave_group);
+        TestFramework.clickViewWithText("Leave");
+
+        // sign back in with the first account and check the count.
+        SignInScreen.signOutAndSignInWithAnotherUser(0);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        GroupScreen.navigateToGroupScreen();
+
+        TestFramework.clickViewWithText(groupName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        TestFramework.clickWithId(R.id.member_btn);
+
+        // check that there is only member.
+        TestFramework.isViewWithTagDisplayed("member0");
+        TestFramework.isViewWithTagNotDisplayed("member1");
+
+        GroupScreen.deleteGroup(groupName);
     }
 }

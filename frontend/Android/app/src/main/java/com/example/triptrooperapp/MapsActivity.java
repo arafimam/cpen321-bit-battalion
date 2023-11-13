@@ -70,6 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LatLng place = new LatLng(latitude, longitude);
             Marker marker =
                     googleMap.addMarker(new MarkerOptions().position(place).title(placeName));
+            marker.setTag(placeName);
             if (marker != null) {
                 marker.showInfoWindow();
             }

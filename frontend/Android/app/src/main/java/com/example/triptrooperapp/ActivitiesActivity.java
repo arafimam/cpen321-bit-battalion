@@ -203,6 +203,7 @@ public class ActivitiesActivity extends AppCompatActivity {
                 Intent phoneDetailsIntent =
                         new Intent(ActivitiesActivity.this,
                                 PlacesActivity.class);
+                phoneDetailsIntent.putExtra("context", "nearby");
                 phoneDetailsIntent.putExtra("list", "--");
                 startActivity(phoneDetailsIntent);
             } else {

@@ -41,6 +41,18 @@ public class curateList {
         }
     }
 
+    // function to delete any created user list.
+
+    private void deleteUserList(String listName) {
+        ActivityScenario<ListActivity> scenario =
+                ActivityScenario.launch(ListActivity.class);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        TestFramework.clickViewWithText(listName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        TestFramework.clickWithId(R.id.action_delete);
+        TestFramework.clickViewWithText("Confirm");
+    }
+
     @Test
     public void testCreateUserList() {
         ListScreen.navigateToListScreen();
@@ -57,6 +69,9 @@ public class curateList {
         Assert.assertTrue("Dialog closed even when list with empty name " +
                         "created",
                 TestFramework.isViewWithIdDisplayed(R.id.create_list_button));
+
+        // clean up.
+        deleteUserList(listName);
     }
 
     @Test
@@ -122,6 +137,9 @@ public class curateList {
             onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
             checkIfThreePlacesAdded();
         }
+
+        // clean up.
+        deleteUserList(listName);
     }
 
     @Test
@@ -181,6 +199,9 @@ public class curateList {
         // verify optimize schedule is now available
         TestFramework.isViewWithTextDisplayed("Optimized schedule ready");
         TestFramework.isViewWithTextDisplayed("View in Maps");
+
+        // clean up.
+        deleteUserList(listName);
     }
 
     @Test
@@ -209,6 +230,9 @@ public class curateList {
 
         // verify no place exist in the screen
         TestFramework.isViewWithTextNotDisplayed("View Place.");
+
+        //cleanup.
+        deleteUserList(listName);
     }
 
     @Test
@@ -235,6 +259,9 @@ public class curateList {
         Assert.assertTrue("Dialog closed even when list with empty name " +
                         "created",
                 TestFramework.isViewWithIdDisplayed(R.id.create_list_button));
+
+        // clean up
+        GroupScreen.deleteGroup(groupName);
     }
 
     @Test
@@ -265,6 +292,9 @@ public class curateList {
 
         // verify group list is not present
         TestFramework.isViewWithTextNotDisplayed(groupListName);
+
+        // clean up
+        GroupScreen.deleteGroup(groupName);
     }
 
     @Test
@@ -334,6 +364,9 @@ public class curateList {
         // verify optimize schedule is now available
         TestFramework.isViewWithTextDisplayed("Optimized schedule ready");
         TestFramework.isViewWithTextDisplayed("View in Maps");
+
+        // clean up
+        GroupScreen.deleteGroup(groupName);
     }
 
     @Test
@@ -370,6 +403,9 @@ public class curateList {
         removeThreePlaces();
         // verify no place exist in the screen
         TestFramework.isViewWithTextNotDisplayed("View Place.");
+
+        // clean up
+        GroupScreen.deleteGroup(groupName);
     }
 
     @Test
@@ -403,6 +439,9 @@ public class curateList {
         TestFramework.clickViewWithText(groupListName);
 
         checkIfThreePlacesAdded();
+
+        // clean up
+        GroupScreen.deleteGroup(groupName);
     }
 
 
