@@ -18,9 +18,9 @@ public class ListBoxComponentView extends LinearLayout {
     private TextView sideTitle;
     private TextView subTitle;
 
-    private TextView buttonAddToList;
+    public TextView buttonAddToList;
 
-    private TextView buttonViewPlace;
+    public TextView buttonViewPlace;
 
     public ListBoxComponentView(Context context) {
         super(context);

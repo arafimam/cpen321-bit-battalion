@@ -7,6 +7,8 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.triptrooperapp.GroupScreen;
+import com.example.triptrooperapp.GroupsActivity;
 import com.example.triptrooperapp.ListActivity;
 import com.example.triptrooperapp.ListScreen;
 import com.example.triptrooperapp.MainActivity;
@@ -15,6 +17,7 @@ import com.example.triptrooperapp.SignInScreen;
 import com.example.triptrooperapp.TestFramework;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,13 +27,22 @@ import org.junit.runner.RunWith;
 // Use Case-1 List Creation with users and group.
 public class curateList {
 
+    private static boolean isSignedIn = false;
+
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule =
             new ActivityScenarioRule<>(MainActivity.class);
 
+    @Before
+    public void signInOnce() {
+        if (!isSignedIn) {
+            SignInScreen.signInIfNotAlreadySignedIn();
+            isSignedIn = true;
+        }
+    }
+
     @Test
     public void testCreateUserList() {
-        SignInScreen.signInIfNotAlreadySignedIn();
         ListScreen.navigateToListScreen();
 
         final String listName = ListScreen.getRandomListName();
@@ -49,7 +61,6 @@ public class curateList {
 
     @Test
     public void testDeleteUserList() {
-        SignInScreen.signInIfNotAlreadySignedIn();
         ListScreen.navigateToListScreen();
 
         final String listName = ListScreen.getRandomListName();
@@ -80,7 +91,6 @@ public class curateList {
 
     @Test
     public void testPopulateUserList() {
-        SignInScreen.signInIfNotAlreadySignedIn();
         ListScreen.navigateToListScreen();
 
         final String listName = ListScreen.getRandomListName();
@@ -116,13 +126,299 @@ public class curateList {
 
     @Test
     public void testOptimizeUserList() {
+        ListScreen.navigateToListScreen();
 
+        final String listName = ListScreen.getRandomListName();
+        ListScreen.createListWithText(listName);
+
+        TestFramework.clickViewWithText(listName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+
+        // click on optimize button without any place added.
+        TestFramework.clickWithId(R.id.optimize_button);
+
+        // verify dialog showing schedule unavailable
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        TestFramework.isViewWithTextDisplayed("Schedule Creation Unavailable");
+        TestFramework.clickViewWithText("Close");
+
+        // add one place and try optimizing
+        TestFramework.clickWithId(R.id.create_list);
+        TestFramework.clickViewWithText("Explore places by destination");
+        TestFramework.setTextToTextFieldWithId(R.id.list_name_textField, "UBC");
+        TestFramework.clickWithId(R.id.create_list_button);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
+        TestFramework.clickViewWithTag("place0");
+        TestFramework.clickViewWithText("Add");
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+
+        // verify optimize schedule is still unavailable
+        ActivityScenario<ListActivity> scenario =
+                ActivityScenario.launch(ListActivity.class);
+        TestFramework.clickViewWithText(listName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        TestFramework.clickWithId(R.id.optimize_button);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        TestFramework.isViewWithTextDisplayed("Schedule Creation Unavailable");
+        TestFramework.clickViewWithText("Close");
+
+        // add 3 places
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        TestFramework.clickWithId(R.id.create_list);
+        TestFramework.clickViewWithText("Explore places by destination");
+        TestFramework.setTextToTextFieldWithId(R.id.list_name_textField,
+                "SURREY");
+        TestFramework.clickWithId(R.id.create_list_button);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        selectThreePlaces();
+        ActivityScenario<ListActivity> scenario1 =
+                ActivityScenario.launch(ListActivity.class);
+        TestFramework.clickViewWithText(listName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        TestFramework.clickWithId(R.id.optimize_button);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+
+        // verify optimize schedule is now available
+        TestFramework.isViewWithTextDisplayed("Optimized schedule ready");
+        TestFramework.isViewWithTextDisplayed("View in Maps");
     }
+
+    @Test
+    public void testRemovePlacesFromUserList() {
+        ListScreen.navigateToListScreen();
+
+        final String listName = ListScreen.getRandomListName();
+        ListScreen.createListWithText(listName);
+
+        TestFramework.clickViewWithText(listName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+
+        // add few places.
+        TestFramework.clickWithId(R.id.create_list);
+        TestFramework.clickViewWithText("Explore places by destination");
+        TestFramework.setTextToTextFieldWithId(R.id.list_name_textField, "UBC");
+        TestFramework.clickWithId(R.id.create_list_button);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
+        selectThreePlaces();
+
+        ActivityScenario<ListActivity> scenario1 =
+                ActivityScenario.launch(ListActivity.class);
+        TestFramework.clickViewWithText(listName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        removeThreePlaces();
+
+        // verify no place exist in the screen
+        TestFramework.isViewWithTextNotDisplayed("View Place.");
+    }
+
+    @Test
+    public void testCreateGroupList() {
+        GroupScreen.navigateToGroupScreen();
+
+        final String groupName = GroupScreen.getRandomGroupName();
+        GroupScreen.createGroupWithName(groupName);
+
+        ActivityScenario<GroupsActivity> scenario1 =
+                ActivityScenario.launch(GroupsActivity.class);
+        TestFramework.clickViewWithText(groupName);
+        GroupScreen.clickOnViewList();
+
+        // creating a a group list with name
+        final String groupListName = groupName + "list";
+        GroupScreen.createGroupList(groupListName);
+
+        // verify group is successfully created.
+        TestFramework.isViewWithTextDisplayed(groupListName);
+
+        // create a group with empty name
+        GroupScreen.createGroupList("");
+        Assert.assertTrue("Dialog closed even when list with empty name " +
+                        "created",
+                TestFramework.isViewWithIdDisplayed(R.id.create_list_button));
+    }
+
+    @Test
+    public void testDeleteGroupList() {
+        GroupScreen.navigateToGroupScreen();
+
+        final String groupName = GroupScreen.getRandomGroupName();
+        GroupScreen.createGroupWithName(groupName);
+        ActivityScenario<GroupsActivity> scenario1 =
+                ActivityScenario.launch(GroupsActivity.class);
+        TestFramework.clickViewWithText(groupName);
+        GroupScreen.clickOnViewList();
+        // creating a a group list with name
+        final String groupListName = groupName + "list";
+        GroupScreen.createGroupList(groupListName);
+
+        TestFramework.clickViewWithText(groupListName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        TestFramework.clickWithId(R.id.action_delete);
+
+        // click on close and see if we still remain in the group screen
+        TestFramework.clickViewWithText("Close");
+        TestFramework.isViewWithIdDisplayed(R.id.action_delete);
+
+        // confirm delete
+        TestFramework.clickWithId(R.id.action_delete);
+        TestFramework.clickViewWithText("Confirm");
+
+        // verify group list is not present
+        TestFramework.isViewWithTextNotDisplayed(groupListName);
+    }
+
+    @Test
+    public void testOptimizeGroupList() {
+        GroupScreen.navigateToGroupScreen();
+        final String groupName = GroupScreen.getRandomGroupName();
+        GroupScreen.createGroupWithName(groupName);
+        ActivityScenario<GroupsActivity> scenario1 =
+                ActivityScenario.launch(GroupsActivity.class);
+        TestFramework.clickViewWithText(groupName);
+        GroupScreen.clickOnViewList();
+        // creating a a group list with name
+        final String groupListName = groupName + "list";
+        GroupScreen.createGroupList(groupListName);
+
+        TestFramework.clickViewWithText(groupListName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        TestFramework.clickWithId(R.id.optimize_button);
+        // verify dialog showing schedule unavailable
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        TestFramework.isViewWithTextDisplayed("Schedule Creation Unavailable");
+        TestFramework.clickViewWithText("Close");
+
+        // add one place and try optimizing
+        TestFramework.clickWithId(R.id.create_list);
+        TestFramework.clickViewWithText("Explore places by destination");
+        TestFramework.setTextToTextFieldWithId(R.id.list_name_textField, "UBC");
+        TestFramework.clickWithId(R.id.create_list_button);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
+        TestFramework.clickViewWithTag("place0");
+        TestFramework.clickViewWithText("Add");
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+
+        ActivityScenario<GroupsActivity> scenario2 =
+                ActivityScenario.launch(GroupsActivity.class);
+        TestFramework.clickViewWithText(groupName);
+        GroupScreen.clickOnViewList();
+        TestFramework.clickViewWithText(groupListName);
+
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        TestFramework.clickWithId(R.id.optimize_button);
+
+        // verify dialog showing schedule unavailable
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        TestFramework.isViewWithTextDisplayed("Schedule Creation Unavailable");
+        TestFramework.clickViewWithText("Close");
+
+        // now add more places.
+        TestFramework.clickWithId(R.id.create_list);
+        TestFramework.clickViewWithText("Explore places by destination");
+        TestFramework.setTextToTextFieldWithId(R.id.list_name_textField,
+                "SURREY");
+        TestFramework.clickWithId(R.id.create_list_button);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
+        selectThreePlaces();
+
+        ActivityScenario<GroupsActivity> scenario3 =
+                ActivityScenario.launch(GroupsActivity.class);
+        TestFramework.clickViewWithText(groupName);
+        GroupScreen.clickOnViewList();
+        TestFramework.clickViewWithText(groupListName);
+
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        TestFramework.clickWithId(R.id.optimize_button);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+
+        // verify optimize schedule is now available
+        TestFramework.isViewWithTextDisplayed("Optimized schedule ready");
+        TestFramework.isViewWithTextDisplayed("View in Maps");
+    }
+
+    @Test
+    public void testRemovePlacesFromGroupList() {
+        GroupScreen.navigateToGroupScreen();
+        final String groupName = GroupScreen.getRandomGroupName();
+        GroupScreen.createGroupWithName(groupName);
+        ActivityScenario<GroupsActivity> scenario1 =
+                ActivityScenario.launch(GroupsActivity.class);
+        TestFramework.clickViewWithText(groupName);
+        GroupScreen.clickOnViewList();
+        // creating a a group list with name
+        final String groupListName = groupName + "list";
+        GroupScreen.createGroupList(groupListName);
+
+        TestFramework.clickViewWithText(groupListName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+
+        TestFramework.clickWithId(R.id.create_list);
+        TestFramework.clickViewWithText("Explore places by destination");
+        TestFramework.setTextToTextFieldWithId(R.id.list_name_textField,
+                "SURREY");
+        TestFramework.clickWithId(R.id.create_list_button);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
+        selectThreePlaces();
+
+        ActivityScenario<GroupsActivity> scenario2 =
+                ActivityScenario.launch(GroupsActivity.class);
+        TestFramework.clickViewWithText(groupName);
+        GroupScreen.clickOnViewList();
+        TestFramework.clickViewWithText(groupListName);
+
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        removeThreePlaces();
+        // verify no place exist in the screen
+        TestFramework.isViewWithTextNotDisplayed("View Place.");
+    }
+
+    @Test
+    public void testPopulateGroupList() {
+        GroupScreen.navigateToGroupScreen();
+        final String groupName = GroupScreen.getRandomGroupName();
+        GroupScreen.createGroupWithName(groupName);
+        ActivityScenario<GroupsActivity> scenario1 =
+                ActivityScenario.launch(GroupsActivity.class);
+        TestFramework.clickViewWithText(groupName);
+        GroupScreen.clickOnViewList();
+        // creating a a group list with name
+        final String groupListName = groupName + "list";
+        GroupScreen.createGroupList(groupListName);
+
+        TestFramework.clickViewWithText(groupListName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+
+        TestFramework.clickWithId(R.id.create_list);
+        TestFramework.clickViewWithText("Explore places by destination");
+        TestFramework.setTextToTextFieldWithId(R.id.list_name_textField,
+                "SURREY");
+        TestFramework.clickWithId(R.id.create_list_button);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
+        selectThreePlaces();
+
+        ActivityScenario<GroupsActivity> scenario2 =
+                ActivityScenario.launch(GroupsActivity.class);
+        TestFramework.clickViewWithText(groupName);
+        GroupScreen.clickOnViewList();
+        TestFramework.clickViewWithText(groupListName);
+
+        checkIfThreePlacesAdded();
+    }
+
 
     private void selectThreePlaces() {
         for (int i = 0; i < 3; i++) {
             TestFramework.clickViewWithTag("place" + i);
             TestFramework.clickViewWithText("Add");
+            onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        }
+    }
+
+    private void removeThreePlaces() {
+        for (int i = 0; i < 3; i++) {
+            TestFramework.clickViewWithTag("remove" + i);
+            onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+            TestFramework.clickViewWithText("Remove");
             onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         }
     }
