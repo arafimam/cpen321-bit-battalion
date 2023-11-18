@@ -17,6 +17,7 @@ jest.mock('../../services/userService', () => ({
 }));
 
 describe('createGroup', () => {
+  // ChatGPT usage: No
   it('should send a message when creating a group', async () => {
     const userData = {
       deviceRegistrationToken: 'mockDeviceToken'
@@ -40,6 +41,7 @@ describe('createGroup', () => {
     expect(admin.messaging().send).toHaveBeenCalledTimes(1);
   });
 
+  // ChatGPT usage: No
   it('should catch error if sending notification when creating a group was unsuccessful', async () => {
     const userData = {
       deviceRegistrationToken: 'mockDeviceToken'
@@ -65,6 +67,7 @@ describe('createGroup', () => {
 });
 
 describe('joinGroup', () => {
+  // ChatGPT usage: No
   it('should send a message to all users in a group when a new user joins', async () => {
     const mockUsers = [
       { deviceRegistrationToken: 'mockDeviceToken1' },
@@ -88,6 +91,7 @@ describe('joinGroup', () => {
     expect(admin.messaging().send).toHaveBeenCalledTimes(3);
   });
 
+  // ChatGPT usage: No
   it('should catch error if sending notification when creating a group was unsuccessful', async () => {
     const mockUsers = [
       { deviceRegistrationToken: 'mockDeviceToken1' },

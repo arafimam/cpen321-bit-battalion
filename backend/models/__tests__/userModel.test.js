@@ -6,6 +6,7 @@ const mockFindOne = jest.spyOn(userModel.User, 'findOne');
 const mockFindOneAndUpdate = jest.spyOn(userModel.User, 'findOneAndUpdate');
 
 describe('checkUserExists', () => {
+  // ChatGPT usage: No
   it.each([true, false])('returns true or false when checkUserExists is successful', async (userExists) => {
     const mockGoogleId = 'mock-google-id';
 
@@ -16,6 +17,7 @@ describe('checkUserExists', () => {
     expect(mockExists).toHaveBeenCalledWith({ googleId: mockGoogleId });
   });
 
+  // ChatGPT usage: No
   it('throws error when checkUserExists is unsuccessful', async () => {
     const mockGoogleId = 'mock-google-id';
 
@@ -27,6 +29,7 @@ describe('checkUserExists', () => {
 });
 
 describe('getUserByGoogleId', () => {
+  // ChatGPT usage: No
   it('returns a user by googleId when getUserByGoogleId is successful', async () => {
     const mockGoogleId = 'mock-google-id';
     const mockUserData = {
@@ -42,6 +45,7 @@ describe('getUserByGoogleId', () => {
     expect(mockFindOne).toHaveBeenCalledWith({ googleId: mockGoogleId });
   });
 
+  // ChatGPT usage: No
   it('throws error when getUserByGoogleId is unsuccessful', async () => {
     const mockGoogleId = 'mock-google-id';
     mockFindOne.mockRejectedValue(new Error('Getting user by googleId failed'));
@@ -52,6 +56,7 @@ describe('getUserByGoogleId', () => {
 });
 
 describe('getUserById', () => {
+  // ChatGPT usage: No
   it('returns a user by Id when getUserById is successful', async () => {
     const mockUserId = 'mock-user-id';
     const mockUserData = {
@@ -67,6 +72,7 @@ describe('getUserById', () => {
     expect(mockFindById).toHaveBeenCalledWith(mockUserId);
   });
 
+  // ChatGPT usage: No
   it('throws error when getUserById is unsuccessful', async () => {
     const mockUserId = 'mock-user-id';
     mockFindById.mockRejectedValue(new Error('Getting user by Id failed'));
@@ -77,6 +83,7 @@ describe('getUserById', () => {
 });
 
 describe('updateDeviceRegistrationToken', () => {
+  // ChatGPT usage: No
   it('returns a user when updateDeviceRegistrationToken is successful', async () => {
     const mockGoogleId = 'mock-google-id';
     const mockDeviceRegistrationToken = 'mock-device-registration-token';
@@ -97,6 +104,7 @@ describe('updateDeviceRegistrationToken', () => {
     );
   });
 
+  // ChatGPT usage: No
   it('throws error when updateDeviceRegistrationToken is unsuccessful', async () => {
     const mockGoogleId = 'mock-google-id';
     const mockDeviceRegistrationToken = 'mock-device-registration-token';
@@ -114,6 +122,7 @@ describe('updateDeviceRegistrationToken', () => {
 });
 
 describe('getUserLists', () => {
+  // ChatGPT usage: No
   it('returns a list of lists when getUserLists is successful', async () => {
     const mockUserId = 'mock-user-id';
     const mockListsData = [{ listName: 'mock-list-name' }, { listName: 'mock-list-name-2' }];
@@ -127,6 +136,7 @@ describe('getUserLists', () => {
     expect(mockFindById).toHaveBeenCalledWith(mockUserId);
   });
 
+  // ChatGPT usage: No
   it('throws error when getUserLists is unsuccessful', async () => {
     const mockUserId = 'mock-user-id';
     mockFindById.mockReturnValue(new Error('Getting user lists failed'));
@@ -137,6 +147,7 @@ describe('getUserLists', () => {
 });
 
 describe('addListForUser', () => {
+  // ChatGPT usage: No
   it('returns a user when adding a list using addListForUser is successful', async () => {
     const mockUserId = 'mock-user-id';
     const mockListId = 'mock-list-id';
@@ -158,6 +169,7 @@ describe('addListForUser', () => {
     );
   });
 
+  // ChatGPT usage: No
   it('throws error when addListForUser is unsuccessful', async () => {
     const mockUserId = 'mock-user-id';
     const mockListId = 'mock-list-id';
@@ -174,6 +186,7 @@ describe('addListForUser', () => {
 });
 
 describe('removeListForUser', () => {
+  // ChatGPT usage: No
   it('returns a user when removing a list using removeListForUser is successful', async () => {
     const mockUserId = 'mock-user-id';
     const mockListId = 'mock-list-id';
@@ -195,6 +208,7 @@ describe('removeListForUser', () => {
     );
   });
 
+  // ChatGPT usage: No
   it('throws error when removeListForUser is unsuccessful', async () => {
     const mockUserId = 'mock-user-id';
     const mockListId = 'mock-list-id';

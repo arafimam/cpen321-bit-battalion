@@ -8,6 +8,7 @@ const mockUpdateOne = jest.spyOn(listModel.List, 'updateOne');
 const mockFindOneAndUpdate = jest.spyOn(listModel.List, 'findOneAndUpdate');
 
 describe('createList', () => {
+  // ChatGPT usage: No
   it('returns list object when createList is successful', async () => {
     const mockListName = 'mock-list-name';
     const mockListData = {
@@ -22,6 +23,7 @@ describe('createList', () => {
     expect(mockCreate).toHaveBeenCalledWith({ listName: mockListName });
   });
 
+  // ChatGPT usage: No
   it('throws error when createList is unsuccessful', async () => {
     const mockListName = 'mock-list-name';
 
@@ -32,6 +34,7 @@ describe('createList', () => {
 });
 
 describe('deleteList', () => {
+  // ChatGPT usage: No
   it('returns list object when deleteList is successful', async () => {
     const mockListId = 'mock-list-id';
     const mockListData = {
@@ -47,6 +50,7 @@ describe('deleteList', () => {
     expect(mockFindByIdAndDelete).toHaveBeenCalledWith(mockListId);
   });
 
+  // ChatGPT usage: No
   it('throws error when deleteList is unsuccessful', async () => {
     const mockListId = 'mock-list-id';
     mockFindByIdAndDelete.mockRejectedValue(new Error('List deletion failed'));
@@ -57,6 +61,7 @@ describe('deleteList', () => {
 });
 
 describe('getListById', () => {
+  // ChatGPT usage: No
   it('returns a list by Id when getListById is successful', async () => {
     const mockListId = 'mock-list-id';
     const mockListData = {
@@ -72,6 +77,7 @@ describe('getListById', () => {
     expect(mockFindById).toHaveBeenCalledWith(mockListId);
   });
 
+  // ChatGPT usage: No
   it('throws error when getListById is unsuccessful', async () => {
     const mockListId = 'mock-list-id';
     mockFindById.mockRejectedValue(new Error('Getting list by id failed'));
@@ -82,6 +88,7 @@ describe('getListById', () => {
 });
 
 describe('getListName', () => {
+  // ChatGPT usage: No
   it('returns a listName by Id when getListName is successful', async () => {
     const mockListId = 'mock-list-id';
     const mockListData = {
@@ -99,6 +106,7 @@ describe('getListName', () => {
     expect(mockFindById).toHaveBeenCalledWith(mockListId);
   });
 
+  // ChatGPT usage: No
   it('throws error when getListName is unsuccessful', async () => {
     const mockListId = 'mock-list-id';
     mockFindById.mockReturnValue(new Error('Getting listName failed'));
@@ -109,6 +117,7 @@ describe('getListName', () => {
 });
 
 describe('getPlaces', () => {
+  // ChatGPT usage: No
   it('returns a list of places by listId when getPlaces is successful', async () => {
     const mockListId = 'mock-list-id';
     const mockPlacesData = [{ placeId: 'mock-place-id' }, { placeId: 'mock-place-id-2' }];
@@ -122,6 +131,7 @@ describe('getPlaces', () => {
     expect(mockFindById).toHaveBeenCalledWith(mockListId);
   });
 
+  // ChatGPT usage: No
   it('throws error when getPlaces is unsuccessful', async () => {
     const mockListId = 'mock-list-id';
     mockFindById.mockReturnValue(new Error('Getting places failed'));
@@ -132,6 +142,7 @@ describe('getPlaces', () => {
 });
 
 describe('getPlace', () => {
+  // ChatGPT usage: No
   it('returns a place by placeId when getPlace is successful', async () => {
     const mockListId = 'mock-list-id';
     const mockPlaceId = 'mock-place-id';
@@ -144,6 +155,7 @@ describe('getPlace', () => {
     expect(mockFindOne).toHaveBeenCalledWith({ _id: mockListId, places: { placeId: mockPlaceId } }, '-_id');
   });
 
+  // ChatGPT usage: No
   it('throws error when getPlace is unsuccessful', async () => {
     const mockListId = 'mock-list-id';
     const mockPlaceId = 'mock-place-id';
@@ -155,6 +167,7 @@ describe('getPlace', () => {
 });
 
 describe('addPlaceToList', () => {
+  // ChatGPT usage: No
   it('returns a list when adding a place using addPlaceToList is successful', async () => {
     const mockListId = 'mock-list-id';
     const mockPlaceData = { placeId: 'mock-place-id' };
@@ -175,6 +188,7 @@ describe('addPlaceToList', () => {
     );
   });
 
+  // ChatGPT usage: No
   it('throws error when addPlaceToLisst is unsuccessful', async () => {
     const mockListId = 'mock-list-id';
     const mockPlaceData = { placeId: 'mock-place-id' };
@@ -191,6 +205,7 @@ describe('addPlaceToList', () => {
 });
 
 describe('removePlaceFromList', () => {
+  // ChatGPT usage: No
   it('returns a list when removing a place using removePlaceFromList is successful', async () => {
     const mockListId = 'mock-list-id';
     const mockPlaceId = 'mock-place-id';
@@ -211,6 +226,7 @@ describe('removePlaceFromList', () => {
     );
   });
 
+  // ChatGPT usage: No
   it('throws error when removePlaceFromList is unsuccessful', async () => {
     const mockListId = 'mock-list-id';
     const mockPlaceId = 'mock-place-id';

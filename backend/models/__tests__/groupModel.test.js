@@ -9,6 +9,7 @@ const mockUpdateOne = jest.spyOn(groupModel.Group, 'updateOne');
 const mockFindOneAndUpdate = jest.spyOn(groupModel.Group, 'findOneAndUpdate');
 
 describe('createGroup', () => {
+  // ChatGPT usage: No
   it('returns group object when createGroup is successful', async () => {
     const mockGroupData = {
       ownerId: 'mock-owner-id',
@@ -23,6 +24,7 @@ describe('createGroup', () => {
     expect(result).toBe(mockGroupData);
   });
 
+  // ChatGPT usage: No
   it('throws error when createGroup is unsuccessful', async () => {
     const mockGroupData = {
       ownerId: 'mock-owner-id',
@@ -38,6 +40,7 @@ describe('createGroup', () => {
 });
 
 describe('deleteGroup', () => {
+  // ChatGPT usage: No
   it('returns group object when deleteGroup is successful', async () => {
     const mockGroupId = 'mock-group-id';
     const mockGroupData = {
@@ -54,6 +57,7 @@ describe('deleteGroup', () => {
     expect(result).toBe(mockGroupData);
   });
 
+  // ChatGPT usage: No
   it('throws error when deleteGroup is unsuccessful', async () => {
     const mockGroupId = 'mock-group-id';
     mockFindByIdAndDelete.mockRejectedValue(new Error('Group deletion failed'));
@@ -64,6 +68,7 @@ describe('deleteGroup', () => {
 });
 
 describe('getAllGroups', () => {
+  // ChatGPT usage: No
   it('returns a list of group when getAllGroups is successful', async () => {
     const mockUserId = 'mock-user-id';
     const mockGroupData = {
@@ -83,6 +88,7 @@ describe('getAllGroups', () => {
     expect(mockFind).toHaveBeenCalledWith({ 'members.userId': mockUserId });
   });
 
+  // ChatGPT usage: No
   it('throws error when getAllGroups is unsuccessful', async () => {
     const mockUserId = 'mock-user-id';
     mockFind.mockReturnValue(new Error('Getting groups failed'));
@@ -93,6 +99,7 @@ describe('getAllGroups', () => {
 });
 
 describe('getGroup', () => {
+  // ChatGPT usage: No
   it('returns a group by Id when getGroup is successful', async () => {
     const mockGroupId = 'mock-group-id';
     const mockGroupData = {
@@ -110,6 +117,7 @@ describe('getGroup', () => {
     expect(mockFindById).toHaveBeenCalledWith(mockGroupId);
   });
 
+  // ChatGPT usage: No
   it('throws error when getGroup is unsuccessful', async () => {
     const mockGroupId = 'mock-group-id';
     mockFindById.mockRejectedValue(new Error('Getting group by id failed'));
@@ -120,6 +128,7 @@ describe('getGroup', () => {
 });
 
 describe('getGroupLists', () => {
+  // ChatGPT usage: No
   it('returns lists within a group when getGroupLists is successful', async () => {
     const mockGroupId = 'mock-group-id';
     const mockGroupData = {
@@ -135,6 +144,7 @@ describe('getGroupLists', () => {
     expect(mockFindById).toHaveBeenCalledWith(mockGroupId);
   });
 
+  // ChatGPT usage: No
   it('throws error when getGroupLists is unsuccessful', async () => {
     const mockGroupId = 'mock-group-id';
     mockFindById.mockReturnValue(new Error('Getting group by id failed'));
@@ -145,6 +155,7 @@ describe('getGroupLists', () => {
 });
 
 describe('generateUniqueGroupCode', () => {
+  // ChatGPT usage: No
   it.each([false, true])('generateUniqueGroupCode generates a code', async (groupAlreadyExists) => {
     mockFindOne.mockResolvedValueOnce(groupAlreadyExists).mockReturnValueOnce(false);
     const result = await groupModel.generateUniqueGroupCode();
@@ -154,6 +165,7 @@ describe('generateUniqueGroupCode', () => {
 });
 
 describe('addUserToGroup', () => {
+  // ChatGPT usage: No
   it('returns group when adding a user using addUserToGroup is successful', async () => {
     const mockGroupCode = 'mock-group-code';
     const mockMember = { userId: 'mock-user-id', username: 'mock-username' };
@@ -173,6 +185,7 @@ describe('addUserToGroup', () => {
     );
   });
 
+  // ChatGPT usage: No
   it('throws error when addUserToGroup is unsuccessful', async () => {
     const mockGroupCode = 'mock-group-code';
     const mockMember = { userId: 'mock-user-id', username: 'mock-username' };
@@ -189,6 +202,7 @@ describe('addUserToGroup', () => {
 });
 
 describe('removeUserFromGroup', () => {
+  // ChatGPT usage: No
   it('returns group when removing a user using removeUserFromGroup is successful', async () => {
     const mockGroupId = 'mock-group-id';
     const mockUserId = 'mock-user-id';
@@ -208,6 +222,7 @@ describe('removeUserFromGroup', () => {
     );
   });
 
+  // ChatGPT usage: No
   it('throws error when removeUserFromGroup is unsuccessful', async () => {
     const mockGroupId = 'mock-group-id';
     const mockUserId = 'mock-user-id';
@@ -224,6 +239,7 @@ describe('removeUserFromGroup', () => {
 });
 
 describe('addListToGroup', () => {
+  // ChatGPT usage: No
   it('returns group when adding a list using addListToGroup is successful', async () => {
     const mockGroupId = 'mock-group-id';
     const mockListId = 'mock-list-id';
@@ -243,6 +259,7 @@ describe('addListToGroup', () => {
     );
   });
 
+  // ChatGPT usage: No
   it('throws error when addListToGroup is unsuccessful', async () => {
     const mockGroupId = 'mock-group-id';
     const mockListId = 'mock-list-id';
@@ -259,6 +276,7 @@ describe('addListToGroup', () => {
 });
 
 describe('removeListFromGroup', () => {
+  // ChatGPT usage: No
   it('returns group when removing a list using removeListFromGroup is successful', async () => {
     const mockGroupId = 'mock-group-id';
     const mockListId = 'mock-list-id';
@@ -274,6 +292,7 @@ describe('removeListFromGroup', () => {
     expect(mockUpdateOne).toHaveBeenCalledWith({ _id: mockGroupId }, { $pull: { lists: mockListId } }, { new: true });
   });
 
+  // ChatGPT usage: No
   it('throws error when addListToGroup is unsuccessful', async () => {
     const mockGroupId = 'mock-group-id';
     const mockListId = 'mock-list-id';
