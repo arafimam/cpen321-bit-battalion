@@ -1,0 +1,29 @@
+name: Backend Tests
+
+on:
+  push:
+    branches:
+      - main
+      - actions1
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Move to Backend Folder
+        run: cd backend
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: cd backend && npm install
+
+      - name: Run Backend Tests
+        run: cd backend && npm test
