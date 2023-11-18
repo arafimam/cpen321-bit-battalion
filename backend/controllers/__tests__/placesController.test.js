@@ -17,7 +17,13 @@ jest.mock('../../services/placesService.js', () => ({
   getPlacesByText: jest.fn()
 }));
 
+// Interface GET /currLocation
 describe('GET /currLocation get places by current location test', () => {
+  // Input: valid location (latidiude, longitude) and category
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns places with valid location
+  // Expected Output: Places with valid location
+  // ChatGPT usage: No
   it('should return places with valid location', async () => {
     placesService.getPlacesNearby.mockResolvedValue({ status: 200, response: [{ name: 'testPlace1' }] });
 
@@ -26,6 +32,11 @@ describe('GET /currLocation get places by current location test', () => {
     expect(placesService.getPlacesNearby).toHaveBeenCalledWith(1, 1, 'restaurant');
   });
 
+  // Input: valid location (latidiude, longitude) and category
+  // Expected Status Code: 400
+  // Expected Behaviour: Fails to get places due to failed API call (getPlacesNearby)
+  // Expected Output: Returns a 400 status
+  // ChatGPT usage: No
   it('should return error if getPlacesNearby fails', async () => {
     placesService.getPlacesNearby.mockResolvedValue({ status: 400 });
 
@@ -34,7 +45,12 @@ describe('GET /currLocation get places by current location test', () => {
     expect(placesService.getPlacesNearby).toHaveBeenCalledWith(1, 1, 'restaurant');
   });
 
-  it('should return error if latitude and longitude are not null or undefined fails', async () => {
+  // Input: invalid location (latidiude, longitude)
+  // Expected Status Code: 400
+  // Expected Behaviour: Fails to get places
+  // Expected Output: Returns a 400 status
+  // ChatGPT usage: No
+  it('should return error if latitude and longitude are null or undefined fails', async () => {
     placesService.getPlacesNearby.mockResolvedValue({ status: 400 });
 
     const res = await request.get(`/places/currLocation?category=restaurant`);
@@ -43,7 +59,13 @@ describe('GET /currLocation get places by current location test', () => {
   });
 });
 
+// Interface GET /destination
 describe('GET /destination get places by destination location', () => {
+  // Input: valid location (textQuery) and category
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns places with valid location
+  // Expected Output: Places near the location (textQuery)
+  // ChatGPT usage: Partial
   it('should return places with valid location', async () => {
     placesService.getPlacesByText.mockResolvedValue({ status: 200, response: [{ name: 'testPlace1' }] });
 
@@ -52,6 +74,11 @@ describe('GET /destination get places by destination location', () => {
     expect(placesService.getPlacesByText).toHaveBeenCalledWith('vancouver', 'restaurant');
   });
 
+  // Input: valid location (textQuery) and category
+  // Expected Status Code: 400
+  // Expected Behaviour: Fails to get places due to failed API call (getPlacesByText)
+  // Expected Output: Returns a 400 status
+  // ChatGPT usage: No
   it('should return error if getPlacesByText fails', async () => {
     placesService.getPlacesByText.mockResolvedValue({ status: 400 });
 
