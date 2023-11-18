@@ -31,15 +31,27 @@ jest.mock('../../notifications/groupNotification.js', () => ({
   joinGroup: jest.fn()
 }));
 
-describe('/all get all groups test', () => {
-  it('should return all groups', async () => {
+// Interface GET /groups/all
+describe('GET /all get all groups test', () => {
+  // Input: None
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns a list of all groups
+  // Expected Output: An array of all the groups
+  // ChatGPT usage: Yes
+  it('should return all groups on success', async () => {
     groupService.getAllGroups.mockResolvedValue([{ groupName: 'testGroup1' }]);
 
     const res = await request.get(`/groups/all`);
     expect(res.status).toBe(200);
+    expect(res.body.groups).toEqual([{ groupName: 'testGroup1' }]);
   });
 
-  it('should return a list', async () => {
+  // Input: None
+  // Expected Status Code: 500
+  // Expected Behaviour: Internal Server Error
+  // Expected Output: Error
+  // ChatGPT usage: Yes
+  it('should return a 500 status on internal error', async () => {
     groupService.getAllGroups.mockRejectedValue(new Error('mock error'));
 
     const res = await request.get(`/groups/all`);
@@ -47,16 +59,29 @@ describe('/all get all groups test', () => {
   });
 });
 
+// Interface GET /groups/:id
 describe('GET /:id get group by id test', () => {
   const mockGroupId = 'mock-group-id';
   const invalidId = 'mock-invalid-id';
+
+  // Input: id of the group being retrieved
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns the group with given id
+  // Expected Output: The group object
+  // ChatGPT usage: No
   it('should return groups with valid id', async () => {
-    groupService.getGroupById.mockResolvedValue([{ groupName: 'testGroup1' }]);
+    groupService.getGroupById.mockResolvedValue({ groupName: 'testGroup1' });
 
     const res = await request.get(`/groups/${mockGroupId}`);
     expect(res.status).toBe(200);
+    expect(res.body.group).toStrictEqual({ groupName: 'testGroup1' });
   });
 
+  // Input: invalid id
+  // Expected Status Code: 400
+  // Expected Behaviour: Returns a 400 status code
+  // Expected Output: Bad request status
+  // ChatGPT usage: No
   it('should return a 400 status code with invalid id', async () => {
     groupService.getGroupById.mockResolvedValue(null);
 
@@ -64,6 +89,11 @@ describe('GET /:id get group by id test', () => {
     expect(res.status).toBe(400);
   });
 
+  // Input: valid id
+  // Expected Status Code: 500
+  // Expected Behaviour: Returns a 500 status code on internal error
+  // Expected Output: Internal Server Error
+  // ChatGPT usage: No
   it('should return a 500 status code if something went wrong while getting group by id', async () => {
     groupService.getGroupById.mockRejectedValue(new Error('something went wrong'));
 
@@ -72,8 +102,15 @@ describe('GET /:id get group by id test', () => {
   });
 });
 
+// Interface POST /groups/create
 describe('POST /create create new group', () => {
   const successNotif = 'mock-successful-notification';
+
+  // Input: valid groupName
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns a 200 status code and creates new group
+  // Expected Output: Returns the group code for new group
+  // ChatGPT usage: No
   it('should return group code on successful creation', async () => {
     const mockGroupCode = 'mock-group-code';
     groupService.createGroup.mockResolvedValue(mockGroupCode);
@@ -81,8 +118,14 @@ describe('POST /create create new group', () => {
 
     const res = await request.post(`/groups/create`);
     expect(res.status).toBe(200);
+    expect(res.body.groupCode).toBe(mockGroupCode);
   });
 
+  // Input: valid groupName
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns a 200 status code and creates new group
+  // Expected Output: Returns the group code for new group despite notif failure
+  // ChatGPT usage: No
   it('should still create group despite failed creation notification', async () => {
     const mockGroupCode = 'mock-group-code';
     groupService.createGroup.mockResolvedValue(mockGroupCode);
@@ -92,6 +135,11 @@ describe('POST /create create new group', () => {
     expect(res.status).toBe(200);
   });
 
+  // Input: valid groupName
+  // Expected Status Code: 500
+  // Expected Behaviour: Returns a 500 status code on internal error
+  // Expected Output: Internal Server Error
+  // ChatGPT usage: No
   it('should return a 500 status code if something went wrong during creation', async () => {
     groupService.createGroup.mockRejectedValue(new Error('something went wrong'));
 
@@ -100,32 +148,57 @@ describe('POST /create create new group', () => {
   });
 });
 
+// Interface PUT /groups/join
 describe('PUT /join add user to group', () => {
   const successNotif = 'mock-successful-join-notification';
   const successResult = 'mock-successful-join-result';
+
+  // Input: valid groupCode
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns a 200 status code and user joins group
+  // Expected Output: Success message
+  // ChatGPT usage: No
   it('should return a 200 status code on successful join', async () => {
     groupService.addUserToGroup.mockResolvedValue(successResult);
     groupNotification.joinGroup.mockResolvedValue(successNotif);
 
     const res = await request.put(`/groups/join`);
     expect(res.status).toBe(200);
+    expect(res.body.message).toBe('User successfully added to group');
   });
 
+  // Input: valid groupCode
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns a 200 status code and user joins group despite notif fail
+  // Expected Output: Success message
+  // ChatGPT usage: No
   it('should join successfully despite a failed notification', async () => {
     groupService.addUserToGroup.mockResolvedValue(successResult);
     groupNotification.joinGroup.mockRejectedValue(new Error('notification failed'));
 
     const res = await request.put(`/groups/join`);
     expect(res.status).toBe(200);
+    expect(res.body.message).toBe('User successfully added to group');
   });
 
+  // Input: invalid groupCode
+  // Expected Status Code: 400
+  // Expected Behaviour: Returns a 400 status code and join fails
+  // Expected Output: Incorrect group code message
+  // ChatGPT usage: No
   it('should return a 400 status code on joining with invalid code', async () => {
     groupService.addUserToGroup.mockResolvedValue(null);
 
     const res = await request.put(`/groups/join`);
     expect(res.status).toBe(400);
+    expect(res.body.errorMessage).toBe('Incorrect group code');
   });
 
+  // Input: valid groupCode
+  // Expected Status Code: 500
+  // Expected Behaviour: Returns a 500 status code on internal failure
+  // Expected Output: Internal Server Error
+  // ChatGPT usage: No
   it('should return a 500 status code if something went wrong while joining', async () => {
     groupService.addUserToGroup.mockRejectedValue(new Error('something went wrong'));
 
@@ -134,16 +207,29 @@ describe('PUT /join add user to group', () => {
   });
 });
 
+// Interface PUT /groups/:id/leave
 describe('PUT /:id/leave remove user from group', () => {
   const successResult = 'mock-successful-removal-result';
   const mockGroupId = 'mock-group-id';
+
+  // Input: valid groupId
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns a 200 status and user leaves group
+  // Expected Output: Success message
+  // ChatGPT usage: No
   it('should return a 200 status code on successful removal', async () => {
     groupService.removeUserFromGroup.mockResolvedValue(successResult);
 
     const res = await request.put(`/groups/${mockGroupId}/leave`);
     expect(res.status).toBe(200);
+    expect(res.body.message).toBe('User successfully removed from group');
   });
 
+  // Input: valid groupId
+  // Expected Status Code: 500
+  // Expected Behaviour: Returns a 500 status code on internal failure
+  // Expected Output: Internal Server Error
+  // ChatGPT usage: No
   it('should return a 500 status code if something went wrong while removing', async () => {
     groupService.removeUserFromGroup.mockRejectedValue(new Error('something went wrong'));
 
@@ -152,9 +238,16 @@ describe('PUT /:id/leave remove user from group', () => {
   });
 });
 
+// Interface GET /groups/:id/lists
 describe('GET /:id/lists get lists for group of id', () => {
   const successResult = 'mock-successful-removal-result';
   const mockGroupId = 'mock-group-id';
+
+  // Input: valid groupId
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns a 200 status code and returns lists
+  // Expected Output: Lists for group with given groupId
+  // ChatGPT usage: No
   it('should return a 200 status code on successful removal', async () => {
     groupService.getListsforGroup.mockResolvedValue(successResult);
 
@@ -162,6 +255,11 @@ describe('GET /:id/lists get lists for group of id', () => {
     expect(res.status).toBe(200);
   });
 
+  // Input: valid groupCode
+  // Expected Status Code: 500
+  // Expected Behaviour: Returns a 500 status code on internal failure
+  // Expected Output: Internal Server Error
+  // ChatGPT usage: No
   it('should return a 500 status code if something went wrong while getting', async () => {
     groupService.getListsforGroup.mockRejectedValue(new Error('something went wrong'));
 
@@ -170,22 +268,41 @@ describe('GET /:id/lists get lists for group of id', () => {
   });
 });
 
-describe('PUT :id/add/list add list to group', () => {
+// Interface PUT /groups/:id/add/list
+describe('PUT /:id/add/list add list to group', () => {
   const successResult = 'mock-successful-add-result';
   const mockGroupId = 'mock-group-id';
   const mockListName = 'mock-list-name';
+
+  // Input: valid groupId, listName
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns a 200 status code on successful addition
+  // Expected Output: Success Message
+  // ChatGPT usage: No
   it('should return a 200 status code on successful addition', async () => {
     groupService.addListToGroup.mockResolvedValue(successResult);
 
     const res = await request.put(`/groups/${mockGroupId}/add/list`).send({ listName: mockListName });
     expect(res.status).toBe(200);
+    expect(res.body.message).toBe('New list successfully added to group');
   });
 
+  // Input: valid groupId, missing listName
+  // Expected Status Code: 400
+  // Expected Behaviour: Returns a 400 status code and failed addition
+  // Expected Output: Missing listName error message
+  // ChatGPT usage: No
   it('should return a 400 status code if missing list name', async () => {
     const res = await request.put(`/groups/${mockGroupId}/add/list`);
     expect(res.status).toBe(400);
+    expect(res.body.errorMessage).toBe('Please provide a list name');
   });
 
+  // Input: valid groupId, listName
+  // Expected Status Code: 500
+  // Expected Behaviour: Returns a 500 status code on internal failure
+  // Expected Output: Internal Server Error
+  // ChatGPT usage: No
   it('should return a 500 status code if something went wrong while adding list', async () => {
     groupService.addListToGroup.mockRejectedValue(new Error('something went wrong'));
 
@@ -194,23 +311,42 @@ describe('PUT :id/add/list add list to group', () => {
   });
 });
 
+// Interface PUT /groups/:id/remove/list
 describe('PUT /:id/remove/list remove list from group', () => {
   const successResult = 'mock-successful-add-result';
   const mockGroupId = 'mock-group-id';
   const mockListId = 'mock-list-id';
+
+  // Input: valid groupId, listId
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns a 200 status code on successful removal
+  // Expected Output: Success Message
+  // ChatGPT usage: No
   it('should return a 200 status code on successful removal', async () => {
     groupService.removeListFromGroup.mockResolvedValue(successResult);
 
     const res = await request.put(`/groups/${mockGroupId}/remove/list`).send({ listId: mockListId });
     expect(res.status).toBe(200);
+    expect(res.body.message).toBe('List successfully removed to group');
   });
 
+  // Input: valid groupId, missing listId
+  // Expected Status Code: 400
+  // Expected Behaviour: Returns a 400 status code and fails to remove
+  // Expected Output: Missing listId error message
+  // ChatGPT usage: No
   it('should return a 400 status code if missing list id', async () => {
     const res = await request.put(`/groups/${mockGroupId}/remove/list`);
     expect(res.status).toBe(400);
+    expect(res.body.errorMessage).toBe('Please provide a listId');
   });
 
-  it('should return a 500 status code if something went wrong while adding list', async () => {
+  // Input: valid groupId, listId
+  // Expected Status Code: 500
+  // Expected Behaviour: Returns a 500 status code on internal failure
+  // Expected Output: Internal Server Error
+  // ChatGPT usage: No
+  it('should return a 500 status code if something went wrong while removing list', async () => {
     groupService.removeListFromGroup.mockRejectedValue(new Error('something went wrong'));
 
     const res = await request.put(`/groups/${mockGroupId}/remove/list`).send({ listId: mockListId });
@@ -218,8 +354,15 @@ describe('PUT /:id/remove/list remove list from group', () => {
   });
 });
 
+// Interface DELETE /groups/:id
 describe('DELETE /:id delete group by id test', () => {
   const mockGroupId = 'mock-group-id';
+
+  // Input: valid groupId
+  // Expected Status Code: 200
+  // Expected Behaviour: Returns a 200 status code on successful deletion
+  // Expected Output: Success message
+  // ChatGPT usage: No
   it('should delete group with valid id', async () => {
     groupService.deleteGroup.mockResolvedValue([{ message: 'mock deletion successful' }]);
 
@@ -227,6 +370,11 @@ describe('DELETE /:id delete group by id test', () => {
     expect(res.status).toBe(200);
   });
 
+  // Input: valid groupId
+  // Expected Status Code: 500
+  // Expected Behaviour: Returns a 500 status code on internal failure
+  // Expected Output: Internal Server Error
+  // ChatGPT usage: No
   it('should return a 500 status code if something went wrong during deletion', async () => {
     groupService.deleteGroup.mockRejectedValue(new Error('something went wrong'));
 
