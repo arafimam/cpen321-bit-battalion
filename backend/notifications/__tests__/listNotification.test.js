@@ -12,6 +12,7 @@ jest.mock('firebase-admin', () => {
 });
 
 describe('createList', () => {
+  // ChatGPT usage: No
   it('should send a message when creating a list', async () => {
     const userData = {
       deviceRegistrationToken: 'mockDeviceToken'
@@ -34,6 +35,7 @@ describe('createList', () => {
     expect(admin.messaging().send).toHaveBeenCalledTimes(1);
   });
 
+  // ChatGPT usage: No
   it('should catch error if sending notification when creating a list was unsuccessful', async () => {
     const userData = {
       deviceRegistrationToken: 'mockDeviceToken'

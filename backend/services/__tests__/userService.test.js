@@ -37,8 +37,8 @@ const mockGoogleId = 'mock-google-id';
 const mockUserId = 'mockUserId';
 const mockDeviceRegistrationToken = 'mockDeviceRegistrationToken';
 
-// Used ChatGPT
 describe('verify function', () => {
+  // ChatGPT usage: Yes
   it('verifies the ID token and returns the Google ID', async () => {
     const mockIdToken = 'mock-id-token';
 
@@ -48,12 +48,12 @@ describe('verify function', () => {
   });
 });
 
-// Used ChatGPT
 describe('createUser function', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
+  // ChatGPT usage: Yes
   it('should create a new user if user does not exist', async () => {
     const userData = {
       username: 'testUser',
@@ -74,6 +74,7 @@ describe('createUser function', () => {
     expect(result).toBe('testUser');
   });
 
+  // ChatGPT usage: Yes
   it('should handle error during user creation', async () => {
     const userData = {
       username: 'testUser',
@@ -93,6 +94,7 @@ describe('createUser function', () => {
     );
   });
 
+  // ChatGPT usage: Yes
   it('should update device registration token if user exists', async () => {
     // Mock user data
     const userData = {
@@ -114,6 +116,7 @@ describe('createUser function', () => {
     expect(result).toBe('existingUser');
   });
 
+  // ChatGPT usage: Yes
   it('should handle error if update device registration token fails', async () => {
     // Mock user data
     const userData = {
@@ -134,6 +137,7 @@ describe('createUser function', () => {
     );
   });
 
+  // ChatGPT usage: Yes
   it('should handle errors if user exists check fails', async () => {
     // Mock user data
     const userData = {
@@ -153,6 +157,7 @@ describe('createUser function', () => {
 });
 
 describe('getUserByGoogleId', () => {
+  // ChatGPT usage: No
   it('returns user data for a valid Google ID', async () => {
     userModel.getUserByGoogleId.mockResolvedValue(mockUser);
 
@@ -165,6 +170,7 @@ describe('getUserByGoogleId', () => {
     });
   });
 
+  // ChatGPT usage: No
   it('throws an error for an invalid Google ID', async () => {
     userModel.getUserByGoogleId.mockResolvedValue(null);
 
@@ -175,6 +181,7 @@ describe('getUserByGoogleId', () => {
 });
 
 describe('getUserById', () => {
+  // ChatGPT usage: No
   it('returns user data for a valid user ID', async () => {
     userModel.getUserById.mockResolvedValue(mockUser);
 
@@ -188,6 +195,7 @@ describe('getUserById', () => {
     });
   });
 
+  // ChatGPT usage: No
   it('throws an error for an invalid user ID', async () => {
     userModel.getUserById.mockResolvedValue(null);
 
@@ -198,6 +206,7 @@ describe('getUserById', () => {
 });
 
 describe('updateDeviceRegistrationToken function', () => {
+  // ChatGPT usage: No
   it('updates the device registration token for a valid Google ID', async () => {
     userModel.updateDeviceRegistrationToken.mockResolvedValue({
       _id: 'mockUserId',
@@ -214,6 +223,7 @@ describe('updateDeviceRegistrationToken function', () => {
     });
   });
 
+  // ChatGPT usage: No
   it('throws an error for an invalid Google ID', async () => {
     userModel.updateDeviceRegistrationToken.mockRejectedValue(new Error('Failed to update device registration token'));
 
@@ -224,6 +234,7 @@ describe('updateDeviceRegistrationToken function', () => {
 });
 
 describe('addListForUser', () => {
+  // ChatGPT usage: No
   it('adds a list for a valid user ID and list name', async () => {
     const mockListName = 'mockListName';
     const mockListId = 'mockListId';
@@ -248,6 +259,7 @@ describe('addListForUser', () => {
     });
   });
 
+  // ChatGPT usage: No
   it('throws an error for an invalid user ID', async () => {
     const mockUserId = 'invalidUserId';
     const mockListName = 'mockListName';
@@ -266,6 +278,7 @@ describe('addListForUser', () => {
 });
 
 describe('removeListForUser', () => {
+  // ChatGPT usage: No
   it('removes a list for a valid user ID and list ID', async () => {
     const mockListId = 'mockListId';
 
@@ -284,6 +297,7 @@ describe('removeListForUser', () => {
     });
   });
 
+  // ChatGPT usage: No
   it('throws an error for an invalid user ID', async () => {
     const mockUserId = 'invalidUserId';
     const mockListId = 'mockListId';
@@ -297,6 +311,7 @@ describe('removeListForUser', () => {
 });
 
 describe('getListsforUser', () => {
+  // ChatGPT usage: No
   it('returns lists for a valid user ID', async () => {
     const mockListIds = ['mockListId1', 'mockListId2'];
     const mockLists = [
@@ -316,6 +331,7 @@ describe('getListsforUser', () => {
     expect(result).toEqual(['mockListName1', 'mockListName2']);
   });
 
+  // ChatGPT usage: No
   it('throws an error for an invalid user ID', async () => {
     const mockUserId = 'invalidUserId';
 

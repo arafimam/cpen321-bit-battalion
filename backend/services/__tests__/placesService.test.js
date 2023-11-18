@@ -318,6 +318,7 @@ describe('getPlacesNearby', () => {
   placesService.processPlacesResponse = jest.fn();
   placesService.processPlacesResponse.mockReturnValue(mockPlacesResponse);
 
+  // ChatGPT usage: No
   it.each(['restaurant', undefined])('return a list of places nearby', async (category) => {
     global.fetch.mockResolvedValue({
       ok: true,
@@ -344,6 +345,7 @@ describe('getPlacesNearby', () => {
     expect(result.status).toBe(200);
   });
 
+  // ChatGPT usage: No
   it('returns a 400 status when Google response is not ok', async () => {
     global.fetch.mockResolvedValue({
       ok: false
@@ -367,6 +369,7 @@ describe('getPlacesNearby', () => {
     expect(result.status).toBe(400);
   });
 
+  // ChatGPT usage: No
   it('returns a 500 status when fetch fails', async () => {
     global.fetch.mockRejectedValue({
       ok: false
@@ -395,6 +398,7 @@ describe('getPlacesByText', () => {
   placesService.processPlacesResponse = jest.fn();
   placesService.processPlacesResponse.mockReturnValue(mockPlacesResponse);
 
+  // ChatGPT usage: No
   it.each(['restaurant', undefined])('return a list of places by textQuery', async (category) => {
     global.fetch.mockResolvedValue({
       ok: true,
@@ -421,6 +425,7 @@ describe('getPlacesByText', () => {
     expect(result.status).toBe(200);
   });
 
+  // ChatGPT usage: No
   it('returns a 400 status when Google response is not ok', async () => {
     global.fetch.mockResolvedValue({
       ok: false
@@ -444,6 +449,7 @@ describe('getPlacesByText', () => {
     expect(result.status).toBe(400);
   });
 
+  // ChatGPT usage: No
   it('returns a 500 status when fetch fails', async () => {
     global.fetch.mockRejectedValue({
       ok: false

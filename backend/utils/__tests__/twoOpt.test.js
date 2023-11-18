@@ -1,11 +1,8 @@
 process.env['NODE_ENV'] = 'TEST';
 const twoOpt = require('../twoOpt.js');
 
-// afterEach(() => {
-//   jest.restoreAllMocks();
-// });
-
 describe('degToRad', () => {
+  // ChatGPT usage: No
   it.each([
     [180, Math.PI],
     [90, Math.PI / 2],
@@ -18,6 +15,7 @@ describe('degToRad', () => {
 });
 
 describe('haversineDistance', () => {
+  // ChatGPT usage: No
   it.each([
     [{ latitude: 0, longitude: 0 }, { latitude: 0, longitude: 0 }, 0],
     [{ latitude: 49.2827, longitude: -123.1207 }, { latitude: 34.0549, longitude: -118.2426 }, 1740.1]
@@ -27,6 +25,7 @@ describe('haversineDistance', () => {
 });
 
 describe('calculateTotalDistance', () => {
+  // ChatGPT usage: No
   it('returns the total distance of a path', () => {
     const mockPlaces = [
       { location: { latitude: 0, longitude: 0 } },
@@ -41,6 +40,7 @@ describe('calculateTotalDistance', () => {
 });
 
 describe('twoOpt', () => {
+  // ChatGPT usage: No
   it('returns the best path', () => {
     const mockPlaces = [
       { location: { latitude: 40.7128, longitude: -74.006 } }, // New York

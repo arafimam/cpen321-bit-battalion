@@ -17,6 +17,7 @@ const mockListId = 'mock-list-id';
 const mockPlaceId = 'mock-place-id';
 
 describe('createList', () => {
+  // ChatGPT usage: No
   it('creates a list successfully and returns id of new list', async () => {
     listModel.createList.mockResolvedValue({ _id: mockListId });
 
@@ -25,6 +26,7 @@ describe('createList', () => {
     expect(result).toEqual({ _id: mockListId });
   });
 
+  // ChatGPT usage: No
   it('handles errors when creating a list', async () => {
     listModel.createList.mockRejectedValue(new Error('Failed to create list'));
 
@@ -35,6 +37,7 @@ describe('createList', () => {
 });
 
 describe('deleteListById', () => {
+  // ChatGPT usage: No
   it('deletes a list by ID successfully', async () => {
     listModel.deleteList.mockResolvedValue(true);
 
@@ -45,6 +48,7 @@ describe('deleteListById', () => {
 });
 
 describe('getListById', () => {
+  // ChatGPT usage: No
   it('gets a list by ID successfully', async () => {
     const mockList = { id: mockListId, name: 'Mock List' };
 
@@ -57,6 +61,7 @@ describe('getListById', () => {
 });
 
 describe('getListName', () => {
+  // ChatGPT usage: No
   it('gets a list name by ID successfully', async () => {
     listModel.getListName.mockResolvedValue(mockListName);
 
@@ -67,6 +72,7 @@ describe('getListName', () => {
 });
 
 describe('getPlacesByListId', () => {
+  // ChatGPT usage: No
   it('gets places by list ID successfully', async () => {
     const mockPlaces = [
       { id: 'place-id1', name: 'place1' },
@@ -82,6 +88,7 @@ describe('getPlacesByListId', () => {
 });
 
 describe('addPlaceToList', () => {
+  // ChatGPT usage: No
   it('adds a place to the list successfully', async () => {
     const mockPlaceData = {
       placeId: 'mock-place-id',
@@ -99,6 +106,7 @@ describe('addPlaceToList', () => {
 });
 
 describe('removePlaceFromList', () => {
+  // ChatGPT usage: No
   it('removes a place from the list successfully', async () => {
     listModel.removePlaceFromList.mockResolvedValue(true);
 
@@ -109,6 +117,7 @@ describe('removePlaceFromList', () => {
 });
 
 describe('createScheduleForList', () => {
+  // ChatGPT usage: No
   it('creates a schedule for the list successfully', async () => {
     const mockPlaceIds = ['mock-place-id1', 'mock-place-id2'];
     const mockPlaces = [
