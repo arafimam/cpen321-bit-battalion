@@ -35,6 +35,7 @@ public class GroupManagement {
         }
     }
 
+    // Chat GPT usage: No
     @Test
     public void testCreateGroup() {
         GroupScreen.navigateToGroupScreen();
@@ -57,6 +58,7 @@ public class GroupManagement {
         GroupScreen.deleteGroup(groupName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testDeleteGroup() {
         GroupScreen.navigateToGroupScreen();
@@ -70,6 +72,7 @@ public class GroupManagement {
         TestFramework.isViewWithTextNotDisplayed(groupName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testJoinGroup() {
         GroupScreen.navigateToGroupScreen();
@@ -111,6 +114,7 @@ public class GroupManagement {
         GroupScreen.deleteGroup(fullCode);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testLeaveGroup() {
         GroupScreen.navigateToGroupScreen();
@@ -135,6 +139,7 @@ public class GroupManagement {
         TestFramework.isViewWithTextNotDisplayed(groupName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testGroupMembersOnlyJoin() {
         GroupScreen.navigateToGroupScreen();
@@ -166,6 +171,7 @@ public class GroupManagement {
         TestFramework.isViewWithTagDisplayed("member1");
     }
 
+    // Chat GPT usage: No
     @Test
     public void testGroupMembersWithLeave() {
         GroupScreen.navigateToGroupScreen();

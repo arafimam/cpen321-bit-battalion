@@ -36,6 +36,7 @@ public class recommendPlaces {
         }
     }
 
+    // Chat GPT usage: No
     @Test
     public void testDoNotGivePermissionToViewPlacesNearby() {
         ActivityScreen.navigateToActivityScreen();
@@ -65,6 +66,7 @@ public class recommendPlaces {
         TestFramework.isViewWithIdDisplayed(R.id.activity_location);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testPlacesNearbyByAcceptingLocation() {
         ActivityScreen.navigateToActivityScreen();
@@ -84,6 +86,7 @@ public class recommendPlaces {
         TestFramework.isViewWithTagDisplayed("viewPlace0");
     }
 
+    // Chat GPT usage: No
     @Test
     public void testGetPlacesByDestination() {
         ActivityScreen.navigateToActivityScreen();
@@ -101,6 +104,7 @@ public class recommendPlaces {
         TestFramework.isViewWithTagDisplayed("viewPlace0");
     }
 
+    // Chat GPT usage: No
     @Test
     public void testViewPlaceDetailsForDestination() {
         ActivityScreen.navigateToActivityScreen();
@@ -120,6 +124,7 @@ public class recommendPlaces {
         TestFramework.isViewWithIdDisplayed(R.id.view_in_map);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testOptimizedScheduleRecommendation() {
         ListScreen.navigateToListScreen();
