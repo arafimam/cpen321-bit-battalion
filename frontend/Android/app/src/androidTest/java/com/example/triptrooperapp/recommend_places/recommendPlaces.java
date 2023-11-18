@@ -2,6 +2,7 @@ package com.example.triptrooperapp.recommend_places;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static com.example.triptrooperapp.SignInScreen.isSignedIn;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -20,7 +21,6 @@ import org.junit.Test;
 
 public class recommendPlaces {
 
-    private static boolean isSignedIn = false;
     private static int deniedLocation = 0;
     private static int acceptLocation = 0;
 

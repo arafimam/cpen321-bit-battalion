@@ -14,6 +14,7 @@ import androidx.test.uiautomator.UiSelector;
 public class SignInScreen {
 
     private static final String googleAccountType = "@gmail.com";
+    public static boolean isSignedIn = false;
 
     /**
      * Signs in the user.

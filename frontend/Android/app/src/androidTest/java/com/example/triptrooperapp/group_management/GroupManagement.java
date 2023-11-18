@@ -3,6 +3,7 @@ package com.example.triptrooperapp.group_management;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
+import static com.example.triptrooperapp.SignInScreen.isSignedIn;
 import static org.hamcrest.CoreMatchers.is;
 
 import androidx.test.core.app.ActivityScenario;
@@ -21,7 +22,6 @@ import org.junit.Test;
 
 public class GroupManagement {
 
-    private static boolean isSignedIn = false;
 
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule =
