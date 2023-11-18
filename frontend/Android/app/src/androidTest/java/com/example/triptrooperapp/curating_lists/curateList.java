@@ -53,6 +53,7 @@ public class curateList {
         TestFramework.clickViewWithText("Confirm");
     }
 
+    // Chat GPT usage: No
     @Test
     public void testCreateUserList() {
         ListScreen.navigateToListScreen();
@@ -74,6 +75,7 @@ public class curateList {
         deleteUserList(listName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testDeleteUserList() {
         ListScreen.navigateToListScreen();
@@ -104,6 +106,7 @@ public class curateList {
                 TestFramework.isViewWithTextNotDisplayed(listName));
     }
 
+    // Chat GPT usage: No
     @Test
     public void testPopulateUserList() {
         ListScreen.navigateToListScreen();
@@ -142,6 +145,7 @@ public class curateList {
         deleteUserList(listName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testOptimizeUserList() {
         ListScreen.navigateToListScreen();
@@ -204,6 +208,7 @@ public class curateList {
         deleteUserList(listName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testRemovePlacesFromUserList() {
         ListScreen.navigateToListScreen();
@@ -235,6 +240,7 @@ public class curateList {
         deleteUserList(listName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testCreateGroupList() {
         GroupScreen.navigateToGroupScreen();
@@ -264,6 +270,7 @@ public class curateList {
         GroupScreen.deleteGroup(groupName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testDeleteGroupList() {
         GroupScreen.navigateToGroupScreen();
@@ -297,6 +304,7 @@ public class curateList {
         GroupScreen.deleteGroup(groupName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testOptimizeGroupList() {
         GroupScreen.navigateToGroupScreen();
@@ -369,6 +377,7 @@ public class curateList {
         GroupScreen.deleteGroup(groupName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testRemovePlacesFromGroupList() {
         GroupScreen.navigateToGroupScreen();
@@ -408,6 +417,7 @@ public class curateList {
         GroupScreen.deleteGroup(groupName);
     }
 
+    // Chat GPT usage: No
     @Test
     public void testPopulateGroupList() {
         GroupScreen.navigateToGroupScreen();
