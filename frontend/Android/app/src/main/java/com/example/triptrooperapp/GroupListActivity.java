@@ -209,7 +209,7 @@ public class GroupListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.header_bar_menu_delete, menu);
+        //getMenuInflater().inflate(R.menu.header_bar_menu_delete, menu);
         return true;
     }
 }
