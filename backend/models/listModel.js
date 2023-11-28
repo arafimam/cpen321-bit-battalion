@@ -100,8 +100,12 @@ async function getPlace(listId, placeId) {
 }
 
 async function addPlaceToList(listId, place) {
+  const placeExists = await List.findOne({ places: { $elemMatch: { placeId: place.placeId } } });
+  if (placeExists) {
+    throw new Error('Place already exists in list');
+  }
+
   const filter = { _id: listId };
-  // TODO: Add check to not add duplicates
   const update = { $push: { places: place } };
 
   try {

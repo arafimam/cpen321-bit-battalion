@@ -43,7 +43,6 @@ async function createGroup(group) {
 
 // Help from chatGPT
 async function deleteGroup(groupId) {
-  // TODO: delete lists in group
   try {
     return await Group.findByIdAndDelete(groupId);
   } catch (error) {
@@ -91,7 +90,11 @@ async function generateUniqueGroupCode() {
 }
 
 async function addUserToGroup(groupCode, member) {
-  //TODO: check if user already in group
+  const groupExists = await Group.findOne({ members: { $elemMatch: { userId: member.userId } } });
+  if (groupExists) {
+    throw new Error('User already in group');
+  }
+
   const filter = { groupCode };
   const update = { $push: { members: member } };
 
@@ -104,8 +107,6 @@ async function addUserToGroup(groupCode, member) {
 
 // Help from chatGPT
 async function removeUserFromGroup(groupId, userId) {
-  //TODO: check if user already in group
-  //TODO: if group members becomes empty after removing user, then delete group
   const filter = { _id: groupId };
   const update = { $pull: { members: { userId } } };
 

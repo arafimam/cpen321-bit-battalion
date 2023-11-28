@@ -25,6 +25,11 @@ router.get('/:id', middleware.verifyToken, async (req, res) => {
 router.post('/create', middleware.verifyToken, async (req, res) => {
   let listName = req.body.listName;
 
+  if (listName === null || listName === undefined || listName === '') {
+    res.status(400).send({ errorMessage: 'Please provide a list name' });
+    return;
+  }
+
   try {
     const listId = await listService.createList(listName);
     res.send({ listId });
@@ -49,6 +54,11 @@ router.put('/:id/add/place', middleware.verifyToken, async (req, res) => {
 router.put('/:id/remove/place', middleware.verifyToken, async (req, res) => {
   const listId = req.params.id;
   const placeId = req.body.placeId;
+
+  if (placeId === null || placeId === undefined) {
+    res.status(400).send({ errorMessage: 'Please provide a placeId' });
+    return;
+  }
 
   try {
     const resp = await listService.removePlaceFromList(listId, placeId);
@@ -80,7 +90,11 @@ router.put('/:id/add/schedule', middleware.verifyToken, async (req, res) => {
     console.log(resp);
     res.send({ schedule: resp });
   } catch (error) {
-    res.status(500).send({ errorMessage: 'Failed to create schedule for given list and places' });
+    if (error.message.includes('The following placeId was not found in list')) {
+      res.status(400).send({ errorMessage: error.message });
+    } else {
+      res.status(500).send({ errorMessage: 'Failed to create schedule for given list and places' });
+    }
   }
 });
 

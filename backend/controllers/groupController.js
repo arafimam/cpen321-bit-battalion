@@ -41,6 +41,11 @@ router.get('/:id', middleware.verifyToken, async (req, res) => {
 router.post('/create', middleware.verifyToken, middleware.getUser, async (req, res) => {
   let groupName = req.body.groupName;
 
+  if (groupName === null || groupName === undefined || groupName === '') {
+    res.status(400).send({ errorMessage: 'Please provide a group name' });
+    return;
+  }
+
   let groupData = {
     groupName,
     ownerId: res.locals.user.userId,
@@ -67,7 +72,6 @@ router.delete('/:id/delete', middleware.verifyToken, async (req, res) => {
   const groupId = req.params.id;
 
   try {
-    // TODO: check if user is owner of group
     await groupService.deleteGroup(groupId);
     res.send({ message: 'group successfully deleted' });
   } catch (error) {
@@ -81,20 +85,30 @@ router.delete('/:id/delete', middleware.verifyToken, async (req, res) => {
 router.put('/join', middleware.verifyToken, middleware.getUser, async (req, res) => {
   // Group code as part of request body
   const groupCode = req.body.groupCode;
+
+  if (groupCode === null || groupCode === undefined || groupCode === '') {
+    res.status(400).send({ errorMessage: 'Please provide a group code' });
+    return;
+  }
+
   const user = res.locals.user;
   try {
-    const group = await groupService.addUserToGroup(groupCode, user);
+    const retval = await groupService.addUserToGroup(groupCode, user);
 
-    if (!group) {
-      res.status(400).send({ errorMessage: 'Incorrect group code' });
-    } else {
-      res.send({ message: 'User successfully added to group' });
+    if (!retval.userAlreadyInGroup) {
+      if (!retval.group) {
+        res.status(400).send({ errorMessage: 'Incorrect group code' });
+      } else {
+        res.send({ message: 'User successfully added to group' });
+      }
 
       try {
         await groupNotifications.joinGroup(user, group);
       } catch (error) {
         console.log('Error while notifying group members about a new member joining the group: ', error.message);
       }
+    } else {
+      res.status(400).send({ errorMessage: 'User already in group' });
     }
   } catch (error) {
     console.log(error.message);
@@ -133,7 +147,7 @@ router.put('/:id/add/list', middleware.verifyToken, async (req, res) => {
   const groupId = req.params.id;
   const listName = req.body.listName;
 
-  if (listName === null || listName === undefined) {
+  if (listName === null || listName === undefined || listName === '') {
     res.status(400).send({ errorMessage: 'Please provide a list name' });
     return;
   }
