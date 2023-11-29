@@ -124,6 +124,18 @@ public class recommendPlaces {
         TestFramework.isViewWithIdDisplayed(R.id.view_in_map);
     }
 
+    @Test
+    public void testViewPlaceWithNonExistentDestination() {
+        ActivityScreen.navigateToActivityScreen();
+        ActivityScreen.clickOnPlacesByDestination();
+
+        // trying with an empty destination
+        ActivityScreen.enterDestination("lyop hghnbty njghty aswq fghty");
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+
+        TestFramework.isViewWithTextDisplayed("Something went wrong");
+    }
+
     // Chat GPT usage: No
     @Test
     public void testOptimizedScheduleRecommendation() {

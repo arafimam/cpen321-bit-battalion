@@ -2,6 +2,10 @@ package com.example.triptrooperapp.curating_lists;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
+import static org.hamcrest.CoreMatchers.is;
+
+import android.util.Log;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -21,6 +25,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 
@@ -109,6 +116,7 @@ public class curateList {
     // Chat GPT usage: No
     @Test
     public void testPopulateUserList() {
+        List<String> placesAdded;
         ListScreen.navigateToListScreen();
 
         final String listName = ListScreen.getRandomListName();
@@ -118,13 +126,11 @@ public class curateList {
         onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
 
         TestFramework.clickWithId(R.id.create_list);
-        TestFramework.clickViewWithText("Explore places by destination");
-        TestFramework.setTextToTextFieldWithId(R.id.list_name_textField, "UBC");
-        TestFramework.clickWithId(R.id.create_list_button);
+        enterDestinationNameByVerifying("UBC", listName, true);
 
         // add 3 places.
         onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
-        selectThreePlaces();
+        placesAdded = selectThreePlaces();
         // select on a 4th place but close the dialog.
         TestFramework.clickViewWithTag("place3");
         TestFramework.clickViewWithText("Cancel");
@@ -138,7 +144,7 @@ public class curateList {
             onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
             TestFramework.clickViewWithText(listName);
             onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
-            checkIfThreePlacesAdded();
+            checkIfThreePlacesAdded(placesAdded);
         }
 
         // clean up.
@@ -434,13 +440,11 @@ public class curateList {
         TestFramework.clickViewWithText(groupListName);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
 
-        TestFramework.clickWithId(R.id.create_list);
-        TestFramework.clickViewWithText("Explore places by destination");
-        TestFramework.setTextToTextFieldWithId(R.id.list_name_textField,
-                "SURREY");
-        TestFramework.clickWithId(R.id.create_list_button);
+        //TestFramework.clickWithId(R.id.create_list);
+        enterDestinationNameByVerifying("SURREY", groupListName, false);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
-        selectThreePlaces();
+        List<String> groupSelectedPlaces;
+        groupSelectedPlaces = selectThreePlaces();
 
         ActivityScenario<GroupsActivity> scenario2 =
                 ActivityScenario.launch(GroupsActivity.class);
@@ -448,19 +452,59 @@ public class curateList {
         GroupScreen.clickOnViewList();
         TestFramework.clickViewWithText(groupListName);
 
-        checkIfThreePlacesAdded();
+        checkIfThreePlacesAdded(groupSelectedPlaces);
 
         // clean up
         GroupScreen.deleteGroup(groupName);
     }
 
+    private void enterDestinationNameByVerifying(String destinationName,
+                                                 String listName,
+                                                 boolean verify) {
+        if (verify) {
+            TestFramework.clickViewWithText("Explore places by destination");
+            TestFramework.setTextToTextFieldWithId(R.id.list_name_textField,
+                    "");
+            TestFramework.clickWithId(R.id.create_list_button);
 
-    private void selectThreePlaces() {
+            // verify not navigated to places screen
+            onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+            TestFramework.isViewWithTextDisplayed("Explore places by " +
+                    "destination");
+
+            TestFramework.clickViewWithText("Explore places by destination");
+            TestFramework.setTextToTextFieldWithId(R.id.list_name_textField,
+                    "lyop hghnbty njghty aswq fghty");
+            TestFramework.clickWithId(R.id.create_list_button);
+            onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+            TestFramework.isViewWithTextDisplayed("Something went wrong");
+
+            // now enter the correct destination place.
+            ActivityScenario<ListActivity> scenario =
+                    ActivityScenario.launch(ListActivity.class);
+            TestFramework.clickViewWithText(listName);
+
+            onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+        }
+
+        TestFramework.clickWithId(R.id.create_list);
+        TestFramework.clickViewWithText("Explore places by destination");
+        TestFramework.setTextToTextFieldWithId(R.id.list_name_textField,
+                destinationName);
+        TestFramework.clickWithId(R.id.create_list_button);
+    }
+
+    private List<String> selectThreePlaces() {
+        List<String> placeName = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
+            placeName.add(TestFramework.getText(withTagValue(is("placeName" + i))));
+            Log.d("TAG", placeName.get(i));
             TestFramework.clickViewWithTag("place" + i);
             TestFramework.clickViewWithText("Add");
             onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         }
+
+        return placeName;
     }
 
     private void removeThreePlaces() {
@@ -472,8 +516,9 @@ public class curateList {
         }
     }
 
-    private void checkIfThreePlacesAdded() {
+    private void checkIfThreePlacesAdded(List<String> placeNames) {
         for (int i = 0; i < 3; i++) {
+            TestFramework.isViewWithTextDisplayed(placeNames.get(i));
             Assert.assertTrue("Place not visible",
                     TestFramework.isViewWithTagDisplayed("place" + i));
         }
