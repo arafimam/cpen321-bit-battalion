@@ -69,9 +69,7 @@ async function createScheduleForList(listId, placeIds) {
 
   const filteredPlaces = places.filter((place) => {
     for (let placeId of placeIds) {
-      if (place.placeId === placeId) {
-        return true;
-      }
+      return place.placeId === placeId;
     }
   });
   console.log('places: ' + places);
