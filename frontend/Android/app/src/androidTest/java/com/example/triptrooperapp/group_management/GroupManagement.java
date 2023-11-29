@@ -126,7 +126,7 @@ public class GroupManagement {
         // get the group code.
         String fullCode = TestFramework.getText(withTagValue(is("sideTitle0")));
         String code = fullCode.replaceAll("Group code: ", "");
-        
+
         GroupScreen.joinGroupWithCode(code);
 
         // verify user sees an error message

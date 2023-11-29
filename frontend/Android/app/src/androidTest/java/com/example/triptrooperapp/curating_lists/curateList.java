@@ -256,6 +256,7 @@ public class curateList {
 
         ActivityScenario<GroupsActivity> scenario1 =
                 ActivityScenario.launch(GroupsActivity.class);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         TestFramework.clickViewWithText(groupName);
         GroupScreen.clickOnViewList();
 
@@ -264,6 +265,7 @@ public class curateList {
         GroupScreen.createGroupList(groupListName);
 
         // verify group is successfully created.
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         TestFramework.isViewWithTextDisplayed(groupListName);
 
         // create a group with empty name
