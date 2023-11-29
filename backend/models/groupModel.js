@@ -90,7 +90,7 @@ async function generateUniqueGroupCode() {
 }
 
 async function addUserToGroup(groupCode, member) {
-  const groupExists = await Group.findOne({ members: { $elemMatch: { userId: member.userId } } });
+  const groupExists = await Group.findOne({ groupCode, members: { $elemMatch: { userId: member.userId } } });
   if (groupExists) {
     throw new Error('User already in group');
   }
@@ -119,9 +119,9 @@ async function removeUserFromGroup(groupId, userId) {
 
 async function addListToGroup(groupId, listId) {
   const filter = { _id: groupId };
+  const update = { $push: { lists: listId } };
 
   try {
-    const update = { $push: { lists: listId } };
     return await Group.findOneAndUpdate(filter, update, { new: true });
   } catch (error) {
     throw new Error('Error in DB while adding list to the group: ' + error.message);
