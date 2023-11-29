@@ -1,8 +1,6 @@
 const groupModel = require('../models/groupModel');
 const listService = require('./listService');
 
-//TODO: check group exists function
-
 async function getAllGroups(userId) {
   try {
     const groups = await groupModel.getAllGroups(userId);
@@ -36,6 +34,12 @@ async function createGroup(groupData) {
 }
 
 async function deleteGroup(groupId) {
+  const retval = await groupModel.getGroupLists(groupId);
+  const listIds = retval.lists;
+  for (const listId of listIds) {
+    await listService.deleteListById(listId);
+  }
+
   return await groupModel.deleteGroup(groupId);
 }
 
@@ -45,19 +49,37 @@ async function addUserToGroup(groupCode, userData) {
     username: userData.username
   };
 
-  return await groupModel.addUserToGroup(groupCode, member);
+  try {
+    const group = await groupModel.addUserToGroup(groupCode, member);
+    return {
+      userAlreadyInGroup: false,
+      group
+    };
+  } catch (error) {
+    if (error.message.includes('User already in group')) {
+      return {
+        userAlreadyInGroup: true
+      };
+    } else {
+      throw new Error(error.message);
+    }
+  }
 }
 
-// TODO: this is wrong - change the signature and usage
-async function removeUserFromGroup(userId, groupCode) {
-  return await groupModel.removeUserFromGroup(userId, groupCode);
+async function removeUserFromGroup(groupId, userId) {
+  const group = await groupModel.removeUserFromGroup(groupId, userId);
+
+  if (group.members.length === 0) {
+    await deleteGroup(groupId);
+  }
+
+  return group;
 }
 
 async function getListsforGroup(groupId) {
   try {
     const output = await groupModel.getGroupLists(groupId);
     const listIds = output.lists;
-    console.log('list ids: ', listIds);
     let lists = [];
     for (let listId of listIds) {
       let list = await listService.getListName(listId);

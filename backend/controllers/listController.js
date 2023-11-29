@@ -25,6 +25,11 @@ router.get('/:id', middleware.verifyToken, async (req, res) => {
 router.post('/create', middleware.verifyToken, async (req, res) => {
   let listName = req.body.listName;
 
+  if (listName === null || listName === undefined || listName === '') {
+    res.status(400).send({ errorMessage: 'Please provide a valid list name' });
+    return;
+  }
+
   try {
     const listId = await listService.createList(listName);
     res.send({ listId });
@@ -40,15 +45,24 @@ router.put('/:id/add/place', middleware.verifyToken, async (req, res) => {
   try {
     const placeResp = await listService.addPlaceToList(listId, place);
     console.log(placeResp);
-    res.send({ message: 'Successfully added place to list' });
+    if (placeResp.placeAlreadyExistsInList) {
+      res.status(400).send({ errorMessage: 'Place already exists in list' });
+    } else {
+      res.status(200).send({ message: 'Successfully added place to list' });
+    }
   } catch (error) {
-    res.status(500).send({ errorMessage: 'Failed to add a place to list ' });
+    res.status(500).send({ errorMessage: 'Failed to add a place to list' });
   }
 });
 
 router.put('/:id/remove/place', middleware.verifyToken, async (req, res) => {
   const listId = req.params.id;
   const placeId = req.body.placeId;
+
+  if (placeId === null || placeId === undefined) {
+    res.status(400).send({ errorMessage: 'Please provide a placeId' });
+    return;
+  }
 
   try {
     const resp = await listService.removePlaceFromList(listId, placeId);

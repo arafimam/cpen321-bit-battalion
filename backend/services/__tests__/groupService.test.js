@@ -2,6 +2,10 @@ const groupService = require('../groupService.js');
 const listService = require('../listService.js');
 const groupModel = require('../../models/groupModel.js');
 
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
 jest.mock('../../models/groupModel.js', () => ({
   createGroup: jest.fn(),
   generateUniqueGroupCode: jest.fn(),
@@ -88,12 +92,17 @@ describe('createGroup', () => {
 
 describe('deleteGroup', () => {
   // ChatGPT usage: No
-  it('returns true when deleteGroup is successful', async () => {
+  it.each([[[]], [['list1', 'list2']]])('returns true when deleteGroup is successful', async (groupLists) => {
     const mockGroupId = 'mock-group-id';
 
+    groupModel.getGroupLists.mockResolvedValue({ lists: groupLists });
     groupModel.deleteGroup.mockResolvedValue(true);
+    listService.deleteListById.mockResolvedValue(true);
 
     const result = await groupService.deleteGroup(mockGroupId);
+    if (groupLists != []) {
+      expect(listService.deleteListById).toHaveBeenCalledTimes(groupLists.length);
+    }
 
     expect(result).toBe(true);
   });
@@ -112,26 +121,65 @@ describe('addUserToGroup', () => {
 
     const result = await groupService.addUserToGroup(mockGroupCode, mockUserData);
 
-    expect(result).toBe(true);
+    expect(result.group).toBe(true);
     expect(groupModel.addUserToGroup).toHaveBeenCalledWith(mockGroupCode, {
       userId: mockUserData.userId,
       username: mockUserData.username
     });
   });
+
+  // ChatGPT usage: No
+  it('user already in the group', async () => {
+    const mockGroupCode = 'mock-group-code';
+    const mockUserData = {
+      userId: 'mock-user-id',
+      username: 'mock-username'
+    };
+
+    groupModel.addUserToGroup.mockRejectedValue(new Error('User already in group'));
+
+    const result = await groupService.addUserToGroup(mockGroupCode, mockUserData);
+
+    expect(result).toEqual({
+      userAlreadyInGroup: true
+    });
+  });
+
+  // ChatGPT usage: No
+  it('adding a user to group is unsuccessful', async () => {
+    const mockGroupCode = 'mock-group-code';
+    const mockUserData = {
+      userId: 'mock-user-id',
+      username: 'mock-username'
+    };
+
+    groupModel.addUserToGroup.mockRejectedValue(new Error('Could not add user to group'));
+
+    await expect(groupService.addUserToGroup(mockGroupCode, mockUserData)).rejects.toThrowError();
+  });
 });
 
 describe('removeUserFromGroup', () => {
   // ChatGPT usage: No
-  it('removes a user from the group successfully', async () => {
+  it.each([[[{ userId: 'mock-member' }]], [[]]])('removes a user from the group successfully', async (groupMembers) => {
+    const mockGroupId = 'mock-group-id';
     const mockUserId = 'mock-user-id';
-    const mockGroupCode = 'mock-group-code';
 
-    groupModel.removeUserFromGroup.mockResolvedValue(true);
+    const removeUserFromGroupMockRetval = {
+      members: []
+    };
 
-    const result = await groupService.removeUserFromGroup(mockUserId, mockGroupCode);
+    groupModel.removeUserFromGroup.mockResolvedValue(removeUserFromGroupMockRetval);
+    groupModel.deleteGroup.mockResolvedValue(true);
+    groupModel.getGroupLists.mockResolvedValue({ lists: [] });
 
-    expect(result).toBe(true);
-    expect(groupModel.removeUserFromGroup).toHaveBeenCalledWith(mockUserId, mockGroupCode);
+    const result = await groupService.removeUserFromGroup(mockGroupId, mockUserId);
+
+    expect(result).toBe(removeUserFromGroupMockRetval);
+    if (groupMembers == []) {
+      expect(groupModel.deleteGroup).toHaveBeenCalledWith(mockGroupId);
+    }
+    expect(groupModel.removeUserFromGroup).toHaveBeenCalledWith(mockGroupId, mockUserId);
   });
 });
 

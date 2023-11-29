@@ -1,12 +1,62 @@
 const groupModel = require('../groupModel.js');
 
-const mockCreate = jest.spyOn(groupModel.Group, 'create');
-const mockFind = jest.spyOn(groupModel.Group, 'find');
-const mockFindById = jest.spyOn(groupModel.Group, 'findById');
-const mockFindOne = jest.spyOn(groupModel.Group, 'findOne');
-const mockFindByIdAndDelete = jest.spyOn(groupModel.Group, 'findByIdAndDelete');
-const mockUpdateOne = jest.spyOn(groupModel.Group, 'updateOne');
-const mockFindOneAndUpdate = jest.spyOn(groupModel.Group, 'findOneAndUpdate');
+let mockCreate = jest.spyOn(groupModel.Group, 'create');
+let mockFind = jest.spyOn(groupModel.Group, 'find');
+let mockFindById = jest.spyOn(groupModel.Group, 'findById');
+let mockFindOne = jest.spyOn(groupModel.Group, 'findOne');
+let mockFindByIdAndDelete = jest.spyOn(groupModel.Group, 'findByIdAndDelete');
+let mockUpdateOne = jest.spyOn(groupModel.Group, 'updateOne');
+let mockFindOneAndUpdate = jest.spyOn(groupModel.Group, 'findOneAndUpdate');
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+describe('addUserToGroup', () => {
+  // ChatGPT usage: No
+  it('returns group when adding a user using addUserToGroup is successful', async () => {
+    const mockGroupCode = 'mock-group-code';
+    const mockMember = { userId: 'mock-user-id', username: 'mock-username' };
+    const mockGroupData = {
+      groupCode: mockGroupCode,
+      groupId: 'mock-group-id'
+    };
+
+    mockFindOne.mockResolvedValue(null);
+    mockFindOneAndUpdate.mockResolvedValue(mockGroupData);
+    const result = await groupModel.addUserToGroup(mockGroupCode, mockMember);
+
+    expect(result).toBe(mockGroupData);
+    expect(mockFindOneAndUpdate).toHaveBeenCalledWith(
+      { groupCode: mockGroupCode },
+      { $push: { members: mockMember } },
+      { new: true }
+    );
+  });
+
+  // ChatGPT usage: No
+  it('throws error when addUserToGroup is unsuccessful', async () => {
+    const mockGroupCode = 'mock-group-code';
+    const mockMember = { userId: 'mock-user-id', username: 'mock-username' };
+
+    mockFindOneAndUpdate.mockRejectedValue(new Error('Adding user to group failed'));
+
+    await expect(groupModel.addUserToGroup(mockGroupCode, mockMember)).rejects.toThrowError();
+    expect(mockFindOneAndUpdate).toHaveBeenCalledWith(
+      { groupCode: mockGroupCode },
+      { $push: { members: mockMember } },
+      { new: true }
+    );
+  });
+
+  it('user already in group in addUserToGroup', async () => {
+    const mockGroupCode = 'mock-group-code';
+    const mockMember = { userId: 'mock-user-id', username: 'mock-username' };
+
+    mockFindOne.mockResolvedValue(mockMember);
+    await expect(groupModel.addUserToGroup(mockGroupCode, mockMember)).rejects.toThrowError();
+  });
+});
 
 describe('createGroup', () => {
   // ChatGPT usage: No
@@ -161,43 +211,6 @@ describe('generateUniqueGroupCode', () => {
     const result = await groupModel.generateUniqueGroupCode();
     expect(result.length).toBe(6);
     expect(mockFindOne).toHaveBeenCalled();
-  });
-});
-
-describe('addUserToGroup', () => {
-  // ChatGPT usage: No
-  it('returns group when adding a user using addUserToGroup is successful', async () => {
-    const mockGroupCode = 'mock-group-code';
-    const mockMember = { userId: 'mock-user-id', username: 'mock-username' };
-    const mockGroupData = {
-      groupCode: mockGroupCode,
-      groupId: 'mock-group-id'
-    };
-
-    mockFindOneAndUpdate.mockResolvedValue(mockGroupData);
-    const result = await groupModel.addUserToGroup(mockGroupCode, mockMember);
-
-    expect(result).toBe(mockGroupData);
-    expect(mockFindOneAndUpdate).toHaveBeenCalledWith(
-      { groupCode: mockGroupCode },
-      { $push: { members: mockMember } },
-      { new: true }
-    );
-  });
-
-  // ChatGPT usage: No
-  it('throws error when addUserToGroup is unsuccessful', async () => {
-    const mockGroupCode = 'mock-group-code';
-    const mockMember = { userId: 'mock-user-id', username: 'mock-username' };
-
-    mockFindOneAndUpdate.mockRejectedValue(new Error('Adding user to group failed'));
-
-    await expect(groupModel.addUserToGroup(mockGroupCode, mockMember)).rejects.toThrowError();
-    expect(mockFindOneAndUpdate).toHaveBeenCalledWith(
-      { groupCode: mockGroupCode },
-      { $push: { members: mockMember } },
-      { new: true }
-    );
   });
 });
 

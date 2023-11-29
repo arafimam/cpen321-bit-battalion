@@ -1,8 +1,6 @@
 const listModel = require('../models/listModel');
 const { twoOpt } = require('../utils/twoOpt');
 
-//TODO: check list exists function
-
 async function createList(listName) {
   try {
     return await listModel.createList(listName);
@@ -39,7 +37,21 @@ async function addPlaceToList(listId, placeData) {
     ...placeData
   };
 
-  return await listModel.addPlaceToList(listId, place);
+  try {
+    const list = await listModel.addPlaceToList(listId, place);
+    return {
+      placeAlreadyExistsInList: false,
+      list
+    };
+  } catch (error) {
+    if (error.message.includes('Place already exists in list')) {
+      return {
+        placeAlreadyExistsInList: true
+      };
+    } else {
+      throw new Error(error.message);
+    }
+  }
 }
 
 async function removePlaceFromList(listId, placeId) {
@@ -62,10 +74,8 @@ async function removePlaceFromList(listId, placeId) {
 //   return twoOpt(places);
 // }
 async function createScheduleForList(listId, placeIds) {
-  const list = await listModel.getPlaces(listId);
+  const list = await getPlacesByListId(listId);
   const places = list.places;
-
-  // TODO: make sure place ID exists
 
   const filteredPlaces = places.filter((place) => {
     for (let placeId of placeIds) {
@@ -74,7 +84,6 @@ async function createScheduleForList(listId, placeIds) {
       }
     }
   });
-  console.log('places: ' + places);
 
   return twoOpt(filteredPlaces);
 }

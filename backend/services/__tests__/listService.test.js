@@ -95,13 +95,44 @@ describe('addPlaceToList', () => {
       displayName: 'mock-display-name',
       location: 'mock-location'
     };
-    const mockPlace = { ...mockPlaceData };
+    const mockList = { ...mockPlaceData };
 
-    listModel.addPlaceToList.mockResolvedValue(mockPlace);
+    listModel.addPlaceToList.mockResolvedValue(mockList);
 
     const result = await listService.addPlaceToList(mockListId, mockPlaceData);
 
-    expect(result).toEqual(mockPlace);
+    expect(result).toEqual({
+      placeAlreadyExistsInList: false,
+      list: mockList
+    });
+  });
+
+  it('place already exists in the list', async () => {
+    const mockPlaceData = {
+      placeId: 'mock-place-id',
+      displayName: 'mock-display-name',
+      location: 'mock-location'
+    };
+
+    listModel.addPlaceToList.mockRejectedValue(new Error('Place already exists in list'));
+
+    const result = await listService.addPlaceToList(mockListId, mockPlaceData);
+
+    expect(result).toEqual({
+      placeAlreadyExistsInList: true
+    });
+  });
+
+  it('adding place to list is unsuccessful', async () => {
+    const mockPlaceData = {
+      placeId: 'mock-place-id',
+      displayName: 'mock-display-name',
+      location: 'mock-location'
+    };
+
+    listModel.addPlaceToList.mockRejectedValue(new Error('Failed to add place to list'));
+
+    await expect(listService.addPlaceToList(mockListId, mockPlaceData)).rejects.toThrowError();
   });
 });
 
