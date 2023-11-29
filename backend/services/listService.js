@@ -83,6 +83,7 @@ async function createScheduleForList(listId, placeIds) {
         return true;
       }
     }
+    return false;
   });
 
   return twoOpt(filteredPlaces);
