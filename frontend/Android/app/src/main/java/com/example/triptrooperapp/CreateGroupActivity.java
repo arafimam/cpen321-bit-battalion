@@ -180,30 +180,38 @@ public class CreateGroupActivity extends AppCompatActivity {
                             });
                         } else {
                             try {
-                                Log.d("TAG", response.body().string());
+                                String responseBody = response.body().string();
+                                String key = "\"errorMessage\":";
+                                int startIndex =
+                                        responseBody.indexOf(key) + key.length();
+                                int endIndex = responseBody.indexOf("\"",
+                                        startIndex + 1);
+                                String errorMessage =
+                                        responseBody.substring(startIndex + 1,
+                                                endIndex);
+
+                                runOnUiThread(() -> {
+                                    AlertDialog.Builder builder =
+                                            new AlertDialog.Builder(CreateGroupActivity.this);
+                                    builder.setMessage(
+                                                    errorMessage)
+                                            .setTitle(
+                                                    "Something went wrong");
+
+                                    builder.setNegativeButton("Close",
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface,
+                                                                    int i) {
+                                                    builder.create().dismiss();
+                                                }
+                                            });
+                                    builder.create().show();
+                                });
                             } catch (IOException e) {
                                 throw new CustomException("error", e);
                             }
-                            runOnUiThread(() -> {
-                                AlertDialog.Builder builder =
-                                        new AlertDialog.Builder(CreateGroupActivity.this);
-                                builder.setMessage(
-                                                "Double check the group code." +
-                                                        " The entered group " +
-                                                        "code does not exist. ")
-                                        .setTitle(
-                                                "Incorrect group code");
 
-                                builder.setNegativeButton("Close",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface,
-                                                                int i) {
-                                                builder.create().dismiss();
-                                            }
-                                        });
-                                builder.create().show();
-                            });
                         }
                     }).start();
                 } catch (JSONException e) {

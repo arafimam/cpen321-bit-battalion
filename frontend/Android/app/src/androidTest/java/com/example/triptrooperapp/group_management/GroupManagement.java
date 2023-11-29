@@ -114,6 +114,26 @@ public class GroupManagement {
         GroupScreen.deleteGroup(fullCode);
     }
 
+    @Test
+    public void testJoinGroupAlreadyJoined() {
+        GroupScreen.navigateToGroupScreen();
+        final String groupName = GroupScreen.getRandomGroupName();
+        GroupScreen.createGroupWithName(groupName);
+
+        ActivityScenario<GroupsActivity> scenario1 =
+                ActivityScenario.launch(GroupsActivity.class);
+
+        // get the group code.
+        String fullCode = TestFramework.getText(withTagValue(is("sideTitle0")));
+        String code = fullCode.replaceAll("Group code: ", "");
+        
+        GroupScreen.joinGroupWithCode(code);
+
+        // verify user sees an error message
+        TestFramework.isViewWithTextDisplayed("Something went wrong");
+
+    }
+
     // Chat GPT usage: No
     @Test
     public void testLeaveGroup() {

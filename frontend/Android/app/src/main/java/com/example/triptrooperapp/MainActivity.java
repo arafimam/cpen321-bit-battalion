@@ -35,6 +35,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -99,10 +101,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //TODO:clean up request permission code
-        // FCM SDK (and your app) can post notifications.
-        // TODO: Inform user that that your app will not show
-        //  notifications.
         ActivityResultLauncher<String> requestPermissionLauncher =
                 registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                     if (isGranted) {
@@ -110,8 +108,6 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this, "Notification permission granted!",
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        // TODO: Inform user that that your app will not show
-                        //  notifications.
                         Toast.makeText(this, "We need those permissions to " +
                                 "show " +
                                 "notifications!", Toast.LENGTH_SHORT).show();
@@ -127,12 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         } else if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 android.Manifest.permission.POST_NOTIFICATIONS)) {
-            // In an educational UI, explain to the user why your app
-            // requires this
-            // permission for a specific feature to behave as expected, and what
-            // features are disabled if it's declined. In this UI, include a
-            // "cancel" or "no thanks" button that lets the user continue
-            // using your app without granting the permission.
+
             new AlertDialog.Builder(this).setTitle("Please allow notification" +
                     " permissions").setMessage("This permission is required " +
                     "to show notifications").setNegativeButton("CANCEL",
@@ -152,9 +143,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }).create().show();
         } else {
-            // You can directly ask for the permission.
-            // The registered ActivityResultCallback gets the result of this
-            // request.
             requestPermissionLauncher.launch(
                     Manifest.permission.POST_NOTIFICATIONS);
         }
@@ -284,6 +272,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 });
             } else {
+                try {
+                    Log.d("ERR", loginResponse.body().string());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 runOnUiThread(() -> {
                     progressbar.setVisibility(View.GONE);
                     Toast.makeText(MainActivity.this, "Unable to login. " +

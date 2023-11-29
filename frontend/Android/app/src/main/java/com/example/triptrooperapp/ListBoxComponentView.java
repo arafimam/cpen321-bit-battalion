@@ -14,7 +14,7 @@ import androidx.cardview.widget.CardView;
 public class ListBoxComponentView extends LinearLayout {
 
     private CardView cardView;
-    private TextView mainTitle;
+    public TextView mainTitle;
     public TextView sideTitle;
     private TextView subTitle;
 

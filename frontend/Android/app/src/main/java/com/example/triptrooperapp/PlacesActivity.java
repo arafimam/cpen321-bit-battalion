@@ -342,6 +342,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                             ListBoxComponentView listBox =
                                     new ListBoxComponentView(PlacesActivity.this);
                             listBox.setTag("place" + finalI);
+                            listBox.mainTitle.setTag("placeName" + finalI);
                             try {
                                 String placeName = place.getString(
                                         "displayName");
@@ -482,8 +483,37 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                         });
                                     } else {
                                         try {
-                                            Log.d("TAG",
-                                                    response1.body().string());
+                                            String responseBody =
+                                                    response1.body().string();
+                                            String key = "\"errorMessage\":";
+                                            int startIndex =
+                                                    responseBody.indexOf(key) + key.length();
+                                            int endIndex =
+                                                    responseBody.indexOf("\"",
+                                                    startIndex + 1);
+                                            String errorMessage =
+                                                    responseBody.substring(startIndex + 1,
+                                                            endIndex);
+                                            runOnUiThread(() -> {
+                                                AlertDialog.Builder builder =
+                                                        new AlertDialog.Builder(PlacesActivity.this);
+                                                builder.setMessage(
+                                                                errorMessage)
+                                                        .setTitle(
+                                                                "Something went wrong");
+
+                                                builder.setNegativeButton(
+                                                        "Close",
+                                                        new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface,
+                                                                                int i) {
+                                                                builder.create().dismiss();
+                                                            }
+                                                        });
+                                                builder.create().show();
+                                            });
+
                                         } catch (IOException e) {
                                             throw new CustomException("error"
                                                     , e);
