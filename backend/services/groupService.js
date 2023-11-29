@@ -70,7 +70,7 @@ async function removeUserFromGroup(groupId, userId) {
   const group = await groupModel.removeUserFromGroup(groupId, userId);
 
   if (group.members.length === 0) {
-    await groupModel.deleteGroup(groupId);
+    await deleteGroup(groupId);
   }
 
   return group;

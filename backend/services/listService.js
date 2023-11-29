@@ -60,7 +60,7 @@ async function removePlaceFromList(listId, placeId) {
 //   return twoOpt(places);
 // }
 async function createScheduleForList(listId, placeIds) {
-  const list = await listService.getPlacesByListId(listId);
+  const list = await getPlacesByListId(listId);
   const places = list.places;
 
   const filteredPlaces = places.filter((place) => {
