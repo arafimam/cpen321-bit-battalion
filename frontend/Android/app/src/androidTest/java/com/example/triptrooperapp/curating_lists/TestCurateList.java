@@ -138,13 +138,12 @@ public class TestCurateList {
         TestFramework.isViewWithTextDisplayed("Your Places");
 
         // go to the list details screen
-        try (ActivityScenario<ListActivity> scenario =
-                     ActivityScenario.launch(ListActivity.class)) {
-            onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
-            TestFramework.clickViewWithText(listName);
-            onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
-            checkIfThreePlacesAdded(placesAdded);
-        }
+        ActivityScenario.launch(ListActivity.class);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
+        TestFramework.clickViewWithText(listName);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
+        checkIfThreePlacesAdded(placesAdded);
+
 
         // clean up.
         deleteUserList(listName);
@@ -180,8 +179,7 @@ public class TestCurateList {
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
 
         // verify optimize schedule is still unavailable
-        ActivityScenario<ListActivity> scenario =
-                ActivityScenario.launch(ListActivity.class);
+        ActivityScenario.launch(ListActivity.class);
         TestFramework.clickViewWithText(listName);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         TestFramework.clickWithId(R.id.optimize_button);
@@ -231,8 +229,7 @@ public class TestCurateList {
         onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
         selectThreePlaces();
 
-        ActivityScenario<ListActivity> scenario1 =
-                ActivityScenario.launch(ListActivity.class);
+        ActivityScenario.launch(ListActivity.class);
         TestFramework.clickViewWithText(listName);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
         removeThreePlaces();
