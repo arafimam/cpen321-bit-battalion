@@ -2,7 +2,7 @@ const express = require('express');
 
 const groupService = require('../services/groupService.js');
 const middleware = require('../middleware/middleware.js');
-const groupNotifications = require('../notifications/groupNotification.js');
+const groupNotification = require('../notifications/groupNotification.js');
 
 const router = express.Router();
 
@@ -57,7 +57,7 @@ router.post('/create', middleware.verifyToken, middleware.getUser, async (req, r
     res.send({ groupCode });
 
     try {
-      await groupNotifications.createGroup(res.locals.user, groupName, groupCode);
+      await groupNotification.createGroup(res.locals.user, groupName, groupCode);
     } catch (error) {
       console.log('Error while notifying about a new group created: ', error.message);
     }
@@ -99,13 +99,12 @@ router.put('/join', middleware.verifyToken, middleware.getUser, async (req, res)
       if (!retval.group) {
         res.status(400).send({ errorMessage: 'Incorrect group code' });
       } else {
-        res.send({ message: 'User successfully added to group' });
-      }
-
-      try {
-        await groupNotifications.joinGroup(user, group);
-      } catch (error) {
-        console.log('Error while notifying group members about a new member joining the group: ', error.message);
+        res.status(200).send({ message: 'User successfully added to group' });
+        try {
+          await groupNotification.joinGroup(user, retval.group);
+        } catch (error) {
+          console.log('Error while notifying group members about a new member joining the group: ', error.message);
+        }
       }
     } else {
       res.status(400).send({ errorMessage: 'User already in group' });

@@ -93,6 +93,17 @@ describe('POST /create create a new list', () => {
     expect(res.body.listId).toBe(mockListId);
   });
 
+  // Input: invalid/missing listName
+  // Expected Status Code: 400
+  // Expected Behaviour: Fails to create list
+  // Expected Output: Invalid listName error message and 400 status code
+  // ChatGPT usage: No
+  it('should return a 400 status code when given invalid/missing listName', async () => {
+    const res = await request.post(`/lists/create`);
+    expect(res.status).toBe(400);
+    expect(res.body.errorMessage).toBe('Please provide a valid list name');
+  });
+
   // Input: valid listName
   // Expected Status Code: 500
   // Expected Behaviour: Internal server error
@@ -110,7 +121,6 @@ describe('POST /create create a new list', () => {
 describe('PUT /:id/add/place add place to a list', () => {
   const mockPlace = { displayName: 'mock-display-name' };
   const mockListId = 'mock-list-id';
-  const mockSuccessResult = 'mock-success-result';
 
   // Input: valid place
   // Expected Status Code: 200
@@ -118,11 +128,24 @@ describe('PUT /:id/add/place add place to a list', () => {
   // Expected Output: Success Message
   // ChatGPT usage: No
   it('should return a 200 status code on successful addition of place', async () => {
-    listService.addPlaceToList.mockResolvedValue(mockSuccessResult);
+    listService.addPlaceToList.mockResolvedValue({ placeAlreadyExistsInList: false });
 
     const res = await request.put(`/lists/${mockListId}/add/place`).send({ place: mockPlace });
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('Successfully added place to list');
+  });
+
+  // Input: duplicate place (place already exists in list)
+  // Expected Status Code: 400
+  // Expected Behaviour: Fails to add the place in the list since it's a duplicate
+  // Expected Output: Place already exists in the list error message and 400 status code
+  // ChatGPT usage: No
+  it('should return a 400 status code when given a duplicate place', async () => {
+    listService.addPlaceToList.mockResolvedValue({ placeAlreadyExistsInList: true });
+
+    const res = await request.put(`/lists/${mockListId}/add/place`).send({ place: mockPlace });
+    expect(res.status).toBe(400);
+    expect(res.body.errorMessage).toBe('Place already exists in list');
   });
 
   // Input: valid place
@@ -155,6 +178,17 @@ describe('PUT /:id/remove/place remove place from a list', () => {
     const res = await request.put(`/lists/${mockListId}/remove/place`).send({ placeId: mockPlaceId });
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('successfully removed place from list');
+  });
+
+  // Input: missing placeId
+  // Expected Status Code: 400
+  // Expected Behaviour: Fails to remove a place from the list due to missing placeId
+  // Expected Output: Missing placeId error message and 400 status code
+  // ChatGPT usage: No
+  it('should return a 400 status code when placeId input is missing', async () => {
+    const res = await request.put(`/lists/${mockListId}/remove/place`);
+    expect(res.status).toBe(400);
+    expect(res.body.errorMessage).toBe('Please provide a placeId');
   });
 
   // Input: valid placeId

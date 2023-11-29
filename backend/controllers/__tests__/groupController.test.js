@@ -135,6 +135,16 @@ describe('POST /create create new group', () => {
     expect(res.status).toBe(200);
   });
 
+  // Input: invalid/missing groupName
+  // Expected Status Code: 400
+  // Expected Behaviour: fails to create a group due to missing/invalid groupName
+  // Expected Output: Returns an error message stating to provide a valid group name
+  // ChatGPT usage: No
+  it('invalid/missing groupName', async () => {
+    const res = await request.post(`/groups/create`);
+    expect(res.status).toBe(400);
+  });
+
   // Input: valid groupName
   // Expected Status Code: 500
   // Expected Behaviour: Returns a 500 status code on internal error
@@ -151,7 +161,6 @@ describe('POST /create create new group', () => {
 // Interface PUT /groups/join
 describe('PUT /join add user to group', () => {
   const successNotif = 'mock-successful-join-notification';
-  const successResult = 'mock-successful-join-result';
 
   // Input: valid groupCode
   // Expected Status Code: 200
@@ -187,12 +196,12 @@ describe('PUT /join add user to group', () => {
     expect(res.body.message).toBe('User successfully added to group');
   });
 
-  // Input: invalid groupCode
+  // Input: incorrect groupCode
   // Expected Status Code: 400
   // Expected Behaviour: Returns a 400 status code and join fails
   // Expected Output: Incorrect group code message
   // ChatGPT usage: No
-  it('should return a 400 status code on joining with invalid code', async () => {
+  it('should return a 400 status code on joining with incorrect code', async () => {
     groupService.addUserToGroup.mockResolvedValue({
       userAlreadyInGroup: false,
       group: null
@@ -201,6 +210,32 @@ describe('PUT /join add user to group', () => {
     const res = await request.put(`/groups/join`).send({ groupCode: 'mock-group-code' });
     expect(res.status).toBe(400);
     expect(res.body.errorMessage).toBe('Incorrect group code');
+  });
+
+  // Input: invalid/missing groupCode
+  // Expected Status Code: 400
+  // Expected Behaviour: fails to create a group due to missing/invalid groupCode
+  // Expected Output: Returns an error message stating to provide a group code
+  // ChatGPT usage: No
+  it('invalid/missing groupCode', async () => {
+    const res = await request.put(`/groups/join`);
+    expect(res.status).toBe(400);
+  });
+
+  // Input: valid groupCode
+  // Expected Status Code: 400
+  // Expected Behaviour: Fails to add user to group since user is already in the group
+  // Expected Output: User already in group message
+  // ChatGPT usage: No
+  it('user already exists in the group', async () => {
+    groupService.addUserToGroup.mockResolvedValue({
+      userAlreadyInGroup: true,
+      group: null
+    });
+
+    const res = await request.put(`/groups/join`).send({ groupCode: 'mock-group-code' });
+    expect(res.status).toBe(400);
+    expect(res.body.errorMessage).toBe('User already in group');
   });
 
   // Input: valid groupCode
