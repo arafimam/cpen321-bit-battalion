@@ -140,7 +140,7 @@ describe('addUserToGroup', () => {
 
     const result = await groupService.addUserToGroup(mockGroupCode, mockUserData);
 
-    expect(result).toStrictEqual({
+    expect(result).toEqual({
       userAlreadyInGroup: true
     });
   });

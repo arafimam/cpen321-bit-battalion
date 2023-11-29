@@ -37,7 +37,21 @@ async function addPlaceToList(listId, placeData) {
     ...placeData
   };
 
-  return await listModel.addPlaceToList(listId, place);
+  try {
+    const list = await listModel.addPlaceToList(listId, place);
+    return {
+      placeAlreadyExistsInList: false,
+      list
+    };
+  } catch (error) {
+    if (error.message.includes('Place already exists in list')) {
+      return {
+        placeAlreadyExistsInList: true
+      };
+    } else {
+      throw new Error(error.message);
+    }
+  }
 }
 
 async function removePlaceFromList(listId, placeId) {
