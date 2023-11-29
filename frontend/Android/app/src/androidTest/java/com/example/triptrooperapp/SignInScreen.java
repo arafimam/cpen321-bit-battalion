@@ -32,7 +32,7 @@ public class SignInScreen {
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new CustomException("error", e);
         }
 
         // using UI automator to control the google account picker.
@@ -55,8 +55,7 @@ public class SignInScreen {
     }
 
     public static void signOutAndSignInWithAnotherUser(int accountNumber) {
-        ActivityScenario<HomeActivity> scenario1 =
-                ActivityScenario.launch(HomeActivity.class);
+        ActivityScenario.launch(HomeActivity.class);
         TestFramework.clickWithId(R.id.sign_out_google);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
 

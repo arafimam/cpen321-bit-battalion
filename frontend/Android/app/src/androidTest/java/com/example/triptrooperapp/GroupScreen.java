@@ -5,8 +5,6 @@ import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
-import androidx.test.core.app.ActivityScenario;
-
 public class GroupScreen {
 
     /**
@@ -72,8 +70,6 @@ public class GroupScreen {
     }
 
     public static void deleteGroup(String groupName) {
-        ActivityScenario<GroupsActivity> scenario =
-                ActivityScenario.launch(GroupsActivity.class);
         TestFramework.clickViewWithText(groupName);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         TestFramework.clickWithId(R.id.action_delete);

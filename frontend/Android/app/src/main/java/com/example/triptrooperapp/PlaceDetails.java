@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class placeDetails extends AppCompatActivity {
+public class PlaceDetails extends AppCompatActivity {
 
 
     @Override
@@ -34,7 +34,7 @@ public class placeDetails extends AppCompatActivity {
         gmapBtn.setButtonActionOnClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent mapsIntent = new Intent(placeDetails.this,
+                Intent mapsIntent = new Intent(PlaceDetails.this,
                         MapsActivity.class);
                 mapsIntent.putExtra("placeName", intent.getStringExtra(
                         "placeName"));

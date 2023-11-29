@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class recommendPlaces {
+public class TestRecommendPlaces {
 
     private static int deniedLocation = 0;
     private static int acceptLocation = 0;
@@ -64,17 +64,13 @@ public class recommendPlaces {
 
         // verify we are still in the activity screen
         TestFramework.isViewWithIdDisplayed(R.id.activity_location);
-    }
 
-    // Chat GPT usage: No
-    @Test
-    public void testPlacesNearbyByAcceptingLocation() {
         ActivityScreen.navigateToActivityScreen();
         ActivityScreen.clickOnPlacesNearby();
         if (acceptLocation == 0 && deniedLocation == 0) {
             ActivityScreen.acceptLocationFirstTime();
             acceptLocation++;
-        } else if (acceptLocation == 1 || deniedLocation == 1) {
+        } else if (acceptLocation == 1 || deniedLocation == 2) {
             ActivityScreen.acceptLocationSecondTime();
             acceptLocation++;
         }

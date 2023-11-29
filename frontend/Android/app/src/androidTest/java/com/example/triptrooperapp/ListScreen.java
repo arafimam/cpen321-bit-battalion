@@ -32,7 +32,6 @@ public class ListScreen {
      * Returns a random List Name.
      */
     public static String getRandomListName() {
-        double randomDouble = Math.random();
         int randomIntInRange = (int) (Math.random() * ((1000) + 1));
         return "List " + randomIntInRange;
     }

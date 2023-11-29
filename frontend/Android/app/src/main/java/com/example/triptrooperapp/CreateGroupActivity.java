@@ -91,6 +91,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     private void setButtonClickValidation(String textToValidate,
                                           String failureMessage,
                                           boolean isCreatingNewGroup) {
+        Log.d("Tag", failureMessage);
         if (textToValidate.equals("")) {
             AlertDialog.Builder builder =
                     new AlertDialog.Builder(CreateGroupActivity.this);

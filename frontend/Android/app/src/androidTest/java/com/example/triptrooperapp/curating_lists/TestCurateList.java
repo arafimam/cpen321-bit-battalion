@@ -32,7 +32,7 @@ import java.util.List;
 @RunWith(AndroidJUnit4.class)
 
 // Use Case-1 List Creation with users and group.
-public class curateList {
+public class TestCurateList {
 
     private static boolean isSignedIn = false;
 
@@ -253,9 +253,9 @@ public class curateList {
 
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
-
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+        
+        ActivityScenario.launch(GroupsActivity.class);
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         TestFramework.clickViewWithText(groupName);
         GroupScreen.clickOnViewList();
 
@@ -264,6 +264,7 @@ public class curateList {
         GroupScreen.createGroupList(groupListName);
 
         // verify group is successfully created.
+        onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         TestFramework.isViewWithTextDisplayed(groupListName);
 
         // create a group with empty name
@@ -283,8 +284,7 @@ public class curateList {
 
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
         TestFramework.clickViewWithText(groupName);
         GroupScreen.clickOnViewList();
         // creating a a group list with name
@@ -316,8 +316,8 @@ public class curateList {
         GroupScreen.navigateToGroupScreen();
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+
+        ActivityScenario.launch(GroupsActivity.class);
         TestFramework.clickViewWithText(groupName);
         GroupScreen.clickOnViewList();
         // creating a a group list with name
@@ -342,8 +342,7 @@ public class curateList {
         TestFramework.clickViewWithText("Add");
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
 
-        ActivityScenario<GroupsActivity> scenario2 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
         TestFramework.clickViewWithText(groupName);
         GroupScreen.clickOnViewList();
         TestFramework.clickViewWithText(groupListName);
@@ -365,8 +364,7 @@ public class curateList {
         onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
         selectThreePlaces();
 
-        ActivityScenario<GroupsActivity> scenario3 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
         TestFramework.clickViewWithText(groupName);
         GroupScreen.clickOnViewList();
         TestFramework.clickViewWithText(groupListName);
@@ -389,8 +387,7 @@ public class curateList {
         GroupScreen.navigateToGroupScreen();
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
         TestFramework.clickViewWithText(groupName);
         GroupScreen.clickOnViewList();
         // creating a a group list with name
@@ -408,8 +405,7 @@ public class curateList {
         onView(isRoot()).perform(TestFramework.waitIdlingResource(3000));
         selectThreePlaces();
 
-        ActivityScenario<GroupsActivity> scenario2 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
         TestFramework.clickViewWithText(groupName);
         GroupScreen.clickOnViewList();
         TestFramework.clickViewWithText(groupListName);
@@ -429,8 +425,8 @@ public class curateList {
         GroupScreen.navigateToGroupScreen();
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+
+        ActivityScenario.launch(GroupsActivity.class);
         TestFramework.clickViewWithText(groupName);
         GroupScreen.clickOnViewList();
         // creating a a group list with name
@@ -446,8 +442,7 @@ public class curateList {
         List<String> groupSelectedPlaces;
         groupSelectedPlaces = selectThreePlaces();
 
-        ActivityScenario<GroupsActivity> scenario2 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
         TestFramework.clickViewWithText(groupName);
         GroupScreen.clickOnViewList();
         TestFramework.clickViewWithText(groupListName);
