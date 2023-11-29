@@ -127,6 +127,36 @@ describe('addUserToGroup', () => {
       username: mockUserData.username
     });
   });
+
+  // ChatGPT usage: No
+  it('user already in the group', async () => {
+    const mockGroupCode = 'mock-group-code';
+    const mockUserData = {
+      userId: 'mock-user-id',
+      username: 'mock-username'
+    };
+
+    groupModel.addUserToGroup.mockRejectedValue(new Error('User already in group'));
+
+    const result = await groupService.addUserToGroup(mockGroupCode, mockUserData);
+
+    expect(result).toStrictEqual({
+      userAlreadyInGroup: true
+    });
+  });
+
+  // ChatGPT usage: No
+  it('adding a user to group is unsuccessful', async () => {
+    const mockGroupCode = 'mock-group-code';
+    const mockUserData = {
+      userId: 'mock-user-id',
+      username: 'mock-username'
+    };
+
+    groupModel.addUserToGroup.mockRejectedValue(new Error('Could not add user to group'));
+
+    await expect(groupService.addUserToGroup(mockGroupCode, mockUserData)).rejects.toThrowError();
+  });
 });
 
 describe('removeUserFromGroup', () => {
