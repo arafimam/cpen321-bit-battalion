@@ -133,7 +133,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String placeName = placeNames.get(i);
 
                     LatLng place = new LatLng(latitude, longitude);
-                    googleMap.addMarker(new MarkerOptions().position(place).title((i + 1) + ". " + placeName));
+                    Marker marker =
+                            googleMap.addMarker(new MarkerOptions().position(place).title((i + 1) + ". " + placeName));
+                    marker.setTag("Marker");
                     if (i == 0) {
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place, 15));
                     } else {
