@@ -64,7 +64,6 @@ public class GroupScreen {
      * Returns a random List Name.
      */
     public static String getRandomGroupName() {
-        double randomDouble = Math.random();
         int randomIntInRange = (int) (Math.random() * ((1000) + 1));
         return "Group " + randomIntInRange;
     }

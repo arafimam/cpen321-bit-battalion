@@ -152,8 +152,7 @@ public class TestRecommendPlaces {
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         selectThreePlaces();
 
-        ActivityScenario<ListActivity> scenario1 =
-                ActivityScenario.launch(ListActivity.class);
+        ActivityScenario.launch(ListActivity.class);
         TestFramework.clickViewWithText(listName);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         TestFramework.clickWithId(R.id.optimize_button);
