@@ -60,15 +60,7 @@ async function removePlaceFromList(listId, placeId) {
 //   return twoOpt(places);
 // }
 async function createScheduleForList(listId, placeIds) {
-  // Ensure that the given placeIds are in the list
-  for (const placeId of placeIds) {
-    const place = await listModel.getPlace(listId, placeId);
-    if (!place) {
-      throw new Error(`The following placeId was not found in list: ${placeId}`);
-    }
-  }
-
-  const list = await listModel.getPlaces(listId);
+  const list = await listService.getPlacesByListId(listId);
   const places = list.places;
 
   const filteredPlaces = places.filter((place) => {
