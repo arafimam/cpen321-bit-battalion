@@ -51,8 +51,7 @@ public class TestCurateList {
     // function to delete any created user list.
 
     private void deleteUserList(String listName) {
-        ActivityScenario<ListActivity> scenario =
-                ActivityScenario.launch(ListActivity.class);
+        ActivityScenario.launch(ListActivity.class);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
         TestFramework.clickViewWithText(listName);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
@@ -199,8 +198,7 @@ public class TestCurateList {
         TestFramework.clickWithId(R.id.create_list_button);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         selectThreePlaces();
-        ActivityScenario<ListActivity> scenario1 =
-                ActivityScenario.launch(ListActivity.class);
+        ActivityScenario.launch(ListActivity.class);
         TestFramework.clickViewWithText(listName);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         TestFramework.clickWithId(R.id.optimize_button);
@@ -253,7 +251,7 @@ public class TestCurateList {
 
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
-        
+
         ActivityScenario.launch(GroupsActivity.class);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         TestFramework.clickViewWithText(groupName);
