@@ -1,4 +1,4 @@
-package com.example.triptrooperapp.NFR2;
+package com.example.triptrooperapp.nfr2;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
@@ -19,7 +19,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class optimizedScheduleSpeed {
+public class TestOptimizedScheduleSpeed {
+
 
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule =
@@ -52,8 +53,7 @@ public class optimizedScheduleSpeed {
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
         selectFivePlaces();
 
-        ActivityScenario<ListActivity> scenario1 =
-                ActivityScenario.launch(ListActivity.class);
+        ActivityScenario.launch(ListActivity.class);
         TestFramework.clickViewWithText(listName);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
 

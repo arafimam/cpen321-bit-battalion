@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class GroupManagement {
+public class TestGroupManagement {
 
 
     @Rule
@@ -42,8 +42,8 @@ public class GroupManagement {
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
 
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+
+        ActivityScenario.launch(GroupsActivity.class);
 
         // verify if name exist
         TestFramework.isViewWithTextDisplayed(groupName);
@@ -65,8 +65,8 @@ public class GroupManagement {
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
 
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+
+        ActivityScenario.launch(GroupsActivity.class);
 
         GroupScreen.deleteGroup(groupName);
         TestFramework.isViewWithTextNotDisplayed(groupName);
@@ -79,8 +79,8 @@ public class GroupManagement {
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
 
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+
+        ActivityScenario.launch(GroupsActivity.class);
 
         // get the group code.
         String fullCode = TestFramework.getText(withTagValue(is("sideTitle0")));
@@ -92,8 +92,7 @@ public class GroupManagement {
         GroupScreen.joinGroupWithCode(code);
 
 
-        ActivityScenario<GroupsActivity> scenario2 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
         GroupScreen.navigateToGroupScreen();
 
         // verify successfully joined group.
@@ -105,8 +104,7 @@ public class GroupManagement {
         TestFramework.isViewWithTextDisplayed("Incorrect group code");
 
         // test with empty join code.
-        ActivityScenario<GroupsActivity> scenario3 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
         GroupScreen.joinGroupWithCode("");
         TestFramework.isViewWithTextDisplayed("Empty group name or group code");
 
@@ -120,8 +118,7 @@ public class GroupManagement {
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
 
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
 
         // get the group code.
         String fullCode = TestFramework.getText(withTagValue(is("sideTitle0")));
@@ -141,8 +138,7 @@ public class GroupManagement {
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
 
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
 
         TestFramework.clickViewWithText(groupName);
         TestFramework.clickWithId(R.id.leave_group);
@@ -166,8 +162,7 @@ public class GroupManagement {
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
 
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
 
         // get the group code.
         String fullCode = TestFramework.getText(withTagValue(is("sideTitle0")));
@@ -179,8 +174,7 @@ public class GroupManagement {
         GroupScreen.joinGroupWithCode(code);
 
 
-        ActivityScenario<GroupsActivity> scenario2 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
         GroupScreen.navigateToGroupScreen();
         TestFramework.clickViewWithText(fullCode);
         TestFramework.clickWithId(R.id.member_btn);
@@ -198,8 +192,7 @@ public class GroupManagement {
         final String groupName = GroupScreen.getRandomGroupName();
         GroupScreen.createGroupWithName(groupName);
 
-        ActivityScenario<GroupsActivity> scenario1 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
 
         // get the group code.
         String fullCode = TestFramework.getText(withTagValue(is("sideTitle0")));
@@ -218,8 +211,7 @@ public class GroupManagement {
         GroupScreen.joinGroupWithCode(code);
 
 
-        ActivityScenario<GroupsActivity> scenario2 =
-                ActivityScenario.launch(GroupsActivity.class);
+        ActivityScenario.launch(GroupsActivity.class);
         GroupScreen.navigateToGroupScreen();
         TestFramework.clickViewWithText(fullCode);
         TestFramework.clickWithId(R.id.member_btn);

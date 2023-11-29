@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Log.d("ERR", loginResponse.body().string());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new CustomException("error", e);
                 }
                 runOnUiThread(() -> {
                     progressbar.setVisibility(View.GONE);

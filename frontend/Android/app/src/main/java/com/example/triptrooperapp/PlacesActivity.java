@@ -179,7 +179,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                         @Override
                                         public void onClick(View view) {
                                             Intent intentTo =
-                                                    new Intent(PlacesActivity.this, placeDetails.class);
+                                                    new Intent(PlacesActivity.this, PlaceDetails.class);
                                             intentTo.putExtra("placeName",
                                                     placeName);
                                             intentTo.putExtra("rating", rating);
@@ -379,7 +379,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                         @Override
                                         public void onClick(View view) {
                                             Intent intentTo =
-                                                    new Intent(PlacesActivity.this, placeDetails.class);
+                                                    new Intent(PlacesActivity.this, PlaceDetails.class);
                                             intentTo.putExtra("placeName",
                                                     placeName);
                                             intentTo.putExtra("rating", rating);
@@ -490,7 +490,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationListene
                                                     responseBody.indexOf(key) + key.length();
                                             int endIndex =
                                                     responseBody.indexOf("\"",
-                                                    startIndex + 1);
+                                                            startIndex + 1);
                                             String errorMessage =
                                                     responseBody.substring(startIndex + 1,
                                                             endIndex);

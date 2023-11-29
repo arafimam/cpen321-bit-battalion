@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class recommendPlaces {
+public class TestRecommendPlaces {
 
     private static int deniedLocation = 0;
     private static int acceptLocation = 0;

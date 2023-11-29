@@ -40,7 +40,7 @@
             android:exported="false"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".placeDetails"
+            android:name=".PlaceDetails"
             android:exported="false" />
         <activity
             android:name=".GroupListActivity"

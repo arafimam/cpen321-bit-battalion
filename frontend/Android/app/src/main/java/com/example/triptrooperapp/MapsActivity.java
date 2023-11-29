@@ -29,7 +29,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        com.example.triptrooperapp.databinding.ActivityMapsBinding binding =
+        ActivityMapsBinding binding =
                 ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -133,9 +133,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String placeName = placeNames.get(i);
 
                     LatLng place = new LatLng(latitude, longitude);
-
-                    Marker marker =
-                            googleMap.addMarker(new MarkerOptions().position(place).title((i + 1) + ". " + placeName));
+                    googleMap.addMarker(new MarkerOptions().position(place).title((i + 1) + ". " + placeName));
                     if (i == 0) {
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place, 15));
                     } else {

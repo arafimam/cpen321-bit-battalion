@@ -541,7 +541,6 @@ public class ListDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String listId = intent.getStringExtra("id");
-        String listName = intent.getStringExtra("listName");
 
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(ListDetailsActivity.this);
@@ -601,7 +600,7 @@ public class ListDetailsActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(View view) {
                                         Intent intentTo =
-                                                new Intent(ListDetailsActivity.this, placeDetails.class);
+                                                new Intent(ListDetailsActivity.this, PlaceDetails.class);
                                         intentTo.putExtra("placeName",
                                                 placeName);
                                         intentTo.putExtra("address", address);
