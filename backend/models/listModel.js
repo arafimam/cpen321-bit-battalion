@@ -100,7 +100,7 @@ async function getPlace(listId, placeId) {
 }
 
 async function addPlaceToList(listId, place) {
-  const placeExists = await List.findOne({ places: { $elemMatch: { placeId: place.placeId } } });
+  const placeExists = await List.findOne({ _id: listId, places: { $elemMatch: { placeId: place.placeId } } });
   if (placeExists) {
     throw new Error('Place already exists in list');
   }
