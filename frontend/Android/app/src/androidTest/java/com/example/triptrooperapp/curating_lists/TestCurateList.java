@@ -469,9 +469,8 @@ public class TestCurateList {
             onView(isRoot()).perform(TestFramework.waitIdlingResource(2000));
             TestFramework.isViewWithTextDisplayed("Something went wrong");
 
-            // now enter the correct destination place.
-            ActivityScenario<ListActivity> scenario =
-                    ActivityScenario.launch(ListActivity.class);
+            // now enter the correct destination place
+            ActivityScenario.launch(ListActivity.class);
             TestFramework.clickViewWithText(listName);
 
             onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));

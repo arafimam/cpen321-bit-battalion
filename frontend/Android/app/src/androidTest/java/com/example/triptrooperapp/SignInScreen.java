@@ -66,7 +66,7 @@ public class SignInScreen {
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new CustomException("error", e);
         }
 
         // using UI automator to control the google account picker.
