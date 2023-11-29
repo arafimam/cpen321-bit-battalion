@@ -116,7 +116,7 @@ describe('POST /create create new group', () => {
     groupService.createGroup.mockResolvedValue(mockGroupCode);
     groupNotification.createGroup.mockResolvedValue(successNotif);
 
-    const res = await request.post(`/groups/create`);
+    const res = await request.post(`/groups/create`).send({ groupName: 'mock-group-name' });
     expect(res.status).toBe(200);
     expect(res.body.groupCode).toBe(mockGroupCode);
   });
@@ -131,7 +131,7 @@ describe('POST /create create new group', () => {
     groupService.createGroup.mockResolvedValue(mockGroupCode);
     groupNotification.createGroup.mockRejectedValue(new Error('notification failed'));
 
-    const res = await request.post(`/groups/create`);
+    const res = await request.post(`/groups/create`).send({ groupName: 'mock-group-name' });
     expect(res.status).toBe(200);
   });
 
@@ -143,7 +143,7 @@ describe('POST /create create new group', () => {
   it('should return a 500 status code if something went wrong during creation', async () => {
     groupService.createGroup.mockRejectedValue(new Error('something went wrong'));
 
-    const res = await request.post(`/groups/create`);
+    const res = await request.post(`/groups/create`).send({ groupName: 'mock-group-name' });
     expect(res.status).toBe(500);
   });
 });
@@ -159,10 +159,13 @@ describe('PUT /join add user to group', () => {
   // Expected Output: Success message
   // ChatGPT usage: No
   it('should return a 200 status code on successful join', async () => {
-    groupService.addUserToGroup.mockResolvedValue(successResult);
+    groupService.addUserToGroup.mockResolvedValue({
+      userAlreadyInGroup: false,
+      group: { groupName: 'testGroup1' }
+    });
     groupNotification.joinGroup.mockResolvedValue(successNotif);
 
-    const res = await request.put(`/groups/join`);
+    const res = await request.put(`/groups/join`).send({ groupCode: 'mock-group-code' });
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('User successfully added to group');
   });
@@ -173,10 +176,13 @@ describe('PUT /join add user to group', () => {
   // Expected Output: Success message
   // ChatGPT usage: No
   it('should join successfully despite a failed notification', async () => {
-    groupService.addUserToGroup.mockResolvedValue(successResult);
+    groupService.addUserToGroup.mockResolvedValue({
+      userAlreadyInGroup: false,
+      group: { groupName: 'testGroup1' }
+    });
     groupNotification.joinGroup.mockRejectedValue(new Error('notification failed'));
 
-    const res = await request.put(`/groups/join`);
+    const res = await request.put(`/groups/join`).send({ groupCode: 'mock-group-code' });
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('User successfully added to group');
   });
@@ -187,9 +193,12 @@ describe('PUT /join add user to group', () => {
   // Expected Output: Incorrect group code message
   // ChatGPT usage: No
   it('should return a 400 status code on joining with invalid code', async () => {
-    groupService.addUserToGroup.mockResolvedValue(null);
+    groupService.addUserToGroup.mockResolvedValue({
+      userAlreadyInGroup: false,
+      group: null
+    });
 
-    const res = await request.put(`/groups/join`);
+    const res = await request.put(`/groups/join`).send({ groupCode: 'mock-group-code' });
     expect(res.status).toBe(400);
     expect(res.body.errorMessage).toBe('Incorrect group code');
   });
@@ -202,7 +211,7 @@ describe('PUT /join add user to group', () => {
   it('should return a 500 status code if something went wrong while joining', async () => {
     groupService.addUserToGroup.mockRejectedValue(new Error('something went wrong'));
 
-    const res = await request.put(`/groups/join`);
+    const res = await request.put(`/groups/join`).send({ groupCode: 'mock-group-code' });
     expect(res.status).toBe(500);
   });
 });
