@@ -52,11 +52,16 @@ public class TestCurateList {
 
     private void deleteUserList(String listName) {
         ActivityScenario.launch(ListActivity.class);
+
+
         onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
         TestFramework.clickViewWithText(listName);
         onView(isRoot()).perform(TestFramework.waitIdlingResource(1000));
+
+
         TestFramework.clickWithId(R.id.action_delete);
         TestFramework.clickViewWithText("Confirm");
+
     }
 
     // Chat GPT usage: No
