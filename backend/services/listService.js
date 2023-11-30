@@ -27,13 +27,6 @@ async function getPlacesByListId(listId) {
 
 async function addPlaceToList(listId, placeData) {
   const place = {
-    // placeId: placeData.placeId,
-    // displayName: placeData.displayName,
-    // location: placeData.location,
-    // rating: placeData.rating,
-    // websiteUri: placeData.websiteUri,
-    // phoneNumber: placeData.phoneNumber,
-    // regularOpeningHours: placeData.regularOpeningHours,
     ...placeData
   };
 
@@ -58,21 +51,6 @@ async function removePlaceFromList(listId, placeId) {
   return await listModel.removePlaceFromList(listId, placeId);
 }
 
-// async function createScheduleForList(listId, placeIds) {
-//   let places = [];
-
-//   for (const placeId of placeIds) {
-//     const place = await listModel.getPlace(listId, placeId);
-//     if (!place) {
-//       throw new Error('Place not found in list');
-//     }
-//     places.push(place);
-//   }
-
-//   console.log('places: ' + places);
-
-//   return twoOpt(places);
-// }
 async function createScheduleForList(listId, placeIds) {
   const list = await getPlacesByListId(listId);
   const places = list.places;
